@@ -16,16 +16,9 @@
 <body>
 	<button type="button" onclick="createGame();">New game</button>
     <button type="button" onclick="startRound();">Start round</button>
-    <button type="button" onclick="hit();">Hit</button>
-    <button type="button" onclick="double();">Double</button>
-    <button type="button" onclick="split();">Split</button>
-    <button type="button" onclick="stand();">Stand</button>
     <button type="button" onclick="endRound();">End round</button>
     <button type="button" onclick="clearRound();">Clear round</button>
-    <input type="checkbox" id="overwrite-output" checked />Overwrite output
-    <div id="results">
-        
-    </div>
+    <div id="results"></div>
   
     <script src="/plugins/jquery-2.1.1/jquery-2.1.1.min.js" type="text/javascript"></script>
     <script src="/plugins/bootstrap-3.2.0/js/bootstrap.min.js" type="text/javascript"></script>
@@ -37,11 +30,18 @@
             results.innerHTML = '';
 
             var data = JSON.parse(stringifiedData);
-
             if (data.players) {
                 data.players.forEach(p => {
-                    var serializedHands = p.handSet.hands.reduce((sH, hand) => sH + hand.cards.reduce((sC, card) => sC + card.number + card.suit + ', ', '') + ' (' + hand.score.effective + ') / ', '');
-                    results.innerHTML += p.name + ': ' + serializedHands + '<br />';
+                    var serializedHands = p.handSet.hands.reduce((sH, hand) =>
+                        sH + hand.cards.reduce((sC, card) => sC + card.number + card.suit + ', ', '') + ' (' + hand.score.effective + ') / ', '');
+                    results.innerHTML += p.name + ': ' + serializedHands;
+                    if (data.currentIndex != null && data.players[data.currentIndex] == p && p.name != "Dealer") {
+                        results.innerHTML += '<button type="button" onclick="hit();">Hit</button>' +
+                                                '<button type="button" onclick="stand();">Stand</button>' +
+                                                '<button type="button" onclick="double();">Double</button>' +
+                                                '<button type="button" onclick="split();">Split</button>';
+                    }
+                    results.innerHTML += '<br />';
                 });
             }
         }
