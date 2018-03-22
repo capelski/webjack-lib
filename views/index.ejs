@@ -40,7 +40,7 @@
 
             if (data.players) {
                 data.players.forEach(p => {
-                    var serializedHands = p.handSet.hands.reduce((sH, hand) => sH + hand.cards.reduce((sC, card) => sC + card.number + card.suit + ', ', '') + ' / ', '');
+                    var serializedHands = p.handSet.hands.reduce((sH, hand) => sH + hand.cards.reduce((sC, card) => sC + card.number + card.suit + ', ', '') + ' (' + hand.score.effective + ') / ', '');
                     results.innerHTML += p.name + ': ' + serializedHands + '<br />';
                 });
             }

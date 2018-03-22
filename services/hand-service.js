@@ -11,6 +11,7 @@ function handService() {
     function addCard(hand, card) {
         hand.hasAce = hand.hasAce || cardService.isAce(card);
         hand.cards.push(card);
+        hand.score = scoreService.getCardsScore(hand.cards);
     }
 
     function clear(hand) {
@@ -26,7 +27,7 @@ function handService() {
     }
 
     function getScore(hand) {
-        return scoreService.getEffectiveCardsScore(hand.cards);
+        return scoreService.getCardsScore(hand.cards).effective;
     }
 
     function isSplitable(hand) {
