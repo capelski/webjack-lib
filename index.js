@@ -47,63 +47,18 @@ const configureRouter = (middleware) => {
 		}
 	});
 
-	// TODO makeDecision endpoint (receiving the action as parameter)
-
-	router.get('/hit', middleware.session, function (req, res, next) {
+	router.get('/make-decision', middleware.session, function (req, res, next) {
 
 		// TODO Pass the playerId as parameter (should be some kind of hash)
 		var gameId = parseInt(req.query.gameId);
+		var decision = req.query.decision;
 		var game = gameService.getGame(gameId);
 		if (!game) {
 			return res.send(JSON.stringify({message: "No game created"}));
 		}
 		else {
 			var playerId = gameService.getCurrentPlayer(game).id;
-        	gameService.makeDecision(game, playerId, 'Hit');
-            return res.send(JSON.stringify(game.playerSet));
-		}
-    });
-
-    router.get('/double', middleware.session, function (req, res, next) {
-
-    	// TODO Pass the playerId as parameter (should be some kind of hash)
-		var gameId = parseInt(req.query.gameId);
-		var game = gameService.getGame(gameId);
-		if (!game) {
-			return res.send(JSON.stringify({message: "No game created"}));
-		}
-		else {
-			var playerId = gameService.getCurrentPlayer(game).id;
-        	gameService.makeDecision(game, playerId, 'Double');
-            return res.send(JSON.stringify(game.playerSet));
-		}
-    });
-
-    router.get('/split', middleware.session, function (req, res, next) {
-
-        // TODO Pass the playerId as parameter (should be some kind of hash)
-		var gameId = parseInt(req.query.gameId);
-		var game = gameService.getGame(gameId);
-		if (!game) {
-			return res.send(JSON.stringify({message: "No game created"}));
-		}
-		else {
-			var playerId = gameService.getCurrentPlayer(game).id;
-        	gameService.makeDecision(game, playerId, 'Split');
-            return res.send(JSON.stringify(game.playerSet));
-		}
-    });
-
-    router.get('/stand', middleware.session, function (req, res, next) {
-        // TODO Pass the playerId as parameter (should be some kind of hash)
-		var gameId = parseInt(req.query.gameId);
-		var game = gameService.getGame(gameId);
-		if (!game) {
-			return res.send(JSON.stringify({message: "No game created"}));
-		}
-		else {
-			var playerId = gameService.getCurrentPlayer(game).id;
-        	gameService.makeDecision(game, playerId, 'Stand');
+        	gameService.makeDecision(game, playerId, decision);
             return res.send(JSON.stringify(game.playerSet));
 		}
     });
