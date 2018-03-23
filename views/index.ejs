@@ -16,6 +16,7 @@
 <body>
     <button type="button" onclick="createGame();">New game</button>
     <button type="button" onclick="joinGame();">Join game</button>
+    <input type="text" id="game-id" />Game Id
     <button type="button" onclick="startRound();">Start round</button>
     <button type="button" onclick="endRound();">End round</button>
     <button type="button" onclick="clearRound();">Clear round</button>
@@ -71,8 +72,7 @@
         }
 
         function joinGame(){
-            // TODO Let user provide the value
-            gameId = 0;
+            gameId = $('#game-id').val();
             $.get('/join?gameId=' + gameId).then(render);
             setInterval(() =>  $.get('/get?gameId=' + gameId).then(render), 4000);
         }
