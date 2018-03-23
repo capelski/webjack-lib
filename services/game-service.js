@@ -8,6 +8,8 @@ let playerService = require('./player-service');
 let playerSetService = require('./player-set-service');
 let rulesService = require('./rules-service');
 
+let games = [];
+
 function gameService() {
 
     function clearRound(game) {
@@ -29,8 +31,9 @@ function gameService() {
         playerSet = playerSet || playerSetService.create();
 
         var game = new Game(cardSet, playerSet);
+        games.push(game);
 
-        return game;
+        return games.length - 1;
     }
 
     function endRound(game) {
@@ -51,6 +54,10 @@ function gameService() {
 
     function getCurrentPlayer(game) {
         return playerSetService.getCurrentPlayer(game.playerSet);
+    }
+
+    function getGame(gameId) {
+        return games[gameId];
     }
 
     function makeDecision(game, playerId, action) {
@@ -100,6 +107,7 @@ function gameService() {
         create: nodeUtils.trace(gameService.name, create),
         endRound: nodeUtils.trace(gameService.name, endRound),
         getCurrentPlayer: nodeUtils.trace(gameService.name, getCurrentPlayer),
+        getGame: nodeUtils.trace(gameService.name, getGame),
         makeDecision: nodeUtils.trace(gameService.name, makeDecision),
         startRound: nodeUtils.trace(gameService.name, startRound),
         stringify: nodeUtils.trace(gameService.name, stringify)

@@ -9,19 +9,13 @@ const configureRouter = (middleware) => {
 	});
 
 	router.get('/create', middleware.session, function (req, res, next) {
-		
-		if (!req.session.game) {
-			req.session.game = gameService.create();
-			return res.send(JSON.stringify(req.session.game.playerSet));
-		}
-		else {
-			return res.send(JSON.stringify({message: "Game already created"}));
-		}
+		var gameId = gameService.create();
+		return res.send('' + gameId);
 	});
 
 	router.get('/get', middleware.session, function (req, res, next) {
-		
-		var game = req.session.game;
+		var gameId = parseInt(req.query.gameId);
+		var game = gameService.getGame(gameId);
 		if (!game) {
 			return res.send(JSON.stringify({message: "No game created"}));
 		}
@@ -31,8 +25,8 @@ const configureRouter = (middleware) => {
 	});
 
 	router.get('/start-round', middleware.session, function (req, res, next) {
-		
-		var game = req.session.game;
+		var gameId = parseInt(req.query.gameId);
+		var game = gameService.getGame(gameId);
 		if (!game) {
 			return res.send(JSON.stringify({message: "No game created"}));
 		}
@@ -47,7 +41,8 @@ const configureRouter = (middleware) => {
 	router.get('/hit', middleware.session, function (req, res, next) {
 
 		// TODO Pass the playerId as parameter (should be some kind of hash)
-		var game = req.session.game;
+		var gameId = parseInt(req.query.gameId);
+		var game = gameService.getGame(gameId);
 		if (!game) {
 			return res.send(JSON.stringify({message: "No game created"}));
 		}
@@ -61,7 +56,8 @@ const configureRouter = (middleware) => {
     router.get('/double', middleware.session, function (req, res, next) {
 
     	// TODO Pass the playerId as parameter (should be some kind of hash)
-		var game = req.session.game;
+		var gameId = parseInt(req.query.gameId);
+		var game = gameService.getGame(gameId);
 		if (!game) {
 			return res.send(JSON.stringify({message: "No game created"}));
 		}
@@ -75,7 +71,8 @@ const configureRouter = (middleware) => {
     router.get('/split', middleware.session, function (req, res, next) {
 
         // TODO Pass the playerId as parameter (should be some kind of hash)
-		var game = req.session.game;
+		var gameId = parseInt(req.query.gameId);
+		var game = gameService.getGame(gameId);
 		if (!game) {
 			return res.send(JSON.stringify({message: "No game created"}));
 		}
@@ -88,7 +85,8 @@ const configureRouter = (middleware) => {
 
     router.get('/stand', middleware.session, function (req, res, next) {
         // TODO Pass the playerId as parameter (should be some kind of hash)
-		var game = req.session.game;
+		var gameId = parseInt(req.query.gameId);
+		var game = gameService.getGame(gameId);
 		if (!game) {
 			return res.send(JSON.stringify({message: "No game created"}));
 		}
@@ -100,7 +98,8 @@ const configureRouter = (middleware) => {
     });
 
     router.get('/end-round', middleware.session, function (req, res, next) {
-    	var game = req.session.game;
+    	var gameId = parseInt(req.query.gameId);
+		var game = gameService.getGame(gameId);
 		if (!game) {
 			return res.send(JSON.stringify({message: "No game created"}));
 		}
@@ -111,7 +110,8 @@ const configureRouter = (middleware) => {
     });
 
     router.get('/clear-round', middleware.session, function (req, res, next) {
-    	var game = req.session.game;
+    	var gameId = parseInt(req.query.gameId);
+		var game = gameService.getGame(gameId);
 		if (!game) {
 			return res.send(JSON.stringify({message: "No game created"}));
 		}

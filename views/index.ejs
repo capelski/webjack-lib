@@ -25,6 +25,8 @@
     <script src="<%= asset('js/app.js') %>" type="text/javascript"></script>
 
     <script>
+        var gameId;
+
         function render(stringifiedData) {
             var results = document.getElementById('results');
             results.innerHTML = '';
@@ -47,35 +49,35 @@
         }
 
         function clearRound(){
-            $.get('/clear-round').then(render);
+            $.get('/clear-round?gameId=' + gameId).then(render);
         }
 
         function createGame(){
-            $.get('/create').then(render);
+            $.get('/create').then(response => gameId = response);
         }
 
         function double(){
-            $.get('/double').then(render);
+            $.get('/double?gameId=' + gameId).then(render);
         }
 
         function endRound(){
-            $.get('/end-round').then(render);
+            $.get('/end-round?gameId=' + gameId).then(render);
         }
 
         function hit(){
-            $.get('/hit').then(render);
+            $.get('/hit?gameId=' + gameId).then(render);
         }
 
         function split(){
-            $.get('/split').then(render);
+            $.get('/split?gameId=' + gameId).then(render);
         }
 
         function stand(){
-            $.get('/stand').then(render);
+            $.get('/stand?gameId=' + gameId).then(render);
         }
 
         function startRound(){
-            $.get('/start-round').then(render);
+            $.get('/start-round?gameId=' + gameId).then(render);
         }
     </script>
 
