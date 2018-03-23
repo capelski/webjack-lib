@@ -14,7 +14,8 @@
 </head>
 
 <body>
-	<button type="button" onclick="createGame();">New game</button>
+    <button type="button" onclick="createGame();">New game</button>
+    <button type="button" onclick="joinGame();">Join game</button>
     <button type="button" onclick="startRound();">Start round</button>
     <button type="button" onclick="endRound();">End round</button>
     <button type="button" onclick="clearRound();">Clear round</button>
@@ -54,6 +55,7 @@
 
         function createGame(){
             $.get('/create').then(response => gameId = response);
+            setInterval(() =>  $.get('/get?gameId=' + gameId).then(render), 4000);
         }
 
         function double(){
@@ -66,6 +68,13 @@
 
         function hit(){
             $.get('/hit?gameId=' + gameId).then(render);
+        }
+
+        function joinGame(){
+            // TODO Let user provide the value
+            gameId = 0;
+            $.get('/join?gameId=' + gameId).then(render);
+            setInterval(() =>  $.get('/get?gameId=' + gameId).then(render), 4000);
         }
 
         function split(){

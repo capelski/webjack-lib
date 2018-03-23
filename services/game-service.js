@@ -26,9 +26,9 @@ function gameService() {
         }
     }
 
-    function create(cardSet, playerSet) {
+    function create(ownerName, cardSet, playerSet) {
         cardSet = cardSet || cardSetService.create();        
-        playerSet = playerSet || playerSetService.create();
+        playerSet = playerSet || playerSetService.create([ownerName || 'Random player']);
 
         var game = new Game(cardSet, playerSet);
         games.push(game);
@@ -58,6 +58,17 @@ function gameService() {
 
     function getGame(gameId) {
         return games[gameId];
+    }
+
+    function joinGame(gameId) {
+        var game = games[gameId];
+        if (!game) {
+            throw 'No game identified by ' + gameId + ' was found';
+        }
+
+        playerSetService.addPlayer(game.playerSet);
+
+        return game;
     }
 
     function makeDecision(game, playerId, action) {
@@ -108,6 +119,7 @@ function gameService() {
         endRound: nodeUtils.trace(gameService.name, endRound),
         getCurrentPlayer: nodeUtils.trace(gameService.name, getCurrentPlayer),
         getGame: nodeUtils.trace(gameService.name, getGame),
+        joinGame: nodeUtils.trace(gameService.name, joinGame),
         makeDecision: nodeUtils.trace(gameService.name, makeDecision),
         startRound: nodeUtils.trace(gameService.name, startRound),
         stringify: nodeUtils.trace(gameService.name, stringify)

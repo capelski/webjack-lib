@@ -13,6 +13,12 @@ const configureRouter = (middleware) => {
 		return res.send('' + gameId);
 	});
 
+	router.get('/join', middleware.session, function (req, res, next) {
+		var gameId = parseInt(req.query.gameId);
+		var game = gameService.joinGame(gameId);
+		return res.send(JSON.stringify(game.playerSet));
+	});
+
 	router.get('/get', middleware.session, function (req, res, next) {
 		var gameId = parseInt(req.query.gameId);
 		var game = gameService.getGame(gameId);

@@ -5,15 +5,21 @@ let js = require('../js-generics');
 let PlayerSet = require('../models/player-set');
 let playerService = require('./player-service');
 
-function playerSetService() {    
+function playerSetService() {
 
-    function create(playersNumber) {
-        playersNumber = playersNumber || 7;
+    function addPlayer(playerSet, playerName) {
+        // TODO Check max capacity
+        // TODO Check the game status and add only when no round
+        var player = playerService.create(playerSet.players.length, playerName);
+        playerSet.players.unshift(player);
+    }
 
-        var dealer = playerService.create(0, 'Dealer');
-        var players = js.createArray(playersNumber, (array, index) => {
-            array.push(playerService.create(index + 1));
-        });
+    function create(playerNames) {
+        playerNames = playerNames || [];
+
+        var id = 0;
+        var dealer = playerService.create(id++, 'Dealer');
+        var players = playerNames.map(name => playerService.create(id++, name));
         
         var playerSet = new PlayerSet(dealer, players);
 
@@ -96,6 +102,7 @@ function playerSetService() {
     }    
 
     return {
+        addPlayer: nodeUtils.trace(playerSetService.name, addPlayer),
         create: nodeUtils.trace(playerSetService.name, create),
         endRound: nodeUtils.trace(playerSetService.name, endRound),
         ensurePlayer: nodeUtils.trace(playerSetService.name, ensurePlayer),
