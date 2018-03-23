@@ -56,14 +56,15 @@
 
         function createGame(){
             $.get('/create').then(response => {
-                gameId = response.gameId;
-                playerId = response.playerId;
+                var data = JSON.parse(response);
+                gameId = data.gameId;
+                playerId = data.playerId;
                 setInterval(() =>  $.get('/get?gameId=' + gameId).then(render), 4000);
             });
         }
 
         function double(){
-            $.get('/double?gameId=' + gameId).then(render);
+            $.get('/double?gameId=' + gameId + '&playerId=' + playerId).then(render);
         }
 
         function endRound(){
@@ -71,7 +72,7 @@
         }
 
         function hit(){
-            $.get('/hit?gameId=' + gameId).then(render);
+            $.get('/hit?gameId=' + gameId + '&playerId=' + playerId).then(render);
         }
 
         function joinGame(){
@@ -84,11 +85,11 @@
         }
 
         function split(){
-            $.get('/split?gameId=' + gameId).then(render);
+            $.get('/split?gameId=' + gameId + '&playerId=' + playerId).then(render);
         }
 
         function stand(){
-            $.get('/stand?gameId=' + gameId).then(render);
+            $.get('/stand?gameId=' + gameId + '&playerId=' + playerId).then(render);
         }
 
         function startRound(){

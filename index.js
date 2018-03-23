@@ -9,16 +9,18 @@ const configureRouter = (middleware) => {
 		res.render('index.ejs');
 	});
 
+	// TODO Instead of getting the playerId by parameter, set it by session
+
 	router.get('/create', middleware.session, function (req, res, next) {
-		var gameId = gameService.create();
 		var playerId = uuidV4();
+		var gameId = gameService.create(playerId);
 		return res.send(JSON.stringify({ gameId, playerId }));
 	});
 
 	router.get('/join', middleware.session, function (req, res, next) {
 		var gameId = parseInt(req.query.gameId);
-		var game = gameService.joinGame(gameId);
 		var playerId = uuidV4();
+		var game = gameService.joinGame(gameId, playerId);
 		return res.send(playerId);
 	});
 

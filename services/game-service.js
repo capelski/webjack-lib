@@ -26,9 +26,9 @@ function gameService() {
         }
     }
 
-    function create(ownerName, cardSet, playerSet) {
+    function create(ownerId, cardSet, playerSet) {
         cardSet = cardSet || cardSetService.create();        
-        playerSet = playerSet || playerSetService.create([ownerName || 'Random player']);
+        playerSet = playerSet || playerSetService.create(ownerId);
 
         var game = new Game(cardSet, playerSet);
         games.push(game);
@@ -60,13 +60,13 @@ function gameService() {
         return games[gameId];
     }
 
-    function joinGame(gameId) {
+    function joinGame(gameId, playerId) {
         var game = games[gameId];
         if (!game) {
             throw 'No game identified by ' + gameId + ' was found';
         }
 
-        playerSetService.addPlayer(game.playerSet);
+        playerSetService.addPlayer(game.playerSet, playerId);
 
         return game;
     }

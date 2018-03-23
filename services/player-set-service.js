@@ -7,21 +7,18 @@ let playerService = require('./player-service');
 
 function playerSetService() {
 
-    function addPlayer(playerSet, playerName) {
+    function addPlayer(playerSet, playerId) {
         // TODO Check max capacity
         // TODO Check the game status and add only when no round
-        var player = playerService.create(playerSet.players.length, playerName);
+        var player = playerService.create(playerId);
         playerSet.players.unshift(player);
     }
 
-    function create(playerNames) {
-        playerNames = playerNames || [];
-
-        var id = 0;
-        var dealer = playerService.create(id++, 'Dealer');
-        var players = playerNames.map(name => playerService.create(id++, name));
+    function create(ownerId) {
+        var dealer = playerService.create(0, 'Dealer');
+        var owner = playerService.create(ownerId, 'XXXX');
         
-        var playerSet = new PlayerSet(dealer, players);
+        var playerSet = new PlayerSet(dealer, [owner]);
 
         return playerSet;
     }
