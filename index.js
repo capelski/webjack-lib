@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 const gameService = require('./services/game-service');
+const uuidV4 = require('uuid/v4');
 
 const configureRouter = (middleware) => {
 	router.get('/', function (req, res, next) {
@@ -10,13 +11,15 @@ const configureRouter = (middleware) => {
 
 	router.get('/create', middleware.session, function (req, res, next) {
 		var gameId = gameService.create();
-		return res.send('' + gameId);
+		var playerId = uuidV4();
+		return res.send(JSON.stringify({ gameId, playerId }));
 	});
 
 	router.get('/join', middleware.session, function (req, res, next) {
 		var gameId = parseInt(req.query.gameId);
 		var game = gameService.joinGame(gameId);
-		return res.send(JSON.stringify(game.playerSet));
+		var playerId = uuidV4();
+		return res.send(playerId);
 	});
 
 	router.get('/get', middleware.session, function (req, res, next) {

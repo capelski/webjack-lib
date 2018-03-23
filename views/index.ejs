@@ -27,7 +27,7 @@
     <script src="<%= asset('js/app.js') %>" type="text/javascript"></script>
 
     <script>
-        var gameId;
+        var gameId, playerId;
 
         function render(stringifiedData) {
             var results = document.getElementById('results');
@@ -55,8 +55,11 @@
         }
 
         function createGame(){
-            $.get('/create').then(response => gameId = response);
-            setInterval(() =>  $.get('/get?gameId=' + gameId).then(render), 4000);
+            $.get('/create').then(response => {
+                gameId = response.gameId;
+                playerId = response.playerId;
+                setInterval(() =>  $.get('/get?gameId=' + gameId).then(render), 4000);
+            });
         }
 
         function double(){
@@ -73,7 +76,10 @@
 
         function joinGame(){
             gameId = $('#game-id').val();
-            $.get('/join?gameId=' + gameId).then(render);
+            $.get('/join?gameId=' + gameId).then(response => {
+                playerId = response;
+                $.get('/get?gameId=' + gameId).then(render);
+            });
             setInterval(() =>  $.get('/get?gameId=' + gameId).then(render), 4000);
         }
 
