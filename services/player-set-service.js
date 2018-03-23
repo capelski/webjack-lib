@@ -34,7 +34,7 @@ function playerSetService() {
         var currentPlayer = playerSet.players[playerSet.currentIndex];
         if (!currentPlayer) {
             throw 'There is no player identified by ' + playerId;
-        }        
+        }
         else if (currentPlayer.id !== playerId) {
             var ensuredPlayer = getPlayerById(playerSet, playerId);
             throw ensuredPlayer.name + ' can\'t play now! It is ' + currentPlayer.name + '\'s turn';
