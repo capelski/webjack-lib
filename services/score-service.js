@@ -17,10 +17,9 @@ function addCardScore(handScore, card) {
     }
 }
 
-// TODO Pass hand as parameter
-function getCardsScore(cards) {
+function getHandScore(hand) {
     var handScore = new HandScore();
-    var sortedHand = js.clone(cards)
+    var sortedHand = js.clone(hand.cards)
     .sort((a, b) => {
         return cardService.getValue(a) > cardService.getValue(b);
     });
@@ -49,6 +48,6 @@ function stringify(handScore) {
 }
 
 module.exports = {
-    getCardsScore: nodeUtils.trace('ScoreService', getCardsScore, true),
+    getHandScore: nodeUtils.trace('ScoreService', getHandScore, true),
     stringify: nodeUtils.trace('ScoreService', stringify, true)
 };

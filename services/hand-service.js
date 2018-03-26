@@ -11,7 +11,7 @@ function handService() {
     function addCard(hand, card) {
         hand.hasAce = hand.hasAce || cardService.isAce(card);
         hand.cards.push(card);
-        hand.score = scoreService.getCardsScore(hand.cards);
+        hand.score = scoreService.getHandScore(hand);
     }
 
     function clear(hand) {
@@ -27,7 +27,7 @@ function handService() {
     }
 
     function getScore(hand) {
-        return scoreService.getCardsScore(hand.cards).effective;
+        return scoreService.getHandScore(hand).effective;
     }
 
     function isSplitable(hand) {
@@ -43,7 +43,7 @@ function handService() {
         var stringifiedCards = js.stringifyArray(hand.cards, (card) => {
             return cardService.stringify(card);
         });
-        var handScore = scoreService.getCardsScore(hand.cards);
+        var handScore = scoreService.getHandScore(hand);
         stringifiedCards += ' (' + scoreService.stringify(handScore) + ') - ' + hand.status +
         ', Worth: ' + hand.worth;
         return stringifiedCards;

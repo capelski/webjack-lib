@@ -49,7 +49,6 @@ const configureRouter = (middleware) => {
 
 	router.get('/make-decision', middleware.session, function (req, res, next) {
 
-		// TODO Pass the playerId as parameter (should be some kind of hash)
 		var gameId = parseInt(req.query.gameId);
 		var playerId = req.query.playerId;
 		var decision = req.query.decision;
@@ -58,7 +57,6 @@ const configureRouter = (middleware) => {
 			return res.send(JSON.stringify({message: "No game created"}));
 		}
 		else {
-			// var playerId = gameService.getCurrentPlayer(game).id;
         	gameService.makeDecision(game, playerId, decision);
             return res.send(JSON.stringify(game.playerSet));
 		}

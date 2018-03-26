@@ -16,7 +16,6 @@ function gameService() {
         var playedCards = [];
 
         js.iterate(game.playerSet.players, (player) => {
-            // TODO Store decisions
             playedCards = playedCards.concat(playerService.clearRound(player));
         });
         cardSetService.addPlayedCards(game.cardSet, playedCards);
