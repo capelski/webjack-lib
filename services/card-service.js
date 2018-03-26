@@ -18,11 +18,11 @@ const cardsValue = {
     'Q': 10,
     'K': 10
 };
-const numbers = Object.keys(cardsValue);
+const symbols = Object.keys(cardsValue);
 const suits = ['\u2663', '\u2666', '\u2665', '\u2660'];
 
 const createDeck = () => {
-    return js.cartesianProduct(suits, numbers, (suit, number) => {
+    return js.cartesianProduct(suits, symbols, (suit, number) => {
         return new Card(suit, number);
     });
 };
