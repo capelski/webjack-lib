@@ -1,7 +1,6 @@
 'use strict';
 
 const js = require('../utils/js-generics');
-const Card = require('../models/card');
 const CardSet = require('../models/card-set');
 const cardService = require('./card-service');
 
@@ -9,32 +8,14 @@ const addPlayedCards = (cardSet, playedCards) => {
     cardSet.playedCards = cardSet.playedCards.concat(playedCards);
 };
 
-const newDeck = () => {
-    const suits = ['\u2663', '\u2666', '\u2665', '\u2660'];
-    const numbers = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
-    return js.cartesianProduct(suits, numbers, (suit, number) => {
-        return new Card(suit, number);
-    });
-};
-
-const shuffle = (cardSet) => {
-    js.shuffleArray(cardSet.availableCards);
-};
-
-const create = (decksNumber, shuffled) => {
+const create = (decksNumber) => {
     decksNumber = decksNumber || 4;
-    shuffled = shuffled || true;
 
     var cardSet = new CardSet();
-
-    cardSet.availableCards = js.createArray(decksNumber, (array, index) => {
-        return array.concat(newDeck());
-    });
+    cardSet.availableCards = (new Array(decksNumber, null)).map(x => cardService.createDeck()).reduce((x, y) => x.concat(y), []);
     cardSet.playedCards = [];
 
-    if (shuffled) {
-        shuffle(cardSet);
-    }
+    js.shuffleArray(cardSet.availableCards);
 
     return cardSet;
 };
@@ -50,13 +31,12 @@ const getNextCard = (cardSet) => {
 const refill = (cardSet) => {
     cardSet.availableCards = cardSet.availableCards.concat(cardSet.playedCards);
     cardSet.playedCards = [];
-    shuffle(cardSet);
+    js.shuffleArray(cardSet.availableCards);
 };
 
 module.exports = {
     addPlayedCards,
     create,
     getNextCard,
-    refill,
-    shuffle
+    refill
 };

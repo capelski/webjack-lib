@@ -1,6 +1,8 @@
 'use strict';
 
 const Card = require('../models/card');
+const js = require('../utils/js-generics');
+
 const cardsValue = {
     'A': 11,
     '2': 2,
@@ -16,15 +18,21 @@ const cardsValue = {
     'Q': 10,
     'K': 10
 };
+const numbers = Object.keys(cardsValue);
+const suits = ['\u2663', '\u2666', '\u2665', '\u2660'];
 
-const create = (suit, number) => new Card(suit, number);
+const createDeck = () => {
+    return js.cartesianProduct(suits, numbers, (suit, number) => {
+        return new Card(suit, number);
+    });
+};
 
 const getValue = (card) => cardsValue[card.number];
 
 const isAce = (card) => card.number === 'A';
 
 module.exports = {
-    create,
+    createDeck,
     getValue,
     isAce
 };
