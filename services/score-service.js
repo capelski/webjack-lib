@@ -4,7 +4,7 @@ const js = require('../utils/js-generics');
 const HandScore = require('../models/hand-score');
 const cardService = require('./card-service');
 
-function addCardScore(handScore, card) {
+const addCardScore = (handScore, card) => {
     var value = cardService.getValue(card);
     if (cardService.isAce(card)) {
         handScore.min += 1;
@@ -16,7 +16,7 @@ function addCardScore(handScore, card) {
     }
 }
 
-function getHandScore(hand) {
+const getHandScore = (hand) => {
     var handScore = new HandScore();
     var sortedHand = js.clone(hand.cards)
     .sort((a, b) => {

@@ -1,107 +1,102 @@
 'use strict';
 
-let js = require('../utils/js-generics');
-let PlayerSet = require('../models/player-set');
-let playerService = require('./player-service');
+const js = require('../utils/js-generics');
+const PlayerSet = require('../models/player-set');
+const playerService = require('./player-service');
 
-function playerSetService() {
+const addPlayer = (playerSet, playerId) => {
+    // TODO Check max capacity
+    // TODO Check the game status and add only when no round
+    var player = playerService.create(playerId);
+    // TODO push after removing the dealer
+    playerSet.players.unshift(player);
+};
 
-    function addPlayer(playerSet, playerId) {
-        // TODO Check max capacity
-        // TODO Check the game status and add only when no round
-        var player = playerService.create(playerId);
-        // TODO push after removing the dealer
-        playerSet.players.unshift(player);
+const create = (ownerId) => {
+    var dealer = playerService.create(0, 'Dealer');
+    var owner = playerService.create(ownerId, 'XXXX');
+    
+    var playerSet = new PlayerSet(dealer, [owner]);
+
+    return playerSet;
+};
+
+const endRound = (playerSet) => {
+    playerSet.currentIndex = null;
+};
+
+const ensurePlayer = (playerSet, playerId) => {
+    if (playerSet.currentIndex == null) {
+        throw 'No round has been started yet!';
     }
-
-    function create(ownerId) {
-        var dealer = playerService.create(0, 'Dealer');
-        var owner = playerService.create(ownerId, 'XXXX');
-        
-        var playerSet = new PlayerSet(dealer, [owner]);
-
-        return playerSet;
+    var currentPlayer = playerSet.players[playerSet.currentIndex];
+    if (!currentPlayer) {
+        throw 'There is no player identified by ' + playerId;
     }
-
-    function endRound(playerSet) {
-        playerSet.currentIndex = null;
+    else if (currentPlayer.id !== playerId) {
+        var ensuredPlayer = getPlayerById(playerSet, playerId);
+        throw ensuredPlayer.name + ' can\'t play now! It is ' + currentPlayer.name + '\'s turn';
     }
-
-    function ensurePlayer(playerSet, playerId) {
-        if (playerSet.currentIndex == null) {
-            throw 'No round has been started yet!';
+    else if (currentPlayer.id === getDealer(playerSet).id) {
+        throw 'Can\'t play dealer\'s turn!';
+    }
+    else {
+        try {
+            playerService.getCurrentHand(currentPlayer);
+            return currentPlayer;
         }
-        var currentPlayer = playerSet.players[playerSet.currentIndex];
-        if (!currentPlayer) {
-            throw 'There is no player identified by ' + playerId;
+        catch (error) {
+            startNextTurn(playerSet);
+            throw 'Player ' + currentPlayer.name + ' can\'t play anymore this round!';
+        }            
+    }        
+};
+
+const getCurrentPlayer = (playerSet) => {
+    return playerSet.players[playerSet.currentIndex];
+};
+
+const getDealer = (playerSet) => {
+    return playerSet.players[playerSet.players.length - 1];
+};
+
+const getPlayerById = (playerSet, playerId) => {
+    var player = null;
+    var index = 0;
+    while (!player && index < playerSet.players.length) {
+        if (playerSet.players[index].id === playerId) {
+            player = playerSet.players[index];
         }
-        else if (currentPlayer.id !== playerId) {
-            var ensuredPlayer = getPlayerById(playerSet, playerId);
-            throw ensuredPlayer.name + ' can\'t play now! It is ' + currentPlayer.name + '\'s turn';
-        }
-        else if (currentPlayer.id === getDealer(playerSet).id) {
-            throw 'Can\'t play dealer\'s turn!';
-        }
-        else {
-            try {
-                playerService.getCurrentHand(currentPlayer);
-                return currentPlayer;
-            }
-            catch (error) {
-                startNextTurn(playerSet);
-                throw 'Player ' + currentPlayer.name + ' can\'t play anymore this round!';
-            }            
-        }        
+        ++index;
     }
+    return player;
+};
 
-    function getCurrentPlayer(playerSet) {
-        return playerSet.players[playerSet.currentIndex];
+const startNextTurn = (playerSet) => {
+    var nextPlayer = null;
+    while (!nextPlayer && (playerSet.currentIndex < playerSet.players.length - 1)) {            
+        nextPlayer = playerSet.players[playerSet.currentIndex];
+        if (!playerService.hasUnplayedHand(nextPlayer)) {
+            nextPlayer = null;
+            playerSet.currentIndex++;
+        }            
     }
+    return nextPlayer;
+};
 
-    function getDealer(playerSet) {
-        return playerSet.players[playerSet.players.length - 1];
-    }
+const startRound = (playerSet) => {
+    playerSet.currentIndex = 0;
+    startNextTurn(playerSet);
+};
 
-    function getPlayerById(playerSet, playerId) {
-        var player = null;
-        var index = 0;
-        while (!player && index < playerSet.players.length) {
-            if (playerSet.players[index].id === playerId) {
-                player = playerSet.players[index];
-            }
-            ++index;
-        }
-        return player;
-    }
-
-    function startNextTurn(playerSet) {
-        var nextPlayer = null;
-        while (!nextPlayer && (playerSet.currentIndex < playerSet.players.length - 1)) {            
-            nextPlayer = playerSet.players[playerSet.currentIndex];
-            if (!playerService.hasUnplayedHand(nextPlayer)) {
-                nextPlayer = null;
-                playerSet.currentIndex++;
-            }            
-        }
-        return nextPlayer;
-    }
-
-    function startRound(playerSet) {
-        playerSet.currentIndex = 0;
-        startNextTurn(playerSet);
-    }
-
-    return {
-        addPlayer,
-        create,
-        endRound,
-        ensurePlayer,
-        getDealer,
-        getCurrentPlayer,
-        getPlayerById,
-        startNextTurn,
-        startRound
-    };
-}
-
-module.exports = playerSetService();
+module.exports = {
+    addPlayer,
+    create,
+    endRound,
+    ensurePlayer,
+    getDealer,
+    getCurrentPlayer,
+    getPlayerById,
+    startNextTurn,
+    startRound
+};

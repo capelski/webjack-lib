@@ -1,67 +1,62 @@
 'use strict';
 
-let js = require('../utils/js-generics');
-let Card = require('../models/card');
-let CardSet = require('../models/card-set');
-let cardService = require('./card-service');
+const js = require('../utils/js-generics');
+const Card = require('../models/card');
+const CardSet = require('../models/card-set');
+const cardService = require('./card-service');
 
-function cardSetService() {
+const addPlayedCards = (cardSet, playedCards) => {
+    cardSet.playedCards = cardSet.playedCards.concat(playedCards);
+};
 
-    function addPlayedCards(cardSet, playedCards) {
-        cardSet.playedCards = cardSet.playedCards.concat(playedCards);
-    }
+const newDeck = () => {
+    const suits = ['\u2663', '\u2666', '\u2665', '\u2660'];
+    const numbers = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+    return js.cartesianProduct(suits, numbers, (suit, number) => {
+        return new Card(suit, number);
+    });
+};
 
-    function create(decksNumber, shuffled) {
-        decksNumber = decksNumber || 4;
-        shuffled = shuffled || true;
+const shuffle = (cardSet) => {
+    js.shuffleArray(cardSet.availableCards);
+};
 
-        var cardSet = new CardSet();
+const create = (decksNumber, shuffled) => {
+    decksNumber = decksNumber || 4;
+    shuffled = shuffled || true;
 
-        cardSet.availableCards = js.createArray(decksNumber, (array, index) => {
-            return array.concat(newDeck());
-        });
-        cardSet.playedCards = [];
+    var cardSet = new CardSet();
 
-        if (shuffled) {
-            shuffle(cardSet);
-        }
+    cardSet.availableCards = js.createArray(decksNumber, (array, index) => {
+        return array.concat(newDeck());
+    });
+    cardSet.playedCards = [];
 
-        return cardSet;
-    }
-
-    function getNextCard(cardSet) {
-        if (cardSet.availableCards.length === 0) {
-            throw 'No more cards left!';
-        }
-        var nextCard = cardSet.availableCards.splice(0, 1)[0];
-        return nextCard;
-    }
-
-    function newDeck() {
-        let suits = ['\u2663', '\u2666', '\u2665', '\u2660'];
-        let numbers = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
-        return js.cartesianProduct(suits, numbers, (suit, number) => {
-            return new Card(suit, number);
-        });
-    }
-
-    function refill(cardSet) {
-        cardSet.availableCards = cardSet.availableCards.concat(cardSet.playedCards);
-        cardSet.playedCards = [];
+    if (shuffled) {
         shuffle(cardSet);
     }
 
-    function shuffle(cardSet) {
-        js.shuffleArray(cardSet.availableCards);
+    return cardSet;
+};
+
+const getNextCard = (cardSet) => {
+    if (cardSet.availableCards.length === 0) {
+        throw 'No more cards left!';
     }
+    var nextCard = cardSet.availableCards.splice(0, 1)[0];
+    return nextCard;
+};
 
-    return {
-        addPlayedCards,
-        create,
-        getNextCard,
-        refill,
-        shuffle
-    };
-}
+const refill = (cardSet) => {
+    cardSet.availableCards = cardSet.availableCards.concat(cardSet.playedCards);
+    cardSet.playedCards = [];
+    shuffle(cardSet);
+};
 
-module.exports = cardSetService();
+module.exports = {
+    addPlayedCards,
+    create,
+    getNextCard,
+    refill,
+    shuffle
+};

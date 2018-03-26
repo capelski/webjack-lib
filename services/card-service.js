@@ -1,7 +1,7 @@
 'use strict';
 
-let Card = require('../models/card');
-let cardsValue = {
+const Card = require('../models/card');
+const cardsValue = {
     'A': 11,
     '2': 2,
     '3': 3,
@@ -17,25 +17,14 @@ let cardsValue = {
     'K': 10
 };
 
-function cardService() {
+const create = (suit, number) => new Card(suit, number);
 
-    function create(suit, number) {
-        return new Card(suit, number);
-    }
+const getValue = (card) => cardsValue[card.number];
 
-    function getValue(card) {
-        return cardsValue[card.number];
-    }
+const isAce = (card) => card.number === 'A';
 
-    function isAce(card) {
-        return card.number === 'A';
-    }
-
-    return {
-        create,
-        getValue,
-        isAce
-    };
-}
-
-module.exports = cardService();
+module.exports = {
+    create,
+    getValue,
+    isAce
+};
