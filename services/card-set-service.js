@@ -55,23 +55,12 @@ function cardSetService() {
         js.shuffleArray(cardSet.availableCards);
     }
 
-    function stringify(cardSet) {
-        var availableCards = js.stringifyArray(cardSet.availableCards, (card) => {
-            return cardService.stringify(card);
-        });
-        var playedCards = js.stringifyArray(cardSet.playedCards, (card) => {
-            return cardService.stringify(card);
-        });
-        return 'Available cards: ' + availableCards + '<br/>' + 'Played cards: ' + playedCards;
-    }
-
     return {
         addPlayedCards,
         create,
         getNextCard,
         refill,
-        shuffle,
-        stringify
+        shuffle
     };
 }
 

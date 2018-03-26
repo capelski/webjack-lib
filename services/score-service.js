@@ -37,16 +37,6 @@ function getHandScore(hand) {
     return handScore;
 }
 
-function stringify(handScore) {
-    if (handScore.max > 21 || handScore.min === handScore.max) {
-        return handScore.min.toString();
-    }
-    else {
-        return handScore.min + '/' + handScore.max;
-    }
-}
-
 module.exports = {
-    getHandScore,
-    stringify
+    getHandScore
 };

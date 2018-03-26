@@ -79,24 +79,6 @@ function jsGenerics() {
                 array[i] = array[j];
                 array[j] = temp;
             }
-        },
-        stringifyArray: function(array, elementStringifier, separator) {
-            separator = separator || ', ';
-            if (array.length === 0) {
-                return '';
-            }
-
-            return array
-            .map((element) => {
-                var stringifiedElement = element.toString();
-                if (elementStringifier) {
-                    stringifiedElement = elementStringifier(element);
-                }
-                return stringifiedElement;
-            })
-            .reduce((previous, current) => {
-                return previous + separator + current;
-            });
         }
     };
 }

@@ -34,14 +34,6 @@ function playerService() {
         return handSetService.startRound(player.handSet);
     }
 
-    function stringify(player, active) {
-        var actorName = player.name;
-        if (active) {
-            actorName = '<b>' + player.name + '</b>';
-        }
-        return actorName + ', ' + player.earningRate + handSetService.stringify(player.handSet, active);
-    }
-
     function updateEarningRate(player) {
         var earningRate = handSetService.updateEarningRate(player.handSet);
         player.earningRate += earningRate;
@@ -55,7 +47,6 @@ function playerService() {
         getCurrentHand,
         hasUnplayedHand,
         startRound,
-        stringify,
         updateEarningRate
     };
 }

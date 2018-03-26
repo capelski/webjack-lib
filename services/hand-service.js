@@ -38,24 +38,13 @@ function handService() {
         hand.status = status;
     }
 
-    function stringify(hand) {
-        var stringifiedCards = js.stringifyArray(hand.cards, (card) => {
-            return cardService.stringify(card);
-        });
-        var handScore = scoreService.getHandScore(hand);
-        stringifiedCards += ' (' + scoreService.stringify(handScore) + ') - ' + hand.status +
-        ', Worth: ' + hand.worth;
-        return stringifiedCards;
-    }
-
     return {
         addCard,
         clear,
         create,
         getScore,
         isSplitable,
-        setStatus,
-        stringify
+        setStatus
     };
 }
 

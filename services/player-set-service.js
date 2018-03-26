@@ -91,13 +91,6 @@ function playerSetService() {
         startNextTurn(playerSet);
     }
 
-    function stringify(playerSet) {
-        var stringifiedSet = js.stringifyArray(playerSet.players, (player) => {
-            return playerService.stringify(player, player === getCurrentPlayer(playerSet));
-        }, '<br/>') + '<br/>';
-        return stringifiedSet;
-    }    
-
     return {
         addPlayer,
         create,
@@ -107,8 +100,7 @@ function playerSetService() {
         getCurrentPlayer,
         getPlayerById,
         startNextTurn,
-        startRound,
-        stringify
+        startRound
     };
 }
 

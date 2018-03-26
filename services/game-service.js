@@ -107,10 +107,6 @@ function gameService() {
         playerSetService.startRound(game.playerSet);
     }
 
-    function stringify(game) {
-        return playerSetService.stringify(game.playerSet);
-    }
-
     return {
         clearRound,
         create,
@@ -119,8 +115,7 @@ function gameService() {
         getGame,
         joinGame,
         makeDecision,
-        startRound,
-        stringify
+        startRound
     };
 }
 

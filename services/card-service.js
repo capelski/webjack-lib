@@ -31,15 +31,10 @@ function cardService() {
         return card.number === 'A';
     }
 
-    function stringify(card) {
-        return card.number + card.suit;
-    }
-
     return {
         create,
         getValue,
-        isAce,
-        stringify
+        isAce
     };
 }
 

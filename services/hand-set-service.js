@@ -71,24 +71,6 @@ function handSetService() {
         newHand.cards = currentHand.cards.splice(-1);
     }
 
-    function stringify(handSet, active) {
-        var stringifiedHandSet = '';
-        handSet.hands.forEach((hand) => {
-            stringifiedHandSet += '<br />&emsp;';
-            if (active && handSet.hands[handSet.currentHand] === hand) {
-                stringifiedHandSet += '> ';
-            }            
-            stringifiedHandSet += handService.stringify(hand);
-        });
-        if (handSet.earningRate != null) {
-            stringifiedHandSet += '<br />&emsp;Returning rate: ' + handSet.earningRate;
-        }
-        if (handSet.hands.length > 0) {
-            stringifiedHandSet += '<br />';
-        }
-        return stringifiedHandSet;
-    }
-
     function updateEarningRate(handSet) {
         handSet.earningRate = 0;
         handSet.hands.forEach((hand) => {
@@ -112,7 +94,6 @@ function handSetService() {
         getNextHand,
         hasUnplayedHand,
         splitCurrentHand,
-        stringify,
         startRound,
         updateEarningRate
     };
