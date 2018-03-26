@@ -1,10 +1,9 @@
 'use strict';
 
-let nodeUtils = require('../utils/node');
 let Hand = require('../models/hand');
 let cardService = require('./card-service');
 let scoreService = require('./score-service');
-let js = require('../js-generics');
+let js = require('../utils/js-generics');
 
 function handService() {
 
@@ -50,13 +49,13 @@ function handService() {
     }
 
     return {
-        addCard: nodeUtils.trace(handService.name, addCard, true),
-        clear: nodeUtils.trace(handService.name, clear, true),
-        create: nodeUtils.trace(handService.name, create),
-        getScore: nodeUtils.trace(handService.name, getScore, true),
-        isSplitable: nodeUtils.trace(handService.name, isSplitable),
-        setStatus: nodeUtils.trace(handService.name, setStatus),
-        stringify: nodeUtils.trace(handService.name, stringify)
+        addCard,
+        clear,
+        create,
+        getScore,
+        isSplitable,
+        setStatus,
+        stringify
     };
 }
 

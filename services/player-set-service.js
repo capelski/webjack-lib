@@ -1,7 +1,6 @@
 'use strict';
 
-let nodeUtils = require('../utils/node');
-let js = require('../js-generics');
+let js = require('../utils/js-generics');
 let PlayerSet = require('../models/player-set');
 let playerService = require('./player-service');
 
@@ -100,16 +99,16 @@ function playerSetService() {
     }    
 
     return {
-        addPlayer: nodeUtils.trace(playerSetService.name, addPlayer),
-        create: nodeUtils.trace(playerSetService.name, create),
-        endRound: nodeUtils.trace(playerSetService.name, endRound),
-        ensurePlayer: nodeUtils.trace(playerSetService.name, ensurePlayer),
-        getDealer: nodeUtils.trace(playerSetService.name, getDealer),
-        getCurrentPlayer: nodeUtils.trace(playerSetService.name, getCurrentPlayer),
-        getPlayerById: nodeUtils.trace(playerSetService.name, getPlayerById),
-        startNextTurn: nodeUtils.trace(playerSetService.name, startNextTurn),
-        startRound: nodeUtils.trace(playerSetService.name, startRound),
-        stringify: nodeUtils.trace(playerSetService.name, stringify)
+        addPlayer,
+        create,
+        endRound,
+        ensurePlayer,
+        getDealer,
+        getCurrentPlayer,
+        getPlayerById,
+        startNextTurn,
+        startRound,
+        stringify
     };
 }
 

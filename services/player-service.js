@@ -1,6 +1,5 @@
 'use strict';
 
-let nodeUtils = require('../utils/node');
 let Player = require('../models/player');
 let handSetService = require('./hand-set-service');
 
@@ -49,15 +48,15 @@ function playerService() {
     }
 
     return {
-        addAction: nodeUtils.trace(playerService.name, addAction),
-        clearRound: nodeUtils.trace(playerService.name, clearRound),
-        create: nodeUtils.trace(playerService.name, create),
-        dealCard: nodeUtils.trace(playerService.name, dealCard),
-        getCurrentHand: nodeUtils.trace(playerService.name, getCurrentHand),        
-        hasUnplayedHand: nodeUtils.trace(playerService.name, hasUnplayedHand, true),
-        startRound: nodeUtils.trace(playerService.name, startRound),
-        stringify: nodeUtils.trace(playerService.name, stringify, true),
-        updateEarningRate: nodeUtils.trace(playerService.name, updateEarningRate)
+        addAction,
+        clearRound,
+        create,
+        dealCard,
+        getCurrentHand,
+        hasUnplayedHand,
+        startRound,
+        stringify,
+        updateEarningRate
     };
 }
 

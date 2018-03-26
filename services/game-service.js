@@ -1,7 +1,6 @@
 'use strict';
 
-let nodeUtils = require('../utils/node');
-let js = require('../js-generics');
+let js = require('../utils/js-generics');
 let Game = require('../models/game');
 let cardSetService = require('./card-set-service');
 let playerService = require('./player-service');
@@ -113,15 +112,15 @@ function gameService() {
     }
 
     return {
-        clearRound: nodeUtils.trace(gameService.name, clearRound),
-        create: nodeUtils.trace(gameService.name, create),
-        endRound: nodeUtils.trace(gameService.name, endRound),
-        getCurrentPlayer: nodeUtils.trace(gameService.name, getCurrentPlayer),
-        getGame: nodeUtils.trace(gameService.name, getGame),
-        joinGame: nodeUtils.trace(gameService.name, joinGame),
-        makeDecision: nodeUtils.trace(gameService.name, makeDecision),
-        startRound: nodeUtils.trace(gameService.name, startRound),
-        stringify: nodeUtils.trace(gameService.name, stringify)
+        clearRound,
+        create,
+        endRound,
+        getCurrentPlayer,
+        getGame,
+        joinGame,
+        makeDecision,
+        startRound,
+        stringify
     };
 }
 

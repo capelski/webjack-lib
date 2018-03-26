@@ -1,7 +1,6 @@
 'use strict';
 
-const nodeUtils = require('../utils/node');
-const js = require('../js-generics');
+const js = require('../utils/js-generics');
 const HandScore = require('../models/hand-score');
 const cardService = require('./card-service');
 
@@ -48,6 +47,6 @@ function stringify(handScore) {
 }
 
 module.exports = {
-    getHandScore: nodeUtils.trace('ScoreService', getHandScore, true),
-    stringify: nodeUtils.trace('ScoreService', stringify, true)
+    getHandScore,
+    stringify
 };

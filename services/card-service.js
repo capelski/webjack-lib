@@ -1,6 +1,5 @@
 'use strict';
 
-let nodeUtils = require('../utils/node');
 let Card = require('../models/card');
 let cardsValue = {
     'A': 11,
@@ -37,10 +36,10 @@ function cardService() {
     }
 
     return {
-        create: nodeUtils.trace(cardService.name, create, true),
-        getValue: nodeUtils.trace(cardService.name, getValue, true),
-        isAce: nodeUtils.trace(cardService.name, isAce, true),
-        stringify: nodeUtils.trace(cardService.name, stringify, true)
+        create,
+        getValue,
+        isAce,
+        stringify
     };
 }
 

@@ -1,7 +1,6 @@
 'use strict';
 
-let nodeUtils = require('../utils/node');
-let js = require('../js-generics');
+let js = require('../utils/js-generics');
 let HandSet = require('../models/hand-set');
 let handService = require('./hand-service');
 
@@ -104,18 +103,18 @@ function handSetService() {
     }
 
     return {
-        addAction: nodeUtils.trace(handSetService.name, addAction),
-        addCard: nodeUtils.trace(handSetService.name, addCard, true),
-        clearRound: nodeUtils.trace(handSetService.name, clearRound, true),
-        create: nodeUtils.trace(handSetService.name, create),
-        doubleCurrentHand: nodeUtils.trace(handSetService.name, doubleCurrentHand),
-        getCurrentHand: nodeUtils.trace(handSetService.name, getCurrentHand),
-        getNextHand: nodeUtils.trace(handSetService.name, getNextHand),
-        hasUnplayedHand: nodeUtils.trace(handSetService.name, hasUnplayedHand, true),
-        splitCurrentHand: nodeUtils.trace(handSetService.name, splitCurrentHand),
-        stringify: nodeUtils.trace(handSetService.name, stringify, true),
-        startRound: nodeUtils.trace(handSetService.name, startRound),
-        updateEarningRate: nodeUtils.trace(handSetService.name, updateEarningRate)
+        addAction,
+        addCard,
+        clearRound,
+        create,
+        doubleCurrentHand,
+        getCurrentHand,
+        getNextHand,
+        hasUnplayedHand,
+        splitCurrentHand,
+        stringify,
+        startRound,
+        updateEarningRate
     };
 }
 

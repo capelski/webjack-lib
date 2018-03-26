@@ -1,6 +1,5 @@
 'use strict';
 
-let nodeUtils = require('../utils/node');
 let cardSetService = require('./card-set-service');
 let handService = require('./hand-service');
 let handSetService = require('./hand-set-service');
@@ -114,13 +113,13 @@ function rulesService() {
     }
 
     return {
-        dealCard: nodeUtils.trace(rulesService.name, dealCard),
-        dealerTurn: nodeUtils.trace(rulesService.name, dealerTurn),
-        double: nodeUtils.trace(rulesService.name, double),
-        hit: nodeUtils.trace(rulesService.name, hit),
-        resolve: nodeUtils.trace(rulesService.name, resolve),
-        split: nodeUtils.trace(rulesService.name, split),
-        stand: nodeUtils.trace(rulesService.name, stand),
+        dealCard,
+        dealerTurn,
+        double,
+        hit,
+        resolve,
+        split,
+        stand,
     };
 }
 

@@ -1,7 +1,6 @@
 'use strict';
 
-let nodeUtils = require('../utils/node');
-let js = require('../js-generics');
+let js = require('../utils/js-generics');
 let Card = require('../models/card');
 let CardSet = require('../models/card-set');
 let cardService = require('./card-service');
@@ -67,12 +66,12 @@ function cardSetService() {
     }
 
     return {
-        addPlayedCards: nodeUtils.trace(cardSetService.name, addPlayedCards),
-        create: nodeUtils.trace(cardSetService.name, create),
-        getNextCard: nodeUtils.trace(cardSetService.name, getNextCard, true),
-        refill: nodeUtils.trace(cardSetService.name, refill),
-        shuffle: nodeUtils.trace(cardSetService.name, shuffle),
-        stringify: nodeUtils.trace(cardSetService.name, stringify)
+        addPlayedCards,
+        create,
+        getNextCard,
+        refill,
+        shuffle,
+        stringify
     };
 }
 
