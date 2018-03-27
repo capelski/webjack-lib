@@ -31,7 +31,7 @@ const create = () =>  new HandSet();
 
 const doubleCurrentHand = (handSet) => {
     var currentHand = getCurrentHand(handSet);
-    currentHand.worth += 1;
+    currentHand.value += 1;
 };
 
 const getNextHand = (handSet) => {
@@ -75,7 +75,7 @@ const updateEarningRate = (handSet) => {
         1 * (hand.status === 'Wins') +
         0 * (hand.status === 'Ties') +
         -1 * (hand.status === 'Loses');
-        handSet.earningRate += handReturningRate * hand.worth;
+        handSet.earningRate += handReturningRate * hand.value;
     });
     return handSet.earningRate;
 };

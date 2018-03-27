@@ -3,7 +3,7 @@
 function Hand() {
     this.cards = [];
     this.status = 'Unplayed';
-    this.worth = 1;
+    this.value = 1;
     this.score = 0;
 }
 
