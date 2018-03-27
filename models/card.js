@@ -1,7 +1,7 @@
 'use strict';
 
-function Card(suit, number) {
-    this.number = number;
+function Card(suit, symbol) {
+    this.symbol = symbol;
     this.suit = suit;
 }
 

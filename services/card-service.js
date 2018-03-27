@@ -22,14 +22,14 @@ const symbols = Object.keys(cardsValue);
 const suits = ['\u2663', '\u2666', '\u2665', '\u2660'];
 
 const createDeck = () => {
-    return js.cartesianProduct(suits, symbols, (suit, number) => {
-        return new Card(suit, number);
+    return js.cartesianProduct(suits, symbols, (suit, symbol) => {
+        return new Card(suit, symbol);
     });
 };
 
-const getValue = (card) => cardsValue[card.number];
+const getValue = (card) => cardsValue[card.symbol];
 
-const isAce = (card) => card.number === 'A';
+const isAce = (card) => card.symbol === 'A';
 
 module.exports = {
     createDeck,

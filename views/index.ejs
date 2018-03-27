@@ -37,7 +37,7 @@
             if (data.players) {
                 data.players.forEach(p => {
                     var serializedHands = p.handSet.hands.reduce((sH, hand) =>
-                        sH + hand.cards.reduce((sC, card) => sC + card.number + card.suit + ', ', '') + ' (' + hand.score.effective + ') ' + hand.status + ' / ', '');
+                        sH + hand.cards.reduce((sC, card) => sC + card.symbol + card.suit + ', ', '') + ' (' + hand.score.effective + ') ' + hand.status + ' / ', '');
                     results.innerHTML += p.name + ' (' + p.earningRate + '): ' + serializedHands;
                     if (data.currentIndex != null && data.players[data.currentIndex] == p && p.id == playerId) {
                         results.innerHTML += '<button type="button" onclick="hit();">Hit</button>' +
