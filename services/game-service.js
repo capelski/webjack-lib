@@ -24,7 +24,7 @@ const create = (ownerId, cardSet, playerSet) => {
 };
 
 const endRound = (game) => {
-    if (playerSetService.getCurrentPlayer(game.playerSet).id !== playerSetService.getDealer(game.playerSet).id) {
+    if (!playerSetService.isDealerTurn(game.playerSet)) {
         throw 'Can\'t play dealer round yet!';
     }
     
@@ -37,10 +37,6 @@ const endRound = (game) => {
     });
 
     playerSetService.endRound(game.playerSet);
-};
-
-const getCurrentPlayer = (game) => {
-    return playerSetService.getCurrentPlayer(game.playerSet);
 };
 
 const getGame = (gameId) => {
@@ -89,7 +85,6 @@ module.exports = {
     clearRound,
     create,
     endRound,
-    getCurrentPlayer,
     getGame,
     joinGame,
     makeDecision,

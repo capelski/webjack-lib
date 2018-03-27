@@ -77,6 +77,8 @@ const getPlayerById = (playerSet, playerId) => {
     return player;
 };
 
+const isDealerTurn = (playerSet) => getCurrentPlayer(playerSet).id === getDealer(playerSet).id;
+
 const startNextTurn = (playerSet) => {
     var nextPlayer = null;
     while (!nextPlayer && (playerSet.currentIndex < playerSet.players.length - 1)) {            
@@ -101,8 +103,8 @@ module.exports = {
     endRound,
     ensurePlayer,
     getDealer,
-    getCurrentPlayer,
     getPlayerById,
+    isDealerTurn,
     startNextTurn,
     startRound
 };
