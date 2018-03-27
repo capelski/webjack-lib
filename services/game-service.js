@@ -87,7 +87,6 @@ const makeDecision = (game, playerId, action) => {
             break;
         }
     }
-    playerService.addAction(player, action);
 };
 
 const startRound = (game) => {

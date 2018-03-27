@@ -4,10 +4,6 @@ const js = require('../utils/js-generics');
 const HandSet = require('../models/hand-set');
 const handService = require('./hand-service');
 
-const addAction = (handSet, action) => {
-    handSet.actions.push(action);
-};
-
 const addCard = (handSet, card) => {
     var currentHand = getCurrentHand(handSet);
     handService.addCard(currentHand, card);
@@ -19,8 +15,7 @@ const clearRound = (handSet) => {
         cards = cards.concat(handService.getCards(hand));
     });
 
-    handSet.actions = [];        
-    handSet.currentHand = null;        
+    handSet.currentHand = null;
     handSet.hands = [];
     handSet.earningRate = null;
 
@@ -55,7 +50,6 @@ const hasUnplayedHand = (handSet) => {
 };
 
 const startRound = (handSet) => {
-    handSet.actions = [];
     handSet.currentHand = 0;
     handSet.hands.push(handService.create());
 };
@@ -81,7 +75,6 @@ const updateEarningRate = (handSet) => {
 };
 
 module.exports = {
-    addAction,
     addCard,
     clearRound,
     create,

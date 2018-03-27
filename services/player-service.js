@@ -3,10 +3,6 @@
 const Player = require('../models/player');
 const handSetService = require('./hand-set-service');
 
-const addAction = (player, action) => {
-    handSetService.addAction(player.handSet, action);
-};
-
 const clearRound = (player) => {
     return handSetService.clearRound(player.handSet);
 };
@@ -38,7 +34,6 @@ const updateEarningRate = (player) => {
 };
 
 module.exports = {
-    addAction,
     clearRound,
     create,
     dealCard,

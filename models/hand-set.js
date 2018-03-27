@@ -1,10 +1,9 @@
 'use strict';
 
 function HandSet() {
-    this.actions = [];
     this.currentHand = null;
-    this.hands = [];
     this.earningRate = null;
+    this.hands = [];
 }
 
 module.exports = HandSet;
