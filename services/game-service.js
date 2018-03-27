@@ -37,7 +37,7 @@ const endRound = (game) => {
         throw 'Can\'t play dealer round yet!';
     }
     
-    var dealerScore = rulesService.dealerTurn(game);
+    var dealerScore = rulesService.dealerTurn(game, () => cardSetService.getNextCard(game.cardSet));
 
     js.iterate(game.playerSet.players, (player, key) => {            
         if (player !== playerSetService.getDealer(game.playerSet)) {
@@ -71,19 +71,19 @@ const makeDecision = (game, playerId, action) => {
     var player = playerSetService.ensurePlayer(game.playerSet, playerId);
     switch (action) {
         case 'Double': {
-            rulesService.double(game, player);
+            rulesService.double(game, player, () => cardSetService.getNextCard(game.cardSet));
             break;
         }
         case 'Hit': {
-            rulesService.hit(game, player);
+            rulesService.hit(game, player, () => cardSetService.getNextCard(game.cardSet));
             break;
         }
         case 'Split': {
-            rulesService.split(game, player);
+            rulesService.split(game, player, () => cardSetService.getNextCard(game.cardSet));
             break;
         }
         case 'Stand': {
-            rulesService.stand(game, player);
+            rulesService.stand(game, player, () => cardSetService.getNextCard(game.cardSet));
             break;
         }
     }
@@ -93,12 +93,14 @@ const makeDecision = (game, playerId, action) => {
 const startRound = (game) => {
     js.iterate(game.playerSet.players, (player) => {            
         playerService.startRound(player);
-        rulesService.dealCard(game, player, true);
+        var nextCard = cardSetService.getNextCard(game.cardSet);
+        rulesService.dealCard(game, player, nextCard, true);
     });
 
     js.iterate(game.playerSet.players, (player) => {
         if (player !== playerSetService.getDealer(game.playerSet)) {
-            rulesService.dealCard(game, player, true);
+            var nextCard = cardSetService.getNextCard(game.cardSet);
+            rulesService.dealCard(game, player, nextCard, true);
         }
     });
 

@@ -1,10 +1,11 @@
 'use strict';
 
-const cardSetService = require('./card-set-service');
 const handService = require('./hand-service');
 const handSetService = require('./hand-set-service');
 const playerService = require('./player-service');
 const playerSetService = require('./player-set-service');
+
+// TODO dealCard should be internal to this class
 
 const checkBlackJackOrLoses = (game, player, handScore, playerHand, initialDealing) => {
     if (handScore === 21 && playerHand.cards.length === 2) {
@@ -21,34 +22,32 @@ const checkBlackJackOrLoses = (game, player, handScore, playerHand, initialDeali
     }
 };
 
-const dealCard = (game, player, initialDealing) => {
-    var nextCard = cardSetService.getNextCard(game.cardSet);
-    playerService.dealCard(player, nextCard);
+const dealCard = (game, player, card, initialDealing) => {
+    playerService.dealCard(player, card);
     var playerHand = playerService.getCurrentHand(player);
     var handScore = handService.getScore(playerHand);
     checkBlackJackOrLoses(game, player, handScore, playerHand, initialDealing);
     return handScore;
 };
 
-const dealerTurn = (game) => {
+const dealerTurn = (game, cardGetter) => {
     var dealerHand = playerService.getCurrentHand(playerSetService.getDealer(game.playerSet));
     var dealerScore = handService.getScore(dealerHand);
     while (dealerScore < 17) {
-        var nextCard = cardSetService.getNextCard(game.cardSet);
-        playerService.dealCard(playerSetService.getDealer(game.playerSet), nextCard);
+        playerService.dealCard(playerSetService.getDealer(game.playerSet), cardGetter());
         dealerScore = handService.getScore(dealerHand);
     }
     return dealerScore;
 };
 
-const double = (game, player) => {
+const double = (game, player, cardGetter) => {
     var playerHand = playerService.getCurrentHand(player);
     var handScore = handService.getScore(playerHand);
     if (handScore < 9 || handScore > 11) {
         throw 'Double only allowed with 9, 10 or 11 points';
     }
     handSetService.doubleCurrentHand(player.handSet);        
-    handScore = dealCard(game, player);
+    handScore = dealCard(game, player, cardGetter());
 
     if (handScore < 22) {
         handService.setStatus(playerHand, 'Played');
@@ -56,8 +55,8 @@ const double = (game, player) => {
     }
 };
 
-const hit = (game, player) => {
-    dealCard(game, player);
+const hit = (game, player, cardGetter) => {
+    dealCard(game, player, cardGetter());
 };
 
 const resolve = (player, dealerScore) => {
@@ -85,29 +84,29 @@ const resolve = (player, dealerScore) => {
     playerService.updateEarningRate(player);        
 };
 
-const split = (game, player) => {
+const split = (game, player, cardGetter) => {
     var currentHand = handSetService.getCurrentHand(player.handSet);
     if (!handService.isSplitable(currentHand)) {
         throw 'Split only allowed with two equal cards!';
     }
     handSetService.splitCurrentHand(player.handSet);        
-    return dealCard(game, player);
+    return dealCard(game, player, cardGetter());
 };
 
-const startNextHand = (game, player) => {
+const startNextHand = (game, player, cardGetter) => {
     var nextHand = handSetService.getNextHand(player.handSet);
     if (nextHand) {
-        dealCard(game, player);
+        dealCard(game, player, cardGetter());
     }
     else {
         playerSetService.startNextTurn(game.playerSet);
     }
 };
 
-const stand = (game, player) => {
+const stand = (game, player, cardGetter) => {
     var playerHand = playerService.getCurrentHand(player);
     handService.setStatus(playerHand, 'Played');
-    startNextHand(game, player);
+    startNextHand(game, player, cardGetter);
 };
 
 module.exports = {

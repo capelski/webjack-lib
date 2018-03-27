@@ -14,7 +14,7 @@ const getScore = (hand) => {
     };
     var allScores = hand.cards.reduce(cardReducer, [0]);
     var score = allScores[0];
-    for(var i = 1; i < allScores.length; ++i) {
+    for (var i = 1; i < allScores.length; ++i) {
         var potentialScore = allScores[i];
         if (potentialScore < 22) {
             score = potentialScore;
