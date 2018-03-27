@@ -12,6 +12,11 @@ const addPlayer = (playerSet, playerId) => {
     playerSet.players.unshift(player);
 };
 
+const collectPlayedCards = (playerSet) => {
+    var playedCards = playerSet.players.reduce((cards, player) => cards.concat(playerService.clearRound(player)), []);
+    return playedCards;
+};
+
 const create = (ownerId) => {
     var dealer = playerService.create(0, 'Dealer');
     var owner = playerService.create(ownerId, 'XXXX');
@@ -91,6 +96,7 @@ const startRound = (playerSet) => {
 
 module.exports = {
     addPlayer,
+    collectPlayedCards,
     create,
     endRound,
     ensurePlayer,

@@ -6,6 +6,12 @@ const cardService = require('./card-service');
 
 const addPlayedCards = (cardSet, playedCards) => {
     cardSet.playedCards = cardSet.playedCards.concat(playedCards);
+
+    if (cardSet.playedCards.length > 80) {
+        cardSet.availableCards = cardSet.availableCards.concat(cardSet.playedCards);
+        cardSet.playedCards = [];
+        js.shuffleArray(cardSet.availableCards);
+    }
 };
 
 const create = (decksNumber) => {
@@ -28,15 +34,8 @@ const getNextCard = (cardSet) => {
     return nextCard;
 };
 
-const refill = (cardSet) => {
-    cardSet.availableCards = cardSet.availableCards.concat(cardSet.playedCards);
-    cardSet.playedCards = [];
-    js.shuffleArray(cardSet.availableCards);
-};
-
 module.exports = {
     addPlayedCards,
     create,
-    getNextCard,
-    refill
+    getNextCard
 };

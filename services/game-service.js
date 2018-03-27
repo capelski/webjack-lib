@@ -3,23 +3,14 @@
 const js = require('../utils/js-generics');
 const Game = require('../models/game');
 const cardSetService = require('./card-set-service');
-const playerService = require('./player-service');
 const playerSetService = require('./player-set-service');
 const rulesService = require('./rules-service');
 
 let games = [];
 
 const clearRound = (game) => {
-    var playedCards = [];
-
-    js.iterate(game.playerSet.players, (player) => {
-        playedCards = playedCards.concat(playerService.clearRound(player));
-    });
+    var playedCards = playerSetService.collectPlayedCards(game.playerSet);
     cardSetService.addPlayedCards(game.cardSet, playedCards);
-    
-    if (game.cardSet.playedCards.length > 80) {
-        cardSetService.refill(game.cardSet);
-    }
 };
 
 const create = (ownerId, cardSet, playerSet) => {
