@@ -16,7 +16,7 @@ const addCard = (handSet, card) => {
 const clearRound = (handSet) => {
     var cards = [];
     js.iterate(handSet.hands, (hand) => {
-        cards = cards.concat(handService.clear(hand));
+        cards = cards.concat(handService.getCards(hand));
     });
 
     handSet.actions = [];        
@@ -27,9 +27,7 @@ const clearRound = (handSet) => {
     return cards;
 };
 
-const create = () => {
-    return new HandSet();
-};
+const create = () =>  new HandSet();
 
 const doubleCurrentHand = (handSet) => {
     var currentHand = getCurrentHand(handSet);
