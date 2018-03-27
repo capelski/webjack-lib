@@ -5,8 +5,6 @@ const handSetService = require('./hand-set-service');
 const playerService = require('./player-service');
 const playerSetService = require('./player-set-service');
 
-// TODO dealCard should be internal to this class
-
 const checkBlackJackOrLoses = (game, player, handScore, playerHand, initialDealing) => {
     if (handScore === 21 && playerHand.cards.length === 2) {
         handService.setStatus(playerHand, 'BlackJack');
@@ -93,6 +91,13 @@ const split = (game, player, cardGetter) => {
     return dealCard(game, player, cardGetter());
 };
 
+const stand = (game, player, cardGetter) => {
+    var playerHand = playerService.getCurrentHand(player);
+    handService.setStatus(playerHand, 'Played');
+    startNextHand(game, player, cardGetter);
+};
+
+// TODO Should this be here?
 const startNextHand = (game, player, cardGetter) => {
     var nextHand = handSetService.getNextHand(player.handSet);
     if (nextHand) {
@@ -103,18 +108,28 @@ const startNextHand = (game, player, cardGetter) => {
     }
 };
 
-const stand = (game, player, cardGetter) => {
-    var playerHand = playerService.getCurrentHand(player);
-    handService.setStatus(playerHand, 'Played');
-    startNextHand(game, player, cardGetter);
+// TODO Receive playerSet instead
+const startRound = (game, cardGetter) => {
+    // TODO Exclude dealer from players
+
+    game.playerSet.players.forEach(player => {
+        playerService.startRound(player);
+        dealCard(game, player, cardGetter(), true);
+    });
+
+    game.playerSet.players.forEach(player => {
+        if (player !== playerSetService.getDealer(game.playerSet)) {
+            dealCard(game, player, cardGetter(), true);
+        }
+    });
 };
 
 module.exports = {
-    dealCard,
     dealerTurn,
     double,
     hit,
     resolve,
     split,
     stand,
+    startRound
 };

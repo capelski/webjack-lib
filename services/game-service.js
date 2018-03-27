@@ -90,19 +90,7 @@ const makeDecision = (game, playerId, action) => {
 };
 
 const startRound = (game) => {
-    js.iterate(game.playerSet.players, (player) => {            
-        playerService.startRound(player);
-        var nextCard = cardSetService.getNextCard(game.cardSet);
-        rulesService.dealCard(game, player, nextCard, true);
-    });
-
-    js.iterate(game.playerSet.players, (player) => {
-        if (player !== playerSetService.getDealer(game.playerSet)) {
-            var nextCard = cardSetService.getNextCard(game.cardSet);
-            rulesService.dealCard(game, player, nextCard, true);
-        }
-    });
-
+    rulesService.startRound(game, () => cardSetService.getNextCard(game.cardSet));
     playerSetService.startRound(game.playerSet);
 };
 
