@@ -23,14 +23,6 @@ const checkMaxScore = (game, player, playerHand, initialDealing) => {
     }
 };
 
-const dealCard = (game, player, card, initialDealing) => {
-    var handScore = playerService.dealCard(player, card);
-    var playerHand = playerService.getCurrentHand(player);
-    checkBlackJack(game, player, playerHand, initialDealing);
-    checkMaxScore(game, player, playerHand, initialDealing);
-    return playerHand.score;
-};
-
 const dealerTurn = (game, cardGetter) => {
     var dealerHand = playerService.getCurrentHand(playerSetService.getDealer(game.playerSet));
     var dealerScore = handService.getScore(dealerHand);
@@ -47,7 +39,10 @@ const double = (game, player, cardGetter) => {
         throw 'Double only allowed with 9, 10 or 11 points';
     }
     handSetService.doubleCurrentHand(player.handSet);        
-    var handScore = dealCard(game, player, cardGetter());
+
+    var handScore = playerService.dealCard(player,  cardGetter());
+    playerHand = playerService.getCurrentHand(player);
+    checkMaxScore(game, player, playerHand);
 
     if (handScore < 22) {
         handService.setStatus(playerHand, 'Played');
@@ -56,7 +51,9 @@ const double = (game, player, cardGetter) => {
 };
 
 const hit = (game, player, cardGetter) => {
-    dealCard(game, player, cardGetter());
+    var handScore = playerService.dealCard(player, cardGetter());
+    var playerHand = playerService.getCurrentHand(player);
+    checkMaxScore(game, player, playerHand);
 };
 
 const resolve = (player, dealerScore) => {
@@ -88,8 +85,11 @@ const split = (game, player, cardGetter) => {
     if (!handService.isSplitable(currentHand)) {
         throw 'Split only allowed with two equal cards!';
     }
-    handSetService.splitCurrentHand(player.handSet);        
-    return dealCard(game, player, cardGetter());
+    handSetService.splitCurrentHand(player.handSet);
+
+    var handScore = playerService.dealCard(player, cardGetter());
+    var playerHand = playerService.getCurrentHand(player);
+    checkBlackJack(game, player, playerHand);
 };
 
 const stand = (game, player, cardGetter) => {
@@ -102,7 +102,9 @@ const stand = (game, player, cardGetter) => {
 const startNextHand = (game, player, cardGetter) => {
     var nextHand = handSetService.getNextHand(player.handSet);
     if (nextHand) {
-        dealCard(game, player, cardGetter());
+        var handScore = playerService.dealCard(player, cardGetter());
+        var playerHand = playerService.getCurrentHand(player);
+        checkBlackJack(game, player, playerHand);
     }
     else {
         playerSetService.startNextTurn(game.playerSet);
@@ -115,12 +117,14 @@ const startRound = (game, cardGetter) => {
 
     game.playerSet.players.forEach(player => {
         playerService.startRound(player);
-        dealCard(game, player, cardGetter(), true);
+        playerService.dealCard(player, cardGetter());
     });
 
     game.playerSet.players.forEach(player => {
         if (player !== playerSetService.getDealer(game.playerSet)) {
-            dealCard(game, player, cardGetter(), true);
+            var handScore = playerService.dealCard(player, cardGetter());
+            var playerHand = playerService.getCurrentHand(player);
+            checkBlackJack(game, player, playerHand, true);
         }
     });
 };
