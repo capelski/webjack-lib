@@ -7,6 +7,7 @@ const playerSetService = require('./player-set-service');
 const rulesService = require('./rules-service');
 const handSetService = require('./hand-set-service');
 const playerService = require('./player-service');
+const handService = require('./hand-service'); // TODO Remove
 
 let games = [];
 
@@ -30,7 +31,13 @@ const endRound = (game) => {
         throw 'Can\'t play dealer round yet!';
     }
     
-    var dealerScore = rulesService.dealerTurn(game, () => cardSetService.getNextCard(game.cardSet));
+    var dealer = playerSetService.getDealer(game.playerSet);
+    var dealerHand = playerService.getCurrentHand(dealer);
+    var dealerScore = handService.getScore(dealerHand); // TODO Use score property
+    while (dealerScore < 17) {
+        playerService.dealCard(dealer, cardSetService.getNextCard(game.cardSet));
+        dealerScore = handService.getScore(dealerHand);
+    }
 
     js.iterate(game.playerSet.players, (player, key) => {            
         if (player !== playerSetService.getDealer(game.playerSet)) {

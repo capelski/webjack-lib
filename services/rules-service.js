@@ -21,16 +21,6 @@ const checkMaxScore = (playerHand) => {
     return false;
 };
 
-const dealerTurn = (game, cardGetter) => {
-    var dealerHand = playerService.getCurrentHand(playerSetService.getDealer(game.playerSet));
-    var dealerScore = handService.getScore(dealerHand);
-    while (dealerScore < 17) {
-        playerService.dealCard(playerSetService.getDealer(game.playerSet), cardGetter());
-        dealerScore = handService.getScore(dealerHand);
-    }
-    return dealerScore;
-};
-
 const double = (player, cardGetter) => {
     var playerHand = playerService.getCurrentHand(player);
     if (playerHand.score < 9 || playerHand.score > 11) {
@@ -97,7 +87,6 @@ const stand = (player) => {
 
 module.exports = {
     checkBlackJack,
-    dealerTurn,
     double,
     hit,
     resolve,
