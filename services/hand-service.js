@@ -28,10 +28,7 @@ const addCard = (hand, card) => {
     hand.score = getScore(hand);
 };
 
-const isSplitable = (hand) => {
-    return (hand.cards.length === 2 &&
-    cardService.getValue(hand.cards[0]) === cardService.getValue(hand.cards[1]));
-};
+const isSplitable = (hand) => hand.cards.length === 2 && cardService.getValue(hand.cards[0])[0] === cardService.getValue(hand.cards[1])[0];
 
 const setStatus = (hand, status) => {
     hand.status = status;
