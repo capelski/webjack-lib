@@ -26,10 +26,12 @@ const create = (ownerId) => {
     return playerSet;
 };
 
+// TODO Remove
 const endRound = (playerSet) => {
     playerSet.currentIndex = null;
 };
 
+// TODO Move to game-service
 const ensurePlayer = (playerSet, playerId) => {
     if (playerSet.currentIndex == null) {
         throw 'No round has been started yet!';
@@ -57,6 +59,7 @@ const ensurePlayer = (playerSet, playerId) => {
     }        
 };
 
+// TODO Adapt to recieve also a playerId. Rename to getPlayerById
 const getCurrentPlayer = (playerSet) => {
     return playerSet.players[playerSet.currentIndex];
 };
@@ -79,6 +82,7 @@ const getPlayerById = (playerSet, playerId) => {
 
 const isDealerTurn = (playerSet) => getCurrentPlayer(playerSet).id === getDealer(playerSet).id;
 
+// TODO Move to game-service
 const startNextTurn = (playerSet) => {
     var nextPlayer = null;
     while (!nextPlayer && (playerSet.currentIndex < playerSet.players.length - 1)) {            
@@ -91,6 +95,7 @@ const startNextTurn = (playerSet) => {
     return nextPlayer;
 };
 
+// TODO Remove
 const startRound = (playerSet) => {
     playerSet.currentIndex = 0;
     startNextTurn(playerSet);

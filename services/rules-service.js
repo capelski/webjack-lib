@@ -5,6 +5,7 @@ const handSetService = require('./hand-set-service');
 const playerService = require('./player-service');
 const playerSetService = require('./player-set-service');
 
+// TODO Split function in 2
 const checkBlackJackOrLoses = (game, player, handScore, playerHand, initialDealing) => {
     if (handScore === 21 && playerHand.cards.length === 2) {
         handService.setStatus(playerHand, 'BlackJack');
@@ -97,7 +98,7 @@ const stand = (game, player, cardGetter) => {
     startNextHand(game, player, cardGetter);
 };
 
-// TODO Should this be here?
+// TODO Move this to game-service. Call it whenever is needed
 const startNextHand = (game, player, cardGetter) => {
     var nextHand = handSetService.getNextHand(player.handSet);
     if (nextHand) {
