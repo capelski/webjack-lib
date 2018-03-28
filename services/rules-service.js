@@ -14,13 +14,12 @@ const checkBlackJack = (game, player, playerHand, initialDealing) => {
     }
 };
 
-const checkMaxScore = (game, player, playerHand, initialDealing) => {
+const checkMaxScore = (game, player, playerHand) => {
     if (playerHand.score > 21) {
         handService.setStatus(playerHand, 'Loses');
-        if (!initialDealing) {
-            startNextHand(game, player);
-        }
+        return true;
     }
+    return false;
 };
 
 const dealerTurn = (game, cardGetter) => {
@@ -42,9 +41,11 @@ const double = (game, player, cardGetter) => {
 
     var handScore = playerService.dealCard(player,  cardGetter());
     playerHand = playerService.getCurrentHand(player);
-    checkMaxScore(game, player, playerHand);
-
-    if (handScore < 22) {
+    var isBurned = checkMaxScore(game, player, playerHand);
+    if (isBurned) {
+        startNextHand(game, player);
+    }
+    else {
         handService.setStatus(playerHand, 'Played');
         startNextHand(game, player);
     }
@@ -53,7 +54,10 @@ const double = (game, player, cardGetter) => {
 const hit = (game, player, cardGetter) => {
     var handScore = playerService.dealCard(player, cardGetter());
     var playerHand = playerService.getCurrentHand(player);
-    checkMaxScore(game, player, playerHand);
+    var isBurned = checkMaxScore(game, player, playerHand);
+    if (isBurned) {
+        startNextHand(game, player);
+    }
 };
 
 const resolve = (player, dealerScore) => {
