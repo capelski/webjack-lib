@@ -43,18 +43,14 @@ const double = (game, player, cardGetter) => {
     var isBurned = checkMaxScore(playerHand);
     if (!isBurned) {
         handService.setStatus(playerHand, 'Played');
-    }
-    startNextHand(game, player, cardGetter);
-    
+    }    
 };
 
 const hit = (game, player, cardGetter) => {
     var handScore = playerService.dealCard(player, cardGetter());
     var playerHand = playerService.getCurrentHand(player);
     var isBurned = checkMaxScore(playerHand);
-    if (isBurned) {
-        startNextHand(game, player, cardGetter);
-    }
+    return isBurned;
 };
 
 const resolve = (player, dealerScore) => {
@@ -91,31 +87,12 @@ const split = (game, player, cardGetter) => {
     var handScore = playerService.dealCard(player, cardGetter());
     var playerHand = playerService.getCurrentHand(player);
     var isBlackJack = checkBlackJack(playerHand);
-    if (isBlackJack) {
-        startNextHand(game, player, cardGetter);
-    }
+    return isBlackJack;
 };
 
 const stand = (game, player, cardGetter) => {
     var playerHand = playerService.getCurrentHand(player);
     handService.setStatus(playerHand, 'Played');
-    startNextHand(game, player, cardGetter);
-};
-
-// TODO Move this to game-service. Call it whenever is needed
-const startNextHand = (game, player, cardGetter) => {
-    var nextHand = handSetService.getNextHand(player.handSet);
-    if (nextHand) {
-        var handScore = playerService.dealCard(player, cardGetter());
-        var playerHand = playerService.getCurrentHand(player);
-        var isBlackJack = checkBlackJack(playerHand);
-        if (isBlackJack) {
-            startNextHand(game, player, cardGetter);
-        }
-    }
-    else {
-        playerSetService.startNextTurn(game.playerSet);
-    }
 };
 
 // TODO Receive playerSet instead
@@ -137,6 +114,7 @@ const startRound = (game, cardGetter) => {
 };
 
 module.exports = {
+    checkBlackJack,
     dealerTurn,
     double,
     hit,

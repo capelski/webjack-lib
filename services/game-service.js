@@ -5,6 +5,8 @@ const Game = require('../models/game');
 const cardSetService = require('./card-set-service');
 const playerSetService = require('./player-set-service');
 const rulesService = require('./rules-service');
+const handSetService = require('./hand-set-service');
+const playerService = require('./player-service');
 
 let games = [];
 
@@ -59,20 +61,43 @@ const makeDecision = (game, playerId, action) => {
     switch (action) {
         case 'Double': {
             rulesService.double(game, player, () => cardSetService.getNextCard(game.cardSet));
+            startNextHand(game, player);
             break;
         }
         case 'Hit': {
-            rulesService.hit(game, player, () => cardSetService.getNextCard(game.cardSet));
+            var isBurned = rulesService.hit(game, player, () => cardSetService.getNextCard(game.cardSet));
+            if (isBurned) {
+                startNextHand(game, player);
+            }
             break;
         }
         case 'Split': {
-            rulesService.split(game, player, () => cardSetService.getNextCard(game.cardSet));
+            var isBlackJack = rulesService.split(game, player, () => cardSetService.getNextCard(game.cardSet));
+            if (isBlackJack) {
+                startNextHand(game, player);
+            }
             break;
         }
         case 'Stand': {
             rulesService.stand(game, player, () => cardSetService.getNextCard(game.cardSet));
+            startNextHand(game, player);
             break;
         }
+    }
+};
+
+const startNextHand = (game, player) => {
+    var nextHand = handSetService.getNextHand(player.handSet);
+    if (nextHand) {
+        var handScore = playerService.dealCard(player, cardSetService.getNextCard(game.cardSet));
+        var playerHand = playerService.getCurrentHand(player);
+        var isBlackJack = rulesService.checkBlackJack(playerHand);
+        if (isBlackJack) {
+            startNextHand(game, player);
+        }
+    }
+    else {
+        playerSetService.startNextTurn(game.playerSet);
     }
 };
 

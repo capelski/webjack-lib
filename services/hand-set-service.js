@@ -57,9 +57,12 @@ const startRound = (handSet) => {
 
 const splitCurrentHand = (handSet) => {
     var currentHand = getCurrentHand(handSet);
+    var firstCard = currentHand.cards.splice(-1)[0];
+
     var newHand = handService.create();
+    handService.addCard(newHand, firstCard);
+
     handSet.hands.splice(handSet.currentHand + 1, 0, newHand);
-    newHand.cards = currentHand.cards.splice(-1);
 };
 
 const updateEarningRate = (handSet) => {
