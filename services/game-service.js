@@ -60,26 +60,26 @@ const makeDecision = (game, playerId, action) => {
     var player = playerSetService.ensurePlayer(game.playerSet, playerId);
     switch (action) {
         case 'Double': {
-            rulesService.double(game, player, () => cardSetService.getNextCard(game.cardSet));
+            rulesService.double(player, () => cardSetService.getNextCard(game.cardSet));
             startNextHand(game, player);
             break;
         }
         case 'Hit': {
-            var isBurned = rulesService.hit(game, player, () => cardSetService.getNextCard(game.cardSet));
+            var isBurned = rulesService.hit(player, () => cardSetService.getNextCard(game.cardSet));
             if (isBurned) {
                 startNextHand(game, player);
             }
             break;
         }
         case 'Split': {
-            var isBlackJack = rulesService.split(game, player, () => cardSetService.getNextCard(game.cardSet));
+            var isBlackJack = rulesService.split(player, () => cardSetService.getNextCard(game.cardSet));
             if (isBlackJack) {
                 startNextHand(game, player);
             }
             break;
         }
         case 'Stand': {
-            rulesService.stand(game, player, () => cardSetService.getNextCard(game.cardSet));
+            rulesService.stand(player);
             startNextHand(game, player);
             break;
         }
@@ -102,7 +102,21 @@ const startNextHand = (game, player) => {
 };
 
 const startRound = (game) => {
-    rulesService.startRound(game, () => cardSetService.getNextCard(game.cardSet));
+    // TODO Exclude dealer from players
+
+    game.playerSet.players.forEach(player => {
+        playerService.startRound(player);
+        playerService.dealCard(player, cardSetService.getNextCard(game.cardSet));
+    });
+
+    game.playerSet.players.forEach(player => {
+        if (player !== playerSetService.getDealer(game.playerSet)) {
+            var handScore = playerService.dealCard(player, cardSetService.getNextCard(game.cardSet));
+            var playerHand = playerService.getCurrentHand(player);
+            rulesService.checkBlackJack(playerHand);
+        }
+    });
+
     playerSetService.startRound(game.playerSet);
 };
 

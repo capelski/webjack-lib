@@ -31,7 +31,7 @@ const dealerTurn = (game, cardGetter) => {
     return dealerScore;
 };
 
-const double = (game, player, cardGetter) => {
+const double = (player, cardGetter) => {
     var playerHand = playerService.getCurrentHand(player);
     if (playerHand.score < 9 || playerHand.score > 11) {
         throw 'Double only allowed with 9, 10 or 11 points';
@@ -46,7 +46,7 @@ const double = (game, player, cardGetter) => {
     }    
 };
 
-const hit = (game, player, cardGetter) => {
+const hit = (player, cardGetter) => {
     var handScore = playerService.dealCard(player, cardGetter());
     var playerHand = playerService.getCurrentHand(player);
     var isBurned = checkMaxScore(playerHand);
@@ -77,7 +77,7 @@ const resolve = (player, dealerScore) => {
     playerService.updateEarningRate(player);        
 };
 
-const split = (game, player, cardGetter) => {
+const split = (player, cardGetter) => {
     var currentHand = handSetService.getCurrentHand(player.handSet);
     if (!handService.isSplitable(currentHand)) {
         throw 'Split only allowed with two equal cards!';
@@ -90,27 +90,9 @@ const split = (game, player, cardGetter) => {
     return isBlackJack;
 };
 
-const stand = (game, player, cardGetter) => {
+const stand = (player) => {
     var playerHand = playerService.getCurrentHand(player);
     handService.setStatus(playerHand, 'Played');
-};
-
-// TODO Receive playerSet instead
-const startRound = (game, cardGetter) => {
-    // TODO Exclude dealer from players
-
-    game.playerSet.players.forEach(player => {
-        playerService.startRound(player);
-        playerService.dealCard(player, cardGetter());
-    });
-
-    game.playerSet.players.forEach(player => {
-        if (player !== playerSetService.getDealer(game.playerSet)) {
-            var handScore = playerService.dealCard(player, cardGetter());
-            var playerHand = playerService.getCurrentHand(player);
-            checkBlackJack(playerHand);
-        }
-    });
 };
 
 module.exports = {
@@ -120,6 +102,5 @@ module.exports = {
     hit,
     resolve,
     split,
-    stand,
-    startRound
+    stand
 };
