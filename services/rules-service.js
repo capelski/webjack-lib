@@ -5,15 +5,17 @@ const handSetService = require('./hand-set-service');
 const playerService = require('./player-service');
 const playerSetService = require('./player-set-service');
 
-// TODO Split function in 2
-const checkBlackJackOrLoses = (game, player, handScore, playerHand, initialDealing) => {
+const checkBlackJack = (game, player, handScore, playerHand, initialDealing) => {
     if (handScore === 21 && playerHand.cards.length === 2) {
         handService.setStatus(playerHand, 'BlackJack');
         if (!initialDealing) {
             startNextHand(game, player);
         }
-    }                
-    else if (handScore > 21) {
+    }
+};
+
+const checkMaxScore = (game, player, handScore, playerHand, initialDealing) => {
+    if (handScore > 21) {
         handService.setStatus(playerHand, 'Loses');
         if (!initialDealing) {
             startNextHand(game, player);
@@ -25,7 +27,8 @@ const dealCard = (game, player, card, initialDealing) => {
     playerService.dealCard(player, card);
     var playerHand = playerService.getCurrentHand(player);
     var handScore = handService.getScore(playerHand);
-    checkBlackJackOrLoses(game, player, handScore, playerHand, initialDealing);
+    checkBlackJack(game, player, handScore, playerHand, initialDealing);
+    checkMaxScore(game, player, handScore, playerHand, initialDealing);
     return handScore;
 };
 
