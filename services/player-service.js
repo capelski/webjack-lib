@@ -14,7 +14,8 @@ const create = (id, name) => {
 };
 
 const dealCard = (player, card) => {
-    handSetService.addCard(player.handSet, card);
+    var handScore = handSetService.addCard(player.handSet, card);
+    return handScore;
 };
 
 const getCurrentHand = (player) => {

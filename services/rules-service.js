@@ -24,7 +24,7 @@ const checkMaxScore = (game, player, playerHand, initialDealing) => {
 };
 
 const dealCard = (game, player, card, initialDealing) => {
-    playerService.dealCard(player, card);
+    var handScore = playerService.dealCard(player, card);
     var playerHand = playerService.getCurrentHand(player);
     checkBlackJack(game, player, playerHand, initialDealing);
     checkMaxScore(game, player, playerHand, initialDealing);

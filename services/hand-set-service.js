@@ -6,7 +6,8 @@ const handService = require('./hand-service');
 
 const addCard = (handSet, card) => {
     var currentHand = getCurrentHand(handSet);
-    handService.addCard(currentHand, card);
+    var handScore = handService.addCard(currentHand, card);
+    return handScore;
 };
 
 const clearRound = (handSet) => {
