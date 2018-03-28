@@ -5,13 +5,12 @@ const handSetService = require('./hand-set-service');
 const playerService = require('./player-service');
 const playerSetService = require('./player-set-service');
 
-const checkBlackJack = (game, player, playerHand, initialDealing) => {
+const checkBlackJack = (game, player, playerHand) => {
     if (playerHand.score === 21 && playerHand.cards.length === 2) {
         handService.setStatus(playerHand, 'BlackJack');
-        if (!initialDealing) {
-            startNextHand(game, player);
-        }
+        return true;
     }
+    return false;
 };
 
 const checkMaxScore = (game, player, playerHand) => {
@@ -43,11 +42,11 @@ const double = (game, player, cardGetter) => {
     playerHand = playerService.getCurrentHand(player);
     var isBurned = checkMaxScore(game, player, playerHand);
     if (isBurned) {
-        startNextHand(game, player);
+        startNextHand(game, player, cardGetter);
     }
     else {
         handService.setStatus(playerHand, 'Played');
-        startNextHand(game, player);
+        startNextHand(game, player, cardGetter);
     }
 };
 
@@ -56,7 +55,7 @@ const hit = (game, player, cardGetter) => {
     var playerHand = playerService.getCurrentHand(player);
     var isBurned = checkMaxScore(game, player, playerHand);
     if (isBurned) {
-        startNextHand(game, player);
+        startNextHand(game, player, cardGetter);
     }
 };
 
@@ -93,7 +92,10 @@ const split = (game, player, cardGetter) => {
 
     var handScore = playerService.dealCard(player, cardGetter());
     var playerHand = playerService.getCurrentHand(player);
-    checkBlackJack(game, player, playerHand);
+    var isBlackJack = checkBlackJack(game, player, playerHand);
+    if (isBlackJack) {
+        startNextHand(game, player, cardGetter);
+    }
 };
 
 const stand = (game, player, cardGetter) => {
@@ -108,7 +110,10 @@ const startNextHand = (game, player, cardGetter) => {
     if (nextHand) {
         var handScore = playerService.dealCard(player, cardGetter());
         var playerHand = playerService.getCurrentHand(player);
-        checkBlackJack(game, player, playerHand);
+        var isBlackJack = checkBlackJack(game, player, playerHand);
+        if (isBlackJack) {
+            startNextHand(game, player, cardGetter);
+        }
     }
     else {
         playerSetService.startNextTurn(game.playerSet);
@@ -128,7 +133,7 @@ const startRound = (game, cardGetter) => {
         if (player !== playerSetService.getDealer(game.playerSet)) {
             var handScore = playerService.dealCard(player, cardGetter());
             var playerHand = playerService.getCurrentHand(player);
-            checkBlackJack(game, player, playerHand, true);
+            checkBlackJack(game, player, playerHand);
         }
     });
 };
