@@ -5,8 +5,8 @@ const handSetService = require('./hand-set-service');
 const playerService = require('./player-service');
 const playerSetService = require('./player-set-service');
 
-const checkBlackJack = (game, player, handScore, playerHand, initialDealing) => {
-    if (handScore === 21 && playerHand.cards.length === 2) {
+const checkBlackJack = (game, player, playerHand, initialDealing) => {
+    if (playerHand.score === 21 && playerHand.cards.length === 2) {
         handService.setStatus(playerHand, 'BlackJack');
         if (!initialDealing) {
             startNextHand(game, player);
@@ -14,8 +14,8 @@ const checkBlackJack = (game, player, handScore, playerHand, initialDealing) => 
     }
 };
 
-const checkMaxScore = (game, player, handScore, playerHand, initialDealing) => {
-    if (handScore > 21) {
+const checkMaxScore = (game, player, playerHand, initialDealing) => {
+    if (playerHand.score > 21) {
         handService.setStatus(playerHand, 'Loses');
         if (!initialDealing) {
             startNextHand(game, player);
@@ -26,10 +26,9 @@ const checkMaxScore = (game, player, handScore, playerHand, initialDealing) => {
 const dealCard = (game, player, card, initialDealing) => {
     playerService.dealCard(player, card);
     var playerHand = playerService.getCurrentHand(player);
-    var handScore = handService.getScore(playerHand);
-    checkBlackJack(game, player, handScore, playerHand, initialDealing);
-    checkMaxScore(game, player, handScore, playerHand, initialDealing);
-    return handScore;
+    checkBlackJack(game, player, playerHand, initialDealing);
+    checkMaxScore(game, player, playerHand, initialDealing);
+    return playerHand.score;
 };
 
 const dealerTurn = (game, cardGetter) => {
@@ -44,12 +43,11 @@ const dealerTurn = (game, cardGetter) => {
 
 const double = (game, player, cardGetter) => {
     var playerHand = playerService.getCurrentHand(player);
-    var handScore = handService.getScore(playerHand);
-    if (handScore < 9 || handScore > 11) {
+    if (playerHand.score < 9 || playerHand.score > 11) {
         throw 'Double only allowed with 9, 10 or 11 points';
     }
     handSetService.doubleCurrentHand(player.handSet);        
-    handScore = dealCard(game, player, cardGetter());
+    var handScore = dealCard(game, player, cardGetter());
 
     if (handScore < 22) {
         handService.setStatus(playerHand, 'Played');
@@ -63,23 +61,22 @@ const hit = (game, player, cardGetter) => {
 
 const resolve = (player, dealerScore) => {
     player.handSet.hands.forEach((hand) => {
-        var handScore = handService.getScore(hand);
         var status;
 
-        if (handScore > 21) {
+        if (hand.score > 21) {
             status = 'Loses';
         }
-        else if (handScore === 21 && hand.cards.length === 2) {
+        else if (hand.score === 21 && hand.cards.length === 2) {
             status = 'BlackJack';
         }
         else if (dealerScore > 21) {
             status = 'Wins';
         }
-        else if (handScore === dealerScore) {
+        else if (hand.score === dealerScore) {
             status = 'Ties';
         }
         else {
-            status = handScore > dealerScore ? 'Wins' : 'Loses';
+            status = hand.score > dealerScore ? 'Wins' : 'Loses';
         }
         handService.setStatus(hand, status);
     });
