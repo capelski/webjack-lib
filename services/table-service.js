@@ -8,6 +8,7 @@ const rulesService = require('./rules-service');
 const handSetService = require('./hand-set-service');
 const playerService = require('./player-service');
 const handService = require('./hand-service');
+const uuidV4 = require('uuid/v4');
 
 // Extract logic into orchestration-service
 
@@ -18,14 +19,15 @@ const collectPlayedCards = (table) => {
     cardSetService.addPlayedCards(table.cardSet, playedCards);
 };
 
-const create = (ownerId, cardSet, playerSet) => {
-    cardSet = cardSet || cardSetService.create();        
-    playerSet = playerSet || playerSetService.create(ownerId);
+const create = (ownerId) => {
+    var tableId = uuidV4();
+    var cardSet = cardSetService.create();
+    var playerSet = playerSetService.create(ownerId);
 
-    var table = new Table(cardSet, playerSet);
+    var table = new Table(tableId, cardSet, playerSet);
     tables.push(table);
 
-    return tables.length - 1;
+    return tableId;
 };
 
 const endRound = (table) => {
@@ -77,11 +79,11 @@ const ensurePlayer = (playerSet, playerId) => {
 };
 
 const getTable = (tableId) => {
-    return tables[tableId];
+    return tables.find(t => t.id == tableId);
 };
 
 const joinTable = (tableId, playerId) => {
-    var table = tables[tableId];
+    var table = getTable(tableId);
     if (!table) {
         throw 'No table identified by ' + tableId + ' was found';
     }

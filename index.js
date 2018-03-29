@@ -18,14 +18,14 @@ const configureRouter = (middleware) => {
 	});
 
 	router.get('/join', middleware.session, function (req, res, next) {
-		var tableId = parseInt(req.query.tableId);
+		var tableId = req.query.tableId;
 		var playerId = uuidV4();
 		var table = tableService.joinTable(tableId, playerId);
 		return res.send(playerId);
 	});
 
 	router.get('/get', middleware.session, function (req, res, next) {
-		var tableId = parseInt(req.query.tableId);
+		var tableId = req.query.tableId;
 		var table = tableService.getTable(tableId);
 		if (!table) {
 			return res.send(JSON.stringify({message: "No table created"}));
@@ -36,7 +36,7 @@ const configureRouter = (middleware) => {
 	});
 
 	router.get('/start-round', middleware.session, function (req, res, next) {
-		var tableId = parseInt(req.query.tableId);
+		var tableId = req.query.tableId;
 		var table = tableService.getTable(tableId);
 		if (!table) {
 			return res.send(JSON.stringify({message: "No table created"}));
@@ -49,7 +49,7 @@ const configureRouter = (middleware) => {
 
 	router.get('/make-decision', middleware.session, function (req, res, next) {
 
-		var tableId = parseInt(req.query.tableId);
+		var tableId = req.query.tableId;
 		var playerId = req.query.playerId;
 		var decision = req.query.decision;
 		var table = tableService.getTable(tableId);
@@ -68,7 +68,7 @@ const configureRouter = (middleware) => {
     });
 
     router.get('/end-round', middleware.session, function (req, res, next) {
-    	var tableId = parseInt(req.query.tableId);
+    	var tableId = req.query.tableId;
 		var table = tableService.getTable(tableId);
 		if (!table) {
 			return res.send(JSON.stringify({message: "No table created"}));
@@ -80,7 +80,7 @@ const configureRouter = (middleware) => {
     });
 
     router.get('/clear-round', middleware.session, function (req, res, next) {
-    	var tableId = parseInt(req.query.tableId);
+    	var tableId = req.query.tableId;
 		var table = tableService.getTable(tableId);
 		if (!table) {
 			return res.send(JSON.stringify({message: "No table created"}));

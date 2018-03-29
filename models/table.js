@@ -1,7 +1,8 @@
 'use strict';
 
-function Table(cardSet, playerSet) {
-    this.cardSet = cardSet;    
+function Table(tableId, cardSet, playerSet) {
+    this.id = tableId;
+    this.cardSet = cardSet;
     this.playerSet = playerSet;
 }
 
