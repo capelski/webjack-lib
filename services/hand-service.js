@@ -6,6 +6,10 @@ const js = require('../utils/js-generics');
 
 const getCards = (hand) => hand.cards;
 
+const canDouble = (hand) => hand.score > 8 && hand.score < 12;
+
+const canSplit = (hand) => hand.cards.length === 2 && cardService.getValue(hand.cards[0])[0] === cardService.getValue(hand.cards[1])[0];
+
 const create = () => new Hand();
 
 const getScore = (hand) => {
@@ -45,19 +49,18 @@ const isOverMaxScore = (hand) => {
     return _isOverMaxScore;
 };
 
-const isSplitable = (hand) => hand.cards.length === 2 && cardService.getValue(hand.cards[0])[0] === cardService.getValue(hand.cards[1])[0];
-
 const setStatus = (hand, status) => {
     hand.status = status;
 };
 
 module.exports = {
     addCard,
-    getCards,
+    canDouble,
+    canSplit,
     create,
+    getCards,
     getScore,
     isBlackJack,
     isOverMaxScore,
-    isSplitable,
     setStatus
 };

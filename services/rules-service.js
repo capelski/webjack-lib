@@ -9,11 +9,6 @@ const playerSetService = require('./player-set-service');
 // TODO Move resolve to game-service
 // TODO Remove rules-service
 
-const canDouble = (player) => {
-    var playerHand = handSetService.getCurrentHand(player.handSet);
-    return playerHand.score > 8 && playerHand.score < 12;
-};
-
 const double = (player, card) => {
     handSetService.doubleCurrentHand(player.handSet);        
     var handScore = handSetService.dealCard(player.handSet, card);
@@ -55,11 +50,6 @@ const resolve = (player, dealerScore) => {
     playerService.updateEarningRate(player);        
 };
 
-const canSplit = (player) => {
-    var currentHand = handSetService.getCurrentHand(player.handSet);
-    return handService.isSplitable(currentHand);
-};
-
 const split = (player, card) => {
     handSetService.splitCurrentHand(player.handSet);
     var handScore = handSetService.dealCard(player.handSet, card);
@@ -74,8 +64,6 @@ const stand = (player) => {
 };
 
 module.exports = {
-    canDouble,
-    canSplit,
     double,
     hit,
     resolve,
