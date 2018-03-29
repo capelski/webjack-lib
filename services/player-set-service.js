@@ -88,7 +88,7 @@ const startNextTurn = (playerSet) => {
     var nextPlayer = null;
     while (!nextPlayer && (playerSet.currentIndex < playerSet.players.length - 1)) {            
         nextPlayer = playerSet.players[playerSet.currentIndex];
-        if (!playerService.hasUnplayedHand(nextPlayer)) {
+        if (!handSetService.hasUnplayedHand(nextPlayer.handSet)) {
             nextPlayer = null;
             playerSet.currentIndex++;
         }            

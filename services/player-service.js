@@ -12,10 +12,6 @@ const getCurrentHand = (player) => {
     return handSetService.getCurrentHand(player.handSet);
 };
 
-const hasUnplayedHand = (player) => {
-    return handSetService.hasUnplayedHand(player.handSet);
-};
-
 const startRound = (player) => {
     return handSetService.startRound(player.handSet);
 };
@@ -28,7 +24,6 @@ const updateEarningRate = (player) => {
 module.exports = {
     create,
     getCurrentHand,
-    hasUnplayedHand,
     startRound,
     updateEarningRate
 };
