@@ -14,9 +14,9 @@
 </head>
 
 <body>
-    <button type="button" onclick="createGame();">New game</button>
-    <button type="button" onclick="joinGame();">Join game</button>
-    <input type="text" id="game-id" />Game Id
+    <button type="button" onclick="createGame();">Empty table</button>
+    <button type="button" onclick="joinGame();">Join table</button>
+    Table Id: <input type="text" id="table-id" />
     <button type="button" onclick="startRound();">Start round</button>
     <button type="button" onclick="endRound();">End round</button>
     <button type="button" onclick="clearRound();">Clear round</button>
@@ -27,7 +27,7 @@
     <script src="<%= asset('js/app.js') %>" type="text/javascript"></script>
 
     <script>
-        var gameId, playerId;
+        var tableId, playerId;
 
         function render(stringifiedData) {
             var results = document.getElementById('results');
@@ -54,49 +54,49 @@
         }
 
         function clearRound(){
-            $.get('/clear-round?gameId=' + gameId).then(render);
+            $.get('/clear-round?tableId=' + tableId).then(render);
         }
 
         function createGame(){
             $.get('/create').then(response => {
                 var data = JSON.parse(response);
-                gameId = data.gameId;
+                tableId = data.tableId;
                 playerId = data.playerId;
-                setInterval(() =>  $.get('/get?gameId=' + gameId).then(render), 4000);
+                setInterval(() =>  $.get('/get?tableId=' + tableId).then(render), 4000);
             });
         }
 
         function double(){
-            $.get('/make-decision?gameId=' + gameId + '&playerId=' + playerId + '&decision=Double').then(render);
+            $.get('/make-decision?tableId=' + tableId + '&playerId=' + playerId + '&decision=Double').then(render);
         }
 
         function endRound(){
-            $.get('/end-round?gameId=' + gameId).then(render);
+            $.get('/end-round?tableId=' + tableId).then(render);
         }
 
         function hit(){
-            $.get('/make-decision?gameId=' + gameId + '&playerId=' + playerId + '&decision=Hit').then(render);
+            $.get('/make-decision?tableId=' + tableId + '&playerId=' + playerId + '&decision=Hit').then(render);
         }
 
         function joinGame(){
-            gameId = $('#game-id').val();
-            $.get('/join?gameId=' + gameId).then(response => {
+            tableId = $('#table-id').val();
+            $.get('/join?tableId=' + tableId).then(response => {
                 playerId = response;
-                $.get('/get?gameId=' + gameId).then(render);
+                $.get('/get?tableId=' + tableId).then(render);
             });
-            setInterval(() =>  $.get('/get?gameId=' + gameId).then(render), 4000);
+            setInterval(() =>  $.get('/get?tableId=' + tableId).then(render), 4000);
         }
 
         function split(){
-            $.get('/make-decision?gameId=' + gameId + '&playerId=' + playerId + '&decision=Split').then(render);
+            $.get('/make-decision?tableId=' + tableId + '&playerId=' + playerId + '&decision=Split').then(render);
         }
 
         function stand(){
-            $.get('/make-decision?gameId=' + gameId + '&playerId=' + playerId + '&decision=Stand').then(render);
+            $.get('/make-decision?tableId=' + tableId + '&playerId=' + playerId + '&decision=Stand').then(render);
         }
 
         function startRound(){
-            $.get('/start-round?gameId=' + gameId).then(render);
+            $.get('/start-round?tableId=' + tableId).then(render);
         }
     </script>
 

@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var path = require('path');
-const gameService = require('./services/game-service');
+const tableService = require('./services/table-service');
 const uuidV4 = require('uuid/v4');
 
 const configureRouter = (middleware) => {
@@ -13,53 +13,53 @@ const configureRouter = (middleware) => {
 
 	router.get('/create', middleware.session, function (req, res, next) {
 		var playerId = uuidV4();
-		var gameId = gameService.create(playerId);
-		return res.send(JSON.stringify({ gameId, playerId }));
+		var tableId = tableService.create(playerId);
+		return res.send(JSON.stringify({ tableId, playerId }));
 	});
 
 	router.get('/join', middleware.session, function (req, res, next) {
-		var gameId = parseInt(req.query.gameId);
+		var tableId = parseInt(req.query.tableId);
 		var playerId = uuidV4();
-		var game = gameService.joinGame(gameId, playerId);
+		var table = tableService.joinTable(tableId, playerId);
 		return res.send(playerId);
 	});
 
 	router.get('/get', middleware.session, function (req, res, next) {
-		var gameId = parseInt(req.query.gameId);
-		var game = gameService.getGame(gameId);
-		if (!game) {
-			return res.send(JSON.stringify({message: "No game created"}));
+		var tableId = parseInt(req.query.tableId);
+		var table = tableService.getTable(tableId);
+		if (!table) {
+			return res.send(JSON.stringify({message: "No table created"}));
 		}
 		else {
-			return res.send(JSON.stringify(game.playerSet));
+			return res.send(JSON.stringify(table.playerSet));
 		}
 	});
 
 	router.get('/start-round', middleware.session, function (req, res, next) {
-		var gameId = parseInt(req.query.gameId);
-		var game = gameService.getGame(gameId);
-		if (!game) {
-			return res.send(JSON.stringify({message: "No game created"}));
+		var tableId = parseInt(req.query.tableId);
+		var table = tableService.getTable(tableId);
+		if (!table) {
+			return res.send(JSON.stringify({message: "No table created"}));
 		}
 		else {
-			gameService.startRound(game);
-            return res.send(JSON.stringify(game.playerSet));
+			tableService.startRound(table);
+            return res.send(JSON.stringify(table.playerSet));
 		}
 	});
 
 	router.get('/make-decision', middleware.session, function (req, res, next) {
 
-		var gameId = parseInt(req.query.gameId);
+		var tableId = parseInt(req.query.tableId);
 		var playerId = req.query.playerId;
 		var decision = req.query.decision;
-		var game = gameService.getGame(gameId);
-		if (!game) {
-			return res.send(JSON.stringify({message: "No game created"}));
+		var table = tableService.getTable(tableId);
+		if (!table) {
+			return res.send(JSON.stringify({message: "No table created"}));
 		}
 		else {
 			try {
-				gameService.makeDecision(game, playerId, decision);
-				return res.send(JSON.stringify(game.playerSet));
+				tableService.makeDecision(table, playerId, decision);
+				return res.send(JSON.stringify(table.playerSet));
 			}
             catch(exception) {
 				return res.status(400).send(exception);
@@ -68,26 +68,26 @@ const configureRouter = (middleware) => {
     });
 
     router.get('/end-round', middleware.session, function (req, res, next) {
-    	var gameId = parseInt(req.query.gameId);
-		var game = gameService.getGame(gameId);
-		if (!game) {
-			return res.send(JSON.stringify({message: "No game created"}));
+    	var tableId = parseInt(req.query.tableId);
+		var table = tableService.getTable(tableId);
+		if (!table) {
+			return res.send(JSON.stringify({message: "No table created"}));
 		}
 		else {
-        	gameService.endRound(game);
-            return res.send(JSON.stringify(game.playerSet));
+        	tableService.endRound(table);
+            return res.send(JSON.stringify(table.playerSet));
 		}
     });
 
     router.get('/clear-round', middleware.session, function (req, res, next) {
-    	var gameId = parseInt(req.query.gameId);
-		var game = gameService.getGame(gameId);
-		if (!game) {
-			return res.send(JSON.stringify({message: "No game created"}));
+    	var tableId = parseInt(req.query.tableId);
+		var table = tableService.getTable(tableId);
+		if (!table) {
+			return res.send(JSON.stringify({message: "No table created"}));
 		}
 		else {
-        	gameService.collectPlayedCards(game);
-            return res.send(JSON.stringify(game.playerSet));
+        	tableService.collectPlayedCards(table);
+            return res.send(JSON.stringify(table.playerSet));
 		}
     });
 

@@ -1,8 +1,8 @@
 'use strict';
 
-function Game(cardSet, playerSet) {
+function Table(cardSet, playerSet) {
     this.cardSet = cardSet;    
     this.playerSet = playerSet;
 }
 
-module.exports = Game;
+module.exports = Table;

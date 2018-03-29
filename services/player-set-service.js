@@ -9,7 +9,7 @@ const handSetService = require('./hand-set-service');
 
 const addPlayer = (playerSet, playerId) => {
     // TODO Check max capacity
-    // TODO Check the game status and add only when no round
+    // TODO Check the table status and add only when no round
     var player = playerService.create(playerId);
     // TODO push after removing the dealer from players array
     playerSet.players.unshift(player);
