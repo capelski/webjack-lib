@@ -66,19 +66,25 @@ const makeDecision = (game, playerId, action) => {
     var player = playerSetService.ensurePlayer(game.playerSet, playerId);
     switch (action) {
         case 'Double': {
-            rulesService.double(player, () => cardSetService.getNextCard(game.cardSet));
+            if (!rulesService.canDouble(player)) {
+                throw 'Doubling is only allowed with 9, 10 or 11 points';
+            }
+            rulesService.double(player, cardSetService.getNextCard(game.cardSet));
             startNextHand(game, player);
             break;
         }
         case 'Hit': {
-            var isBurned = rulesService.hit(player, () => cardSetService.getNextCard(game.cardSet));
+            var isBurned = rulesService.hit(player, cardSetService.getNextCard(game.cardSet));
             if (isBurned) {
                 startNextHand(game, player);
             }
             break;
         }
         case 'Split': {
-            var isBlackJack = rulesService.split(player, () => cardSetService.getNextCard(game.cardSet));
+            if (!rulesService.canSplit(player)) {
+                throw 'Splitting is only allowed with two equal cards!';
+            }
+            var isBlackJack = rulesService.split(player, cardSetService.getNextCard(game.cardSet));
             if (isBlackJack) {
                 startNextHand(game, player);
             }

@@ -25,24 +25,23 @@ const checkMaxScore = (playerHand) => {
     return false;
 };
 
-const double = (player, cardGetter) => {
+const canDouble = (player) => {
     var playerHand = playerService.getCurrentHand(player);
-    if (playerHand.score < 9 || playerHand.score > 11) {
-        throw 'Double only allowed with 9, 10 or 11 points';
-    }
-    handSetService.doubleCurrentHand(player.handSet);        
+    return playerHand.score > 8 && playerHand.score < 12;
+};
 
-    var handScore = handSetService.dealCard(player.handSet, cardGetter());
-    handSetService.dealCard(player.handSet, cardSetService.getNextCard(game.cardSet))
-    playerHand = playerService.getCurrentHand(player);
+const double = (player, card) => {
+    handSetService.doubleCurrentHand(player.handSet);        
+    var handScore = handSetService.dealCard(player.handSet, card);
+    var playerHand = playerService.getCurrentHand(player);
     var isBurned = checkMaxScore(playerHand);
     if (!isBurned) {
         handService.setStatus(playerHand, 'Played');
     }    
 };
 
-const hit = (player, cardGetter) => {
-    var handScore = handSetService.dealCard(player.handSet, cardGetter());
+const hit = (player, card) => {
+    var handScore = handSetService.dealCard(player.handSet, card);
     var playerHand = playerService.getCurrentHand(player);
     var isBurned = checkMaxScore(playerHand);
     return isBurned;
@@ -72,14 +71,14 @@ const resolve = (player, dealerScore) => {
     playerService.updateEarningRate(player);        
 };
 
-const split = (player, cardGetter) => {
+const canSplit = (player) => {
     var currentHand = handSetService.getCurrentHand(player.handSet);
-    if (!handService.isSplitable(currentHand)) {
-        throw 'Split only allowed with two equal cards!';
-    }
-    handSetService.splitCurrentHand(player.handSet);
+    return handService.isSplitable(currentHand);
+};
 
-    var handScore = handSetService.dealCard(player.handSet, cardGetter());
+const split = (player, card) => {
+    handSetService.splitCurrentHand(player.handSet);
+    var handScore = handSetService.dealCard(player.handSet, card);
     var playerHand = playerService.getCurrentHand(player);
     var isBlackJack = checkBlackJack(playerHand);
     return isBlackJack;
@@ -91,6 +90,8 @@ const stand = (player) => {
 };
 
 module.exports = {
+    canDouble,
+    canSplit,
     checkBlackJack,
     double,
     hit,

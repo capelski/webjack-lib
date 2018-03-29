@@ -57,8 +57,13 @@ const configureRouter = (middleware) => {
 			return res.send(JSON.stringify({message: "No game created"}));
 		}
 		else {
-        	gameService.makeDecision(game, playerId, decision);
-            return res.send(JSON.stringify(game.playerSet));
+			try {
+				gameService.makeDecision(game, playerId, decision);
+				return res.send(JSON.stringify(game.playerSet));
+			}
+            catch(exception) {
+				return res.status(400).send(exception);
+			}
 		}
     });
 
