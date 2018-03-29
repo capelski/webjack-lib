@@ -9,22 +9,6 @@ const playerSetService = require('./player-set-service');
 // TODO Move resolve to game-service
 // TODO Remove rules-service
 
-const checkBlackJack = (playerHand) => {
-    if (playerHand.score === 21 && playerHand.cards.length === 2) {
-        handService.setStatus(playerHand, 'BlackJack');
-        return true;
-    }
-    return false;
-};
-
-const checkMaxScore = (playerHand) => {
-    if (playerHand.score > 21) {
-        handService.setStatus(playerHand, 'Loses');
-        return true;
-    }
-    return false;
-};
-
 const canDouble = (player) => {
     var playerHand = handSetService.getCurrentHand(player.handSet);
     return playerHand.score > 8 && playerHand.score < 12;
@@ -34,17 +18,17 @@ const double = (player, card) => {
     handSetService.doubleCurrentHand(player.handSet);        
     var handScore = handSetService.dealCard(player.handSet, card);
     var playerHand = handSetService.getCurrentHand(player.handSet);
-    var isBurned = checkMaxScore(playerHand);
-    if (!isBurned) {
+    var isOverMaxScore = handService.isOverMaxScore(playerHand);
+    if (!isOverMaxScore) {
         handService.setStatus(playerHand, 'Played');
-    }    
+    }
 };
 
 const hit = (player, card) => {
     var handScore = handSetService.dealCard(player.handSet, card);
     var playerHand = handSetService.getCurrentHand(player.handSet);
-    var isBurned = checkMaxScore(playerHand);
-    return isBurned;
+    var isOverMaxScore = handService.isOverMaxScore(playerHand);
+    return isOverMaxScore;
 };
 
 const resolve = (player, dealerScore) => {
@@ -80,7 +64,7 @@ const split = (player, card) => {
     handSetService.splitCurrentHand(player.handSet);
     var handScore = handSetService.dealCard(player.handSet, card);
     var playerHand = handSetService.getCurrentHand(player.handSet);
-    var isBlackJack = checkBlackJack(playerHand);
+    var isBlackJack = handService.isBlackJack(playerHand);
     return isBlackJack;
 };
 
@@ -92,7 +76,6 @@ const stand = (player) => {
 module.exports = {
     canDouble,
     canSplit,
-    checkBlackJack,
     double,
     hit,
     resolve,

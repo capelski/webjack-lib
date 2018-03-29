@@ -103,7 +103,7 @@ const startNextHand = (game, player) => {
     if (nextHand) {
         var handScore = handSetService.dealCard(player.handSet, cardSetService.getNextCard(game.cardSet));
         var playerHand = handSetService.getCurrentHand(player.handSet);
-        var isBlackJack = rulesService.checkBlackJack(playerHand);
+        var isBlackJack = handService.isBlackJack(playerHand);
         if (isBlackJack) {
             startNextHand(game, player);
         }
@@ -125,7 +125,7 @@ const startRound = (game) => {
         if (player !== playerSetService.getDealer(game.playerSet)) {
             var handScore = handSetService.dealCard(player.handSet, cardSetService.getNextCard(game.cardSet));
             var playerHand = handSetService.getCurrentHand(player.handSet);
-            rulesService.checkBlackJack(playerHand);
+            handService.isBlackJack(playerHand);
         }
     });
 
