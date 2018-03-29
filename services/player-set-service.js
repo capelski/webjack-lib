@@ -9,7 +9,7 @@ const addPlayer = (playerSet, playerId) => {
     // TODO Check max capacity
     // TODO Check the game status and add only when no round
     var player = playerService.create(playerId);
-    // TODO push after removing the dealer
+    // TODO push after removing the dealer from players array
     playerSet.players.unshift(player);
 };
 
@@ -31,34 +31,6 @@ const create = (ownerId) => {
 // TODO Remove
 const endRound = (playerSet) => {
     playerSet.currentIndex = null;
-};
-
-// TODO Move to game-service
-const ensurePlayer = (playerSet, playerId) => {
-    if (playerSet.currentIndex == null) {
-        throw 'No round has been started yet!';
-    }
-    var currentPlayer = playerSet.players[playerSet.currentIndex];
-    if (!currentPlayer) {
-        throw 'There is no player identified by ' + playerId;
-    }
-    else if (currentPlayer.id !== playerId) {
-        var ensuredPlayer = getPlayerById(playerSet, playerId);
-        throw ensuredPlayer.name + ' can\'t play now! It is ' + currentPlayer.name + '\'s turn';
-    }
-    else if (currentPlayer.id === getDealer(playerSet).id) {
-        throw 'Can\'t play dealer\'s turn!';
-    }
-    else {
-        try {
-            handSetService.getCurrentHand(currentPlayer.handSet);
-            return currentPlayer;
-        }
-        catch (error) {
-            startNextTurn(playerSet);
-            throw 'Player ' + currentPlayer.name + ' can\'t play anymore this round!';
-        }            
-    }        
 };
 
 // TODO Adapt to recieve also a playerId. Rename to getPlayerById
@@ -108,7 +80,6 @@ module.exports = {
     collectPlayedCards,
     create,
     endRound,
-    ensurePlayer,
     getDealer,
     getPlayerById,
     isDealerTurn,

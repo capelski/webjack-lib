@@ -4,7 +4,7 @@ const handService = require('./hand-service');
 const handSetService = require('./hand-set-service');
 
 const double = (player, card) => {
-    handSetService.doubleCurrentHand(player.handSet);        
+    handSetService.doubleCurrentHand(player.handSet);
     var handScore = handSetService.dealCard(player.handSet, card);
     var playerHand = handSetService.getCurrentHand(player.handSet);
     var isOverMaxScore = handService.isOverMaxScore(playerHand);

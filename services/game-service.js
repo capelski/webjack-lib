@@ -9,6 +9,9 @@ const handSetService = require('./hand-set-service');
 const playerService = require('./player-service');
 const handService = require('./hand-service');
 
+// TODO Rename to table-service
+// Extract logic into orchestration-service
+
 let games = [];
 
 const collectPlayedCards = (game) => {
@@ -47,6 +50,33 @@ const endRound = (game) => {
     playerSetService.endRound(game.playerSet);
 };
 
+const ensurePlayer = (playerSet, playerId) => {
+    if (playerSet.currentIndex == null) {
+        throw 'No round has been started yet!';
+    }
+    var currentPlayer = playerSet.players[playerSet.currentIndex];
+    if (!currentPlayer) {
+        throw 'There is no player identified by ' + playerId;
+    }
+    else if (currentPlayer.id !== playerId) {
+        var ensuredPlayer = playerSetService.getPlayerById(playerSet, playerId);
+        throw ensuredPlayer.name + ' can\'t play now! It is ' + currentPlayer.name + '\'s turn';
+    }
+    else if (currentPlayer.id === playerSetService.getDealer(playerSet).id) {
+        throw 'Can\'t play dealer\'s turn!';
+    }
+    else {
+        try {
+            handSetService.getCurrentHand(currentPlayer.handSet);
+            return currentPlayer;
+        }
+        catch (error) {
+            playerSetService.startNextTurn(playerSet);
+            throw 'Player ' + currentPlayer.name + ' can\'t play anymore this round!';
+        }            
+    }        
+};
+
 const getGame = (gameId) => {
     return games[gameId];
 };
@@ -63,7 +93,7 @@ const joinGame = (gameId, playerId) => {
 };
 
 const makeDecision = (game, playerId, action) => {
-    var player = playerSetService.ensurePlayer(game.playerSet, playerId);
+    var player = ensurePlayer(game.playerSet, playerId);
     switch (action) {
         case 'Double': {
             var playerHand = handSetService.getCurrentHand(player.handSet);
