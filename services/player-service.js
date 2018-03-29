@@ -1,10 +1,18 @@
 'use strict';
 
 const Player = require('../models/player');
+const handService = require('./hand-service');
 const handSetService = require('./hand-set-service');
 
 const create = (id, name) => {
     return new Player(id, name);
+};
+
+const resolveHands = (player, dealerScore) => {
+    player.handSet.hands.forEach(hand => handService.resolve(hand, dealerScore));
+    // TODO Move following to handService?
+    var earningRate = handSetService.updateEarningRate(player.handSet);
+    player.earningRate += earningRate;
 };
 
 const startRound = (player) => {
@@ -12,13 +20,8 @@ const startRound = (player) => {
     player.handSet = handSet;
 };
 
-const updateEarningRate = (player) => {
-    var earningRate = handSetService.updateEarningRate(player.handSet);
-    player.earningRate += earningRate;
-};
-
 module.exports = {
     create,
-    startRound,
-    updateEarningRate
+    resolveHands,
+    startRound
 };

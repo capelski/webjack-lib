@@ -7,7 +7,7 @@ const playerSetService = require('./player-set-service');
 const rulesService = require('./rules-service');
 const handSetService = require('./hand-set-service');
 const playerService = require('./player-service');
-const handService = require('./hand-service'); // TODO Remove
+const handService = require('./hand-service');
 
 let games = [];
 
@@ -40,7 +40,7 @@ const endRound = (game) => {
 
     js.iterate(game.playerSet.players, (player, key) => {            
         if (player !== playerSetService.getDealer(game.playerSet)) {
-            rulesService.resolve(player, dealerScore);
+            playerService.resolveHands(player, dealerScore);
         }
     });
 

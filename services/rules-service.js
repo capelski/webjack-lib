@@ -2,12 +2,6 @@
 
 const handService = require('./hand-service');
 const handSetService = require('./hand-set-service');
-const playerService = require('./player-service');
-const playerSetService = require('./player-set-service');
-
-// TODO Move all but resolve to handSetService
-// TODO Move resolve to game-service
-// TODO Remove rules-service
 
 const double = (player, card) => {
     handSetService.doubleCurrentHand(player.handSet);        
@@ -26,30 +20,6 @@ const hit = (player, card) => {
     return isOverMaxScore;
 };
 
-const resolve = (player, dealerScore) => {
-    player.handSet.hands.forEach((hand) => {
-        var status;
-
-        if (hand.score > 21) {
-            status = 'Loses';
-        }
-        else if (hand.score === 21 && hand.cards.length === 2) {
-            status = 'BlackJack';
-        }
-        else if (dealerScore > 21) {
-            status = 'Wins';
-        }
-        else if (hand.score === dealerScore) {
-            status = 'Ties';
-        }
-        else {
-            status = hand.score > dealerScore ? 'Wins' : 'Loses';
-        }
-        handService.setStatus(hand, status);
-    });
-    playerService.updateEarningRate(player);        
-};
-
 const split = (player, card) => {
     handSetService.splitCurrentHand(player.handSet);
     var handScore = handSetService.dealCard(player.handSet, card);
@@ -66,7 +36,6 @@ const stand = (player) => {
 module.exports = {
     double,
     hit,
-    resolve,
     split,
     stand
 };
