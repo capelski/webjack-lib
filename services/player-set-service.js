@@ -3,6 +3,7 @@
 const js = require('../utils/js-generics');
 const PlayerSet = require('../models/player-set');
 const playerService = require('./player-service');
+const handSetService = require('./hand-set-service');
 
 const addPlayer = (playerSet, playerId) => {
     // TODO Check max capacity
@@ -13,7 +14,7 @@ const addPlayer = (playerSet, playerId) => {
 };
 
 const collectPlayedCards = (playerSet) => {
-    var playedCards = playerSet.players.reduce((cards, player) => cards.concat(playerService.clearRound(player)), []);
+    var playedCards = playerSet.players.reduce((cards, player) => cards.concat(handSetService.collectPlayedCards(player.handSet)), []);
     return playedCards;
 };
 

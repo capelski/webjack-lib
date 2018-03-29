@@ -11,7 +11,7 @@ const handService = require('./hand-service'); // TODO Remove
 
 let games = [];
 
-const clearRound = (game) => {
+const collectPlayedCards = (game) => {
     var playedCards = playerSetService.collectPlayedCards(game.playerSet);
     cardSetService.addPlayedCards(game.cardSet, playedCards);
 };
@@ -127,7 +127,7 @@ const startRound = (game) => {
 };
 
 module.exports = {
-    clearRound,
+    collectPlayedCards,
     create,
     endRound,
     getGame,

@@ -9,7 +9,7 @@ const gameService = require('../services/game-service');
     gameService.startRound(game);
     gameService.makeDecision(game, playerId, 'Stand');
     gameService.endRound(game);
-    gameService.clearRound(game);
+    gameService.collectPlayedCards(game);
 
     console.log('Test successfully executed')
 })();

@@ -10,7 +10,7 @@ const dealCard = (handSet, card) => {
     return handScore;
 };
 
-const clearRound = (handSet) => {
+const collectPlayedCards = (handSet) => {
     var cards = [];
     js.iterate(handSet.hands, (hand) => {
         cards = cards.concat(handService.getCards(hand));
@@ -80,7 +80,7 @@ const updateEarningRate = (handSet) => {
 
 module.exports = {
     dealCard,
-    clearRound,
+    collectPlayedCards,
     create,
     doubleCurrentHand,
     getCurrentHand,

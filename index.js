@@ -81,7 +81,7 @@ const configureRouter = (middleware) => {
 			return res.send(JSON.stringify({message: "No game created"}));
 		}
 		else {
-        	gameService.clearRound(game);
+        	gameService.collectPlayedCards(game);
             return res.send(JSON.stringify(game.playerSet));
 		}
     });
