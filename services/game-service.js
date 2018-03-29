@@ -71,7 +71,7 @@ const ensurePlayer = (playerSet, playerId) => {
             return currentPlayer;
         }
         catch (error) {
-            playerSetService.startNextTurn(playerSet);
+            startNextTurn(playerSet);
             throw 'Player ' + currentPlayer.name + ' can\'t play anymore this round!';
         }            
     }        
@@ -141,8 +141,20 @@ const startNextHand = (game, player) => {
         }
     }
     else {
-        playerSetService.startNextTurn(game.playerSet);
+        startNextTurn(game.playerSet);
     }
+};
+
+const startNextTurn = (playerSet) => {
+    var nextPlayer = null;
+    while (!nextPlayer && (playerSet.currentIndex < playerSet.players.length - 1)) {            
+        nextPlayer = playerSet.players[playerSet.currentIndex];
+        if (!handSetService.hasUnplayedHand(nextPlayer.handSet)) {
+            nextPlayer = null;
+            playerSet.currentIndex++;
+        }            
+    }
+    return nextPlayer;
 };
 
 const startRound = (game) => {
@@ -161,7 +173,8 @@ const startRound = (game) => {
         }
     });
 
-    playerSetService.startRound(game.playerSet);
+    game.playerSet.currentIndex = 0;
+    startNextTurn(game.playerSet);
 };
 
 module.exports = {

@@ -5,6 +5,8 @@ const PlayerSet = require('../models/player-set');
 const playerService = require('./player-service');
 const handSetService = require('./hand-set-service');
 
+// TODO Add queuedPlayers
+
 const addPlayer = (playerSet, playerId) => {
     // TODO Check max capacity
     // TODO Check the game status and add only when no round
@@ -56,25 +58,6 @@ const getPlayerById = (playerSet, playerId) => {
 
 const isDealerTurn = (playerSet) => getCurrentPlayer(playerSet).id === getDealer(playerSet).id;
 
-// TODO Move to game-service
-const startNextTurn = (playerSet) => {
-    var nextPlayer = null;
-    while (!nextPlayer && (playerSet.currentIndex < playerSet.players.length - 1)) {            
-        nextPlayer = playerSet.players[playerSet.currentIndex];
-        if (!handSetService.hasUnplayedHand(nextPlayer.handSet)) {
-            nextPlayer = null;
-            playerSet.currentIndex++;
-        }            
-    }
-    return nextPlayer;
-};
-
-// TODO Remove
-const startRound = (playerSet) => {
-    playerSet.currentIndex = 0;
-    startNextTurn(playerSet);
-};
-
 module.exports = {
     addPlayer,
     collectPlayedCards,
@@ -82,7 +65,5 @@ module.exports = {
     endRound,
     getDealer,
     getPlayerById,
-    isDealerTurn,
-    startNextTurn,
-    startRound
+    isDealerTurn
 };
