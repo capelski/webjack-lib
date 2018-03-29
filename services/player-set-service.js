@@ -51,7 +51,7 @@ const ensurePlayer = (playerSet, playerId) => {
     }
     else {
         try {
-            playerService.getCurrentHand(currentPlayer);
+            handSetService.getCurrentHand(currentPlayer.handSet);
             return currentPlayer;
         }
         catch (error) {

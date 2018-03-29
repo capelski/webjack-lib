@@ -7,10 +7,6 @@ const create = (id, name) => {
     return new Player(id, name);
 };
 
-const getCurrentHand = (player) => {
-    return handSetService.getCurrentHand(player.handSet);
-};
-
 const startRound = (player) => {
     var handSet = handSetService.create();
     player.handSet = handSet;
@@ -23,7 +19,6 @@ const updateEarningRate = (player) => {
 
 module.exports = {
     create,
-    getCurrentHand,
     startRound,
     updateEarningRate
 };

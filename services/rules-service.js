@@ -26,14 +26,14 @@ const checkMaxScore = (playerHand) => {
 };
 
 const canDouble = (player) => {
-    var playerHand = playerService.getCurrentHand(player);
+    var playerHand = handSetService.getCurrentHand(player.handSet);
     return playerHand.score > 8 && playerHand.score < 12;
 };
 
 const double = (player, card) => {
     handSetService.doubleCurrentHand(player.handSet);        
     var handScore = handSetService.dealCard(player.handSet, card);
-    var playerHand = playerService.getCurrentHand(player);
+    var playerHand = handSetService.getCurrentHand(player.handSet);
     var isBurned = checkMaxScore(playerHand);
     if (!isBurned) {
         handService.setStatus(playerHand, 'Played');
@@ -42,7 +42,7 @@ const double = (player, card) => {
 
 const hit = (player, card) => {
     var handScore = handSetService.dealCard(player.handSet, card);
-    var playerHand = playerService.getCurrentHand(player);
+    var playerHand = handSetService.getCurrentHand(player.handSet);
     var isBurned = checkMaxScore(playerHand);
     return isBurned;
 };
@@ -79,13 +79,13 @@ const canSplit = (player) => {
 const split = (player, card) => {
     handSetService.splitCurrentHand(player.handSet);
     var handScore = handSetService.dealCard(player.handSet, card);
-    var playerHand = playerService.getCurrentHand(player);
+    var playerHand = handSetService.getCurrentHand(player.handSet);
     var isBlackJack = checkBlackJack(playerHand);
     return isBlackJack;
 };
 
 const stand = (player) => {
-    var playerHand = playerService.getCurrentHand(player);
+    var playerHand = handSetService.getCurrentHand(player.handSet);
     handService.setStatus(playerHand, 'Played');
 };
 
