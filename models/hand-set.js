@@ -2,7 +2,7 @@
 
 function HandSet() {
     this.currentHand = null;
-    this.earningRate = null;
+    this.earningRate = 0;
     this.hands = [];
 }
 

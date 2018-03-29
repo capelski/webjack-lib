@@ -15,15 +15,16 @@ const collectPlayedCards = (handSet) => {
     js.iterate(handSet.hands, (hand) => {
         cards = cards.concat(handService.getCards(hand));
     });
-
-    handSet.currentHand = null;
-    handSet.hands = [];
-    handSet.earningRate = null;
-
     return cards;
 };
 
-const create = () =>  new HandSet();
+const create = () => {
+    var handSet = new HandSet();
+    var hand = handService.create();
+    handSet.hands.push(hand);
+    handSet.currentHand = 0;
+    return handSet;
+}
 
 const doubleCurrentHand = (handSet) => {
     var currentHand = getCurrentHand(handSet);
@@ -48,11 +49,6 @@ const hasUnplayedHand = (handSet) => {
         pendingHand = pendingHand || (hand.status === 'Unplayed');
     });
     return pendingHand;
-};
-
-const startRound = (handSet) => {
-    handSet.currentHand = 0;
-    handSet.hands.push(handService.create());
 };
 
 const splitCurrentHand = (handSet) => {
@@ -87,6 +83,5 @@ module.exports = {
     getNextHand,
     hasUnplayedHand,
     splitCurrentHand,
-    startRound,
     updateEarningRate
 };

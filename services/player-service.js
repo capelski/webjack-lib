@@ -4,8 +4,7 @@ const Player = require('../models/player');
 const handSetService = require('./hand-set-service');
 
 const create = (id, name) => {
-    var handSet = handSetService.create();
-    return new Player(id, name, handSet);
+    return new Player(id, name);
 };
 
 const getCurrentHand = (player) => {
@@ -13,7 +12,8 @@ const getCurrentHand = (player) => {
 };
 
 const startRound = (player) => {
-    return handSetService.startRound(player.handSet);
+    var handSet = handSetService.create();
+    player.handSet = handSet;
 };
 
 const updateEarningRate = (player) => {

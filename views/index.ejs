@@ -36,8 +36,11 @@
             var data = JSON.parse(stringifiedData);
             if (data.players) {
                 data.players.forEach(p => {
-                    var serializedHands = p.handSet.hands.reduce((sH, hand) =>
-                        sH + hand.cards.reduce((sC, card) => sC + card.symbol + card.suit + ', ', '') + ' (' + hand.score + ') ' + hand.status + ' / ', '');
+                    var serializedHands = '';
+                    if (p.handSet != null) {
+                        serializedHands = p.handSet.hands.reduce((sH, hand) =>
+                            sH + hand.cards.reduce((sC, card) => sC + card.symbol + card.suit + ', ', '') + ' (' + hand.score + ') ' + hand.status + ' / ', '');
+                    }
                     results.innerHTML += p.name + ' (' + p.earningRate + '): ' + serializedHands;
                     if (data.currentIndex != null && data.players[data.currentIndex] == p && p.id == playerId) {
                         results.innerHTML += '<button type="button" onclick="hit();">Hit</button>' +

@@ -15,6 +15,7 @@ const addPlayer = (playerSet, playerId) => {
 
 const collectPlayedCards = (playerSet) => {
     var playedCards = playerSet.players.reduce((cards, player) => cards.concat(handSetService.collectPlayedCards(player.handSet)), []);
+    playerSet.players.forEach(player => player.handSet = null);
     return playedCards;
 };
 
