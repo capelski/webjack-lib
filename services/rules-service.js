@@ -5,6 +5,10 @@ const handSetService = require('./hand-set-service');
 const playerService = require('./player-service');
 const playerSetService = require('./player-set-service');
 
+// TODO Move all but resolve to handSetService
+// TODO Move resolve to game-service
+// TODO Remove rules-service
+
 const checkBlackJack = (playerHand) => {
     if (playerHand.score === 21 && playerHand.cards.length === 2) {
         handService.setStatus(playerHand, 'BlackJack');
@@ -28,7 +32,8 @@ const double = (player, cardGetter) => {
     }
     handSetService.doubleCurrentHand(player.handSet);        
 
-    var handScore = playerService.dealCard(player,  cardGetter());
+    var handScore = handSetService.dealCard(player.handSet, cardGetter());
+    handSetService.dealCard(player.handSet, cardSetService.getNextCard(game.cardSet))
     playerHand = playerService.getCurrentHand(player);
     var isBurned = checkMaxScore(playerHand);
     if (!isBurned) {
@@ -37,7 +42,7 @@ const double = (player, cardGetter) => {
 };
 
 const hit = (player, cardGetter) => {
-    var handScore = playerService.dealCard(player, cardGetter());
+    var handScore = handSetService.dealCard(player.handSet, cardGetter());
     var playerHand = playerService.getCurrentHand(player);
     var isBurned = checkMaxScore(playerHand);
     return isBurned;
@@ -74,7 +79,7 @@ const split = (player, cardGetter) => {
     }
     handSetService.splitCurrentHand(player.handSet);
 
-    var handScore = playerService.dealCard(player, cardGetter());
+    var handScore = handSetService.dealCard(player.handSet, cardGetter());
     var playerHand = playerService.getCurrentHand(player);
     var isBlackJack = checkBlackJack(playerHand);
     return isBlackJack;

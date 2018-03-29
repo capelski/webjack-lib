@@ -13,11 +13,6 @@ const create = (id, name) => {
     return new Player(id, name, handSet);
 };
 
-const dealCard = (player, card) => {
-    var handScore = handSetService.addCard(player.handSet, card);
-    return handScore;
-};
-
 const getCurrentHand = (player) => {
     return handSetService.getCurrentHand(player.handSet);
 };
@@ -38,7 +33,6 @@ const updateEarningRate = (player) => {
 module.exports = {
     clearRound,
     create,
-    dealCard,
     getCurrentHand,
     hasUnplayedHand,
     startRound,

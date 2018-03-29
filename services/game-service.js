@@ -35,8 +35,7 @@ const endRound = (game) => {
     var dealerHand = playerService.getCurrentHand(dealer);
     var dealerScore = handService.getScore(dealerHand); // TODO Use score property
     while (dealerScore < 17) {
-        playerService.dealCard(dealer, cardSetService.getNextCard(game.cardSet));
-        dealerScore = handService.getScore(dealerHand);
+        dealerScore = handSetService.dealCard(dealer.handSet, cardSetService.getNextCard(game.cardSet));
     }
 
     js.iterate(game.playerSet.players, (player, key) => {            
@@ -96,7 +95,7 @@ const makeDecision = (game, playerId, action) => {
 const startNextHand = (game, player) => {
     var nextHand = handSetService.getNextHand(player.handSet);
     if (nextHand) {
-        var handScore = playerService.dealCard(player, cardSetService.getNextCard(game.cardSet));
+        var handScore = handSetService.dealCard(player.handSet, cardSetService.getNextCard(game.cardSet));
         var playerHand = playerService.getCurrentHand(player);
         var isBlackJack = rulesService.checkBlackJack(playerHand);
         if (isBlackJack) {
@@ -113,12 +112,12 @@ const startRound = (game) => {
 
     game.playerSet.players.forEach(player => {
         playerService.startRound(player);
-        playerService.dealCard(player, cardSetService.getNextCard(game.cardSet));
+        handSetService.dealCard(player.handSet, cardSetService.getNextCard(game.cardSet));
     });
 
     game.playerSet.players.forEach(player => {
         if (player !== playerSetService.getDealer(game.playerSet)) {
-            var handScore = playerService.dealCard(player, cardSetService.getNextCard(game.cardSet));
+            var handScore = handSetService.dealCard(player.handSet, cardSetService.getNextCard(game.cardSet));
             var playerHand = playerService.getCurrentHand(player);
             rulesService.checkBlackJack(playerHand);
         }

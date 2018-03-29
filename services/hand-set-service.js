@@ -4,7 +4,7 @@ const js = require('../utils/js-generics');
 const HandSet = require('../models/hand-set');
 const handService = require('./hand-service');
 
-const addCard = (handSet, card) => {
+const dealCard = (handSet, card) => {
     var currentHand = getCurrentHand(handSet);
     var handScore = handService.addCard(currentHand, card);
     return handScore;
@@ -79,7 +79,7 @@ const updateEarningRate = (handSet) => {
 };
 
 module.exports = {
-    addCard,
+    dealCard,
     clearRound,
     create,
     doubleCurrentHand,
