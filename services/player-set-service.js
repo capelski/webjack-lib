@@ -4,6 +4,7 @@ const js = require('../utils/js-generics');
 const PlayerSet = require('../models/player-set');
 const playerService = require('./player-service');
 const handSetService = require('./hand-set-service');
+const uuidV4 = require('uuid/v4');
 
 // TODO Add queuedPlayers
 
@@ -21,11 +22,9 @@ const collectPlayedCards = (playerSet) => {
     return playedCards;
 };
 
-const create = (ownerId) => {
-    var dealer = playerService.create(0, 'Dealer');
-    var owner = playerService.create(ownerId, 'XXXX');
-    
-    var playerSet = new PlayerSet(dealer, [owner]);
+const create = () => {
+    var dealer = playerService.create(uuidV4(), 'Dealer');    
+    var playerSet = new PlayerSet(dealer);
 
     return playerSet;
 };

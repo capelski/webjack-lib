@@ -12,15 +12,16 @@ const configureRouter = (middleware) => {
 	// TODO Instead of getting the playerId by parameter, set it by session
 
 	router.get('/create', middleware.session, function (req, res, next) {
+		var tableId = tableService.create();
 		var playerId = uuidV4();
-		var tableId = tableService.create(playerId);
+		tableService.joinTable(tableId, playerId);
 		return res.send(JSON.stringify({ tableId, playerId }));
 	});
 
 	router.get('/join', middleware.session, function (req, res, next) {
 		var tableId = req.query.tableId;
 		var playerId = uuidV4();
-		var table = tableService.joinTable(tableId, playerId);
+		tableService.joinTable(tableId, playerId);
 		return res.send(playerId);
 	});
 

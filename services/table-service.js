@@ -19,10 +19,10 @@ const collectPlayedCards = (table) => {
     cardSetService.addPlayedCards(table.cardSet, playedCards);
 };
 
-const create = (ownerId) => {
+const create = () => {
     var tableId = uuidV4();
     var cardSet = cardSetService.create();
-    var playerSet = playerSetService.create(ownerId);
+    var playerSet = playerSetService.create();
 
     var table = new Table(tableId, cardSet, playerSet);
     tables.push(table);

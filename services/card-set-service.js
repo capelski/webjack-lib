@@ -18,7 +18,8 @@ const create = (decksNumber) => {
     decksNumber = decksNumber || 4;
 
     var cardSet = new CardSet();
-    cardSet.availableCards = (new Array(decksNumber, null)).map(x => cardService.createDeck()).reduce((x, y) => x.concat(y), []);
+    cardSet.availableCards = (new Array(decksNumber, null))
+        .map(x => cardService.createDeck()).reduce((x, y) => x.concat(y), []);
     cardSet.playedCards = [];
 
     js.shuffleArray(cardSet.availableCards);

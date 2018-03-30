@@ -1,9 +1,9 @@
 'use strict';
 
-function PlayerSet(dealer, players) {
+function PlayerSet(dealer) {
     // TODO Remove property currentIndex
     this.currentIndex = null;
-    this.players = (players || []).concat([dealer]);
+    this.players = [dealer];
 }
 
 module.exports = PlayerSet;

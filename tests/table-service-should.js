@@ -2,8 +2,9 @@ const uuidV4 = require('uuid/v4');
 const tableService = require('../services/table-service');
 
 (function be_able_to_create_a_table_and_play_a_round() {
+    var tableId = tableService.create();
     var playerId = uuidV4();
-    var tableId = tableService.create(playerId);
+    tableService.joinTable(tableId, playerId);
     var table = tableService.getTable(tableId);
 
     tableService.startRound(table);
