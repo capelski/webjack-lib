@@ -54,49 +54,48 @@
         }
 
         function clearRound(){
-            $.get('/clear-round?tableId=' + tableId).then(render);
+            $.get('/blackjack/clear-round?tableId=' + tableId).then(render);
         }
 
         function createGame(){
-            $.get('/create').then(response => {
+            $.get('/blackjack/create').then(response => {
                 var data = JSON.parse(response);
                 tableId = data.tableId;
                 playerId = data.playerId;
-                setInterval(() =>  $.get('/get?tableId=' + tableId).then(render), 4000);
+                setInterval(() =>  $.get('/blackjack/get?tableId=' + tableId).then(render), 4000);
             });
         }
 
         function double(){
-            $.get('/make-decision?tableId=' + tableId + '&playerId=' + playerId + '&decision=Double').then(render);
+            $.get('/blackjack/make-decision?tableId=' + tableId + '&playerId=' + playerId + '&decision=Double').then(render);
         }
 
         function endRound(){
-            $.get('/end-round?tableId=' + tableId).then(render);
+            $.get('/blackjack/end-round?tableId=' + tableId).then(render);
         }
 
         function hit(){
-            $.get('/make-decision?tableId=' + tableId + '&playerId=' + playerId + '&decision=Hit').then(render);
+            $.get('/blackjack/make-decision?tableId=' + tableId + '&playerId=' + playerId + '&decision=Hit').then(render);
         }
 
         function joinGame(){
             tableId = $('#table-id').val();
-            $.get('/join?tableId=' + tableId).then(response => {
+            $.get('/blackjack/join?tableId=' + tableId).then(response => {
                 playerId = response;
-                $.get('/get?tableId=' + tableId).then(render);
+                setInterval(() =>  $.get('/blackjack/get?tableId=' + tableId).then(render), 4000);
             });
-            setInterval(() =>  $.get('/get?tableId=' + tableId).then(render), 4000);
         }
 
         function split(){
-            $.get('/make-decision?tableId=' + tableId + '&playerId=' + playerId + '&decision=Split').then(render);
+            $.get('/blackjack/make-decision?tableId=' + tableId + '&playerId=' + playerId + '&decision=Split').then(render);
         }
 
         function stand(){
-            $.get('/make-decision?tableId=' + tableId + '&playerId=' + playerId + '&decision=Stand').then(render);
+            $.get('/blackjack/make-decision?tableId=' + tableId + '&playerId=' + playerId + '&decision=Stand').then(render);
         }
 
         function startRound(){
-            $.get('/start-round?tableId=' + tableId).then(render);
+            $.get('/blackjack/start-round?tableId=' + tableId).then(render);
         }
     </script>
 
