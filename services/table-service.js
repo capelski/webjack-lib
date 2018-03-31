@@ -1,7 +1,6 @@
 'use strict';
 
 const js = require('../utils/js-generics');
-const CardSet = require('../models/card-set');
 const Table = require('../models/table');
 const cardService = require('./card-service');
 const playerSetService = require('./player-set-service');
@@ -12,12 +11,12 @@ let tables = [];
 // TODO Exit table functionality
 
 const addPlayedCards = (table, playedCards) => {
-    table.cardSet.playedCards = table.cardSet.playedCards.concat(playedCards);
+    table.playedCards = table.playedCards.concat(playedCards);
 
-    if (table.cardSet.playedCards.length > 80) {
-        table.cardSet.availableCards = table.cardSet.availableCards.concat(table.cardSet.playedCards);
-        table.cardSet.playedCards = [];
-        js.shuffleArray(table.cardSet.availableCards);
+    if (table.playedCards.length > 80) {
+        table.availableCards = table.availableCards.concat(table.playedCards);
+        table.playedCards = [];
+        js.shuffleArray(table.availableCards);
     }
 };
 
@@ -30,19 +29,18 @@ const create = () => {
         .map(x => cardService.createDeck())
         .reduce((x, y) => x.concat(y), []);
     js.shuffleArray(cards);
-    var cardSet = new CardSet(cards);
 
-    var table = new Table(tableId, cardSet, playerSet);
+    var table = new Table(tableId, cards, playerSet);
     tables.push(table);
 
     return table;
 };
 
 const getNextCard = (table) => {
-    if (table.cardSet.availableCards.length === 0) {
+    if (table.availableCards.length === 0) {
         throw 'No more cards left!';
     }
-    var nextCard = table.cardSet.availableCards.splice(0, 1)[0];
+    var nextCard = table.availableCards.splice(0, 1)[0];
     return nextCard;
 };
 
