@@ -11,20 +11,22 @@ const configureRouter = (middleware) => {
 			playerId = req.session.playerId = uuidV4();
 		}
 
-		res.render('index.ejs');
+		var tableId = req.session.tableId;
+		res.render('index.ejs', { tableId });
 	});
 
 	router.get('/join', middleware.session, function (req, res, next) {
 		var playerId = req.session.playerId;
 		var tableId = tableService.joinTable(playerId);
+		req.session.tableId = tableId;
 		return res.send(tableId);
 	});
 
 	router.get('/get', middleware.session, function (req, res, next) {
-		var tableId = req.query.tableId;
+		var tableId = req.session.tableId;
 		var table = tableService.getTable(tableId);
 		if (!table) {
-			return res.send(JSON.stringify({message: "No table created"}));
+			return res.send(JSON.stringify({message: "No table was joint"}));
 		}
 		else {
 			return res.send(JSON.stringify(table.playerSet));
@@ -32,7 +34,7 @@ const configureRouter = (middleware) => {
 	});
 
 	router.get('/start-round', middleware.session, function (req, res, next) {
-		var tableId = req.query.tableId;
+		var tableId = req.session.tableId;
 		var table = tableService.getTable(tableId);
 		if (!table) {
 			return res.send(JSON.stringify({message: "No table created"}));
@@ -45,7 +47,7 @@ const configureRouter = (middleware) => {
 
 	router.get('/make-decision', middleware.session, function (req, res, next) {
 
-		var tableId = req.query.tableId;
+		var tableId = req.session.tableId;
 		var playerId = req.session.playerId;
 		var decision = req.query.decision;
 		var table = tableService.getTable(tableId);
@@ -64,7 +66,7 @@ const configureRouter = (middleware) => {
     });
 
     router.get('/end-round', middleware.session, function (req, res, next) {
-    	var tableId = req.query.tableId;
+    	var tableId = req.session.tableId;
 		var table = tableService.getTable(tableId);
 		if (!table) {
 			return res.send(JSON.stringify({message: "No table created"}));
@@ -76,7 +78,7 @@ const configureRouter = (middleware) => {
     });
 
     router.get('/clear-round', middleware.session, function (req, res, next) {
-    	var tableId = req.query.tableId;
+    	var tableId = req.session.tableId;
 		var table = tableService.getTable(tableId);
 		if (!table) {
 			return res.send(JSON.stringify({message: "No table created"}));
