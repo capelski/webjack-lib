@@ -29,40 +29,42 @@ const create = () => {
     return playerSet;
 };
 
-// TODO Remove
-const endRound = (playerSet) => {
-    playerSet.currentIndex = null;
-};
-
-// TODO Adapt to recieve also a playerId. Rename to getPlayerById
-const getCurrentPlayer = (playerSet) => {
-    return playerSet.players[playerSet.currentIndex];
-};
+const getActivePlayer = (playerSet) =>
+    playerSet.players.find(p => p.id === playerSet.activePlayerId);
 
 const getDealer = (playerSet) => {
     return playerSet.players[playerSet.players.length - 1];
 };
 
-const getPlayerById = (playerSet, playerId) => {
-    var player = null;
-    var index = 0;
-    while (!player && index < playerSet.players.length) {
-        if (playerSet.players[index].id === playerId) {
-            player = playerSet.players[index];
-        }
-        ++index;
-    }
-    return player;
-};
+const getPlayerById = (playerSet, playerId) => playerSet.players.find(p => p.id === playerId);
 
-const isDealerTurn = (playerSet) => getCurrentPlayer(playerSet).id === getDealer(playerSet).id;
+const isDealerTurn = (playerSet) => getActivePlayer(playerSet).id === getDealer(playerSet).id;
+
+const updateActivePlayer = (playerSet) => {
+    if (playerSet.activePlayerId == null) {
+        playerSet.activePlayerId = playerSet.players[0].id;
+    }
+    else {
+        // TODO Refactor turn code...
+        var nextPlayer = null;
+        var index = 0;
+        while (!nextPlayer && (index < playerSet.players.length)) {
+            if (handSetService.hasUnplayedHand(playerSet.players[index].handSet)) {
+                nextPlayer = playerSet.players[index];
+                playerSet.activePlayerId = nextPlayer.id;
+            }
+            ++index;
+        }
+    }
+};
 
 module.exports = {
     addPlayer,
     collectPlayedCards,
     create,
-    endRound,
+    getActivePlayer,
     getDealer,
     getPlayerById,
-    isDealerTurn
+    isDealerTurn,
+    updateActivePlayer
 };

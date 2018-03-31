@@ -1,8 +1,7 @@
 'use strict';
 
 function PlayerSet(dealer) {
-    // TODO Remove property currentIndex
-    this.currentIndex = null;
+    this.activePlayerId = null;
     this.players = [dealer];
 }
 

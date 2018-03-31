@@ -71,35 +71,32 @@ const endRound = (table) => {
             playerService.resolveHands(player, dealerScore);
         }
     });
-
-    playerSetService.endRound(table.playerSet);
 };
 
 const ensurePlayer = (playerSet, playerId) => {
-    if (playerSet.currentIndex == null) {
+    if (playerSet.activePlayerId == null) {
         throw 'No round has been started yet!';
     }
-    var currentPlayer = playerSet.players[playerSet.currentIndex];
-    if (!currentPlayer) {
-        throw 'There is no player identified by ' + playerId;
+
+    var currentPlayer = playerSetService.getActivePlayer(playerSet);
+
+    if (playerSet.activePlayerId !== playerId) {
+        throw 'Not allowed to play now. It is ' + currentPlayer.name + '\'s turn';
     }
-    else if (currentPlayer.id !== playerId) {
-        var ensuredPlayer = playerSetService.getPlayerById(playerSet, playerId);
-        throw ensuredPlayer.name + ' can\'t play now! It is ' + currentPlayer.name + '\'s turn';
-    }
-    else if (currentPlayer.id === playerSetService.getDealer(playerSet).id) {
+
+    // TODO This shouldn't be here..
+    if (currentPlayer.id === playerSetService.getDealer(playerSet).id) {
         throw 'Can\'t play dealer\'s turn!';
     }
-    else {
-        try {
-            handSetService.getCurrentHand(currentPlayer.handSet);
-            return currentPlayer;
-        }
-        catch (error) {
-            startNextTurn(playerSet);
-            throw 'Player ' + currentPlayer.name + ' can\'t play anymore this round!';
-        }            
-    }        
+
+    try {
+        handSetService.getCurrentHand(currentPlayer.handSet);
+        return currentPlayer;
+    }
+    catch (error) {
+        startNextTurn(playerSet);
+        throw 'Player ' + currentPlayer.name + ' can\'t play anymore this round!';
+    }
 };
 
 const makeDecision = (table, playerId, action) => {
@@ -148,18 +145,11 @@ const startNextHand = (table, player) => {
 };
 
 const startNextTurn = (playerSet) => {
-    var nextPlayer = null;
-    while (!nextPlayer && (playerSet.currentIndex < playerSet.players.length - 1)) {            
-        nextPlayer = playerSet.players[playerSet.currentIndex];
-        if (!handSetService.hasUnplayedHand(nextPlayer.handSet)) {
-            nextPlayer = null;
-            playerSet.currentIndex++;
-        }            
-    }
-    return nextPlayer;
+    playerSetService.updateActivePlayer(playerSet);
 };
 
 const startRound = (table) => {
+    // TODO Throw if no players
     // TODO Exclude dealer from players
 
     table.playerSet.players.forEach(player => {
@@ -175,7 +165,7 @@ const startRound = (table) => {
         }
     });
 
-    table.playerSet.currentIndex = 0;
+    table.playerSet.activePlayerId = playerSetService.updateActivePlayer(table.playerSet);
     startNextTurn(table.playerSet);
 };
 

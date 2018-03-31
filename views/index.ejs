@@ -41,7 +41,7 @@
                             sH + hand.cards.reduce((sC, card) => sC + card.symbol + card.suit + ', ', '') + ' (' + hand.score + ') ' + hand.status + ' / ', '');
                     }
                     results.innerHTML += p.name + ' (' + p.earningRate + '): ' + serializedHands;
-                    if (data.currentIndex != null && data.players[data.currentIndex] == p && p.id == playerId) {
+                    if (data.activePlayerId != null && data.players.find(p => p.id == data.activePlayerId).id == p.id && p.id == playerId) {
                         results.innerHTML += '<button type="button" onclick="hit();">Hit</button>' +
                                                 '<button type="button" onclick="stand();">Stand</button>' +
                                                 '<button type="button" onclick="double();">Double</button>' +
