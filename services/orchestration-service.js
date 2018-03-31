@@ -1,11 +1,11 @@
 'use strict';
 
 const js = require('../utils/js-generics');
-const cardSetService = require('./card-set-service');
 const playerService = require('./player-service');
 const playerSetService = require('./player-set-service');
 const handService = require('./hand-service');
 const handSetService = require('./hand-set-service');
+const tableService = require('./table-service');
 
 // TODO Control the game time
 
@@ -51,7 +51,7 @@ const stand = (player) => {
 
 const collectPlayedCards = (table) => {
     var playedCards = playerSetService.collectPlayedCards(table.playerSet);
-    cardSetService.addPlayedCards(table.cardSet, playedCards);
+    tableService.addPlayedCards(table, playedCards);
 };
 
 const endRound = (table) => {
@@ -63,7 +63,7 @@ const endRound = (table) => {
     var dealerHand = handSetService.getCurrentHand(dealer.handSet);
     var dealerScore = handService.getScore(dealerHand); // TODO Use score property
     while (dealerScore < 17) {
-        dealerScore = handSetService.dealCard(dealer.handSet, cardSetService.getNextCard(table.cardSet));
+        dealerScore = handSetService.dealCard(dealer.handSet, tableService.getNextCard(table));
     }
 
     js.iterate(table.playerSet.players, (player, key) => {            
@@ -106,19 +106,19 @@ const makeDecision = (table, playerId, action) => {
     var player = ensurePlayer(table.playerSet, playerId);
     switch (action) {
         case 'Double': {
-            double(player, cardSetService.getNextCard(table.cardSet));
+            double(player, tableService.getNextCard(table));
             startNextHand(table, player);
             break;
         }
         case 'Hit': {
-            var isOverMaxScore = hit(player, cardSetService.getNextCard(table.cardSet));
+            var isOverMaxScore = hit(player, tableService.getNextCard(table));
             if (isOverMaxScore) {
                 startNextHand(table, player);
             }
             break;
         }
         case 'Split': {
-            var isBlackJack = split(player, cardSetService.getNextCard(table.cardSet));
+            var isBlackJack = split(player, tableService.getNextCard(table));
             if (isBlackJack) {
                 startNextHand(table, player);
             }
@@ -135,7 +135,7 @@ const makeDecision = (table, playerId, action) => {
 const startNextHand = (table, player) => {
     var nextHand = handSetService.getNextHand(player.handSet);
     if (nextHand) {
-        var handScore = handSetService.dealCard(player.handSet, cardSetService.getNextCard(table.cardSet));
+        var handScore = handSetService.dealCard(player.handSet, tableService.getNextCard(table));
         var playerHand = handSetService.getCurrentHand(player.handSet);
         var isBlackJack = handService.isBlackJack(playerHand);
         if (isBlackJack) {
@@ -164,12 +164,12 @@ const startRound = (table) => {
 
     table.playerSet.players.forEach(player => {
         playerService.startRound(player);
-        handSetService.dealCard(player.handSet, cardSetService.getNextCard(table.cardSet));
+        handSetService.dealCard(player.handSet, tableService.getNextCard(table));
     });
 
     table.playerSet.players.forEach(player => {
         if (player !== playerSetService.getDealer(table.playerSet)) {
-            var handScore = handSetService.dealCard(player.handSet, cardSetService.getNextCard(table.cardSet));
+            var handScore = handSetService.dealCard(player.handSet, tableService.getNextCard(table));
             var playerHand = handSetService.getCurrentHand(player.handSet);
             handService.isBlackJack(playerHand);
         }
