@@ -41,13 +41,8 @@ const getCurrentHand = (handSet) => {
     return handSet.hands[handSet.currentHand];
 };
 
-const hasUnplayedHand = (handSet) => {
-    var pendingHand = false;
-    handSet.hands.forEach((hand) => {
-        pendingHand = pendingHand || (hand.status === 'Unplayed');
-    });
-    return pendingHand;
-};
+const hasUnplayedHand = (handSet) =>
+    handSet.hands.reduce((unplayedHand, hand) => unplayedHand || (hand.status === 'Unplayed'), false);
 
 const splitCurrentHand = (handSet) => {
     var currentHand = getCurrentHand(handSet);
