@@ -5,14 +5,17 @@ const tableService = require('./services/table-service');
 const uuidV4 = require('uuid/v4');
 
 const configureRouter = (middleware) => {
-	router.get('/', function (req, res, next) {
-		var playerId = uuidV4();
-		// TODO Set the playerId in the session
-		res.render('index.ejs', { playerId });
+	router.get('/', middleware.session, function (req, res, next) {
+		var playerId = req.session.playerId;
+		if (!playerId) {
+			playerId = req.session.playerId = uuidV4();
+		}
+
+		res.render('index.ejs');
 	});
 
 	router.get('/join', middleware.session, function (req, res, next) {
-		var playerId = req.query.playerId;
+		var playerId = req.session.playerId;
 		var tableId = tableService.joinTable(playerId);
 		return res.send(tableId);
 	});
@@ -43,7 +46,7 @@ const configureRouter = (middleware) => {
 	router.get('/make-decision', middleware.session, function (req, res, next) {
 
 		var tableId = req.query.tableId;
-		var playerId = req.query.playerId;
+		var playerId = req.session.playerId;
 		var decision = req.query.decision;
 		var table = tableService.getTable(tableId);
 		if (!table) {

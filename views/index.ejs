@@ -26,7 +26,6 @@
 
     <script>
         var tableId;
-        var playerId = '<%= playerId %>';
 
         function render(stringifiedData) {
             var results = document.getElementById('results');
@@ -41,7 +40,7 @@
                             sH + hand.cards.reduce((sC, card) => sC + card.symbol + card.suit + ', ', '') + ' (' + hand.score + ') ' + hand.status + ' / ', '');
                     }
                     results.innerHTML += p.name + ' (' + p.earningRate + '): ' + serializedHands;
-                    if (data.currentIndex != null && data.players[data.currentIndex] == p && p.id == playerId) {
+                    if (data.currentIndex != null && data.players[data.currentIndex] == p) {
                         results.innerHTML += '<button type="button" onclick="hit();">Hit</button>' +
                                                 '<button type="button" onclick="stand();">Stand</button>' +
                                                 '<button type="button" onclick="double();">Double</button>' +
@@ -57,7 +56,7 @@
         }
 
         function double(){
-            $.get('/blackjack/make-decision?tableId=' + tableId + '&playerId=' + playerId + '&decision=Double').then(render);
+            $.get('/blackjack/make-decision?tableId=' + tableId + '&decision=Double').then(render);
         }
 
         function endRound(){
@@ -65,11 +64,11 @@
         }
 
         function hit(){
-            $.get('/blackjack/make-decision?tableId=' + tableId + '&playerId=' + playerId + '&decision=Hit').then(render);
+            $.get('/blackjack/make-decision?tableId=' + tableId + '&decision=Hit').then(render);
         }
 
         function joinTable(){
-            $.get('/blackjack/join?playerId=' + playerId).then(response => {
+            $.get('/blackjack/join').then(response => {
                 tableId = response;
                 $('#join-table').hide();
                 setInterval(() =>  $.get('/blackjack/get?tableId=' + tableId).then(render), 4000);
@@ -77,11 +76,11 @@
         }
 
         function split(){
-            $.get('/blackjack/make-decision?tableId=' + tableId + '&playerId=' + playerId + '&decision=Split').then(render);
+            $.get('/blackjack/make-decision?tableId=' + tableId + '&decision=Split').then(render);
         }
 
         function stand(){
-            $.get('/blackjack/make-decision?tableId=' + tableId + '&playerId=' + playerId + '&decision=Stand').then(render);
+            $.get('/blackjack/make-decision?tableId=' + tableId + '&decision=Stand').then(render);
         }
 
         function startRound(){
