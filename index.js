@@ -5,6 +5,12 @@ const tableService = require('./services/table-service');
 const uuidV4 = require('uuid/v4');
 
 const configureRouter = (middleware) => {
+
+	const noTableJoined = (res) =>
+		res.status(400).send(JSON.stringify({message: "No table has been joined"}));
+
+	const serializedTable = (res, table) => res.send(JSON.stringify(table.playerSet));
+
 	router.get('/', middleware.session, function (req, res, next) {
 		var playerId = req.session.playerId;
 		if (!playerId) {
@@ -23,41 +29,38 @@ const configureRouter = (middleware) => {
 	});
 
 	router.get('/get', middleware.session, function (req, res, next) {
-		var tableId = req.session.tableId;
-		var table = tableService.getTable(tableId);
+		var table = tableService.getTable(req.session.tableId);
 		if (!table) {
-			return res.send(JSON.stringify({message: "No table was joint"}));
+			return noTableJoined(res);
 		}
 		else {
-			return res.send(JSON.stringify(table.playerSet));
+			return serializedTable(res, table);
 		}
 	});
 
 	router.get('/start-round', middleware.session, function (req, res, next) {
-		var tableId = req.session.tableId;
-		var table = tableService.getTable(tableId);
+		var table = tableService.getTable(req.session.tableId);
 		if (!table) {
-			return res.send(JSON.stringify({message: "No table created"}));
+			return noTableJoined(res);
 		}
 		else {
 			tableService.startRound(table);
-            return res.send(JSON.stringify(table.playerSet));
+            return serializedTable(res, table);
 		}
 	});
 
 	router.get('/make-decision', middleware.session, function (req, res, next) {
 
-		var tableId = req.session.tableId;
 		var playerId = req.session.playerId;
 		var decision = req.query.decision;
-		var table = tableService.getTable(tableId);
+		var table = tableService.getTable(req.session.tableId);
 		if (!table) {
-			return res.send(JSON.stringify({message: "No table created"}));
+			return noTableJoined(res);
 		}
 		else {
 			try {
 				tableService.makeDecision(table, playerId, decision);
-				return res.send(JSON.stringify(table.playerSet));
+				return serializedTable(res, table);
 			}
             catch(exception) {
 				return res.status(400).send(exception);
@@ -66,26 +69,24 @@ const configureRouter = (middleware) => {
     });
 
     router.get('/end-round', middleware.session, function (req, res, next) {
-    	var tableId = req.session.tableId;
-		var table = tableService.getTable(tableId);
+		var table = tableService.getTable(req.session.tableId);
 		if (!table) {
-			return res.send(JSON.stringify({message: "No table created"}));
+			return noTableJoined(res);
 		}
 		else {
         	tableService.endRound(table);
-            return res.send(JSON.stringify(table.playerSet));
+            return serializedTable(res, table);
 		}
     });
 
     router.get('/clear-round', middleware.session, function (req, res, next) {
-    	var tableId = req.session.tableId;
-		var table = tableService.getTable(tableId);
+		var table = tableService.getTable(req.session.tableId);
 		if (!table) {
-			return res.send(JSON.stringify({message: "No table created"}));
+			return noTableJoined(res);
 		}
 		else {
         	tableService.collectPlayedCards(table);
-            return res.send(JSON.stringify(table.playerSet));
+            return serializedTable(res, table);
 		}
     });
 
