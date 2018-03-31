@@ -19,10 +19,8 @@ const collectPlayedCards = (handSet) => {
 };
 
 const create = () => {
-    var handSet = new HandSet();
     var hand = handService.create();
-    handSet.hands.push(hand);
-    handSet.currentHand = 0;
+    var handSet = new HandSet([hand]);
     return handSet;
 }
 

@@ -1,7 +1,7 @@
 'use strict';
 
-function CardSet(suit, number) {
-    this.availableCards = [];
+function CardSet(cards) {
+    this.availableCards = cards;
     this.playedCards = [];
 }
 

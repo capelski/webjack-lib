@@ -22,9 +22,7 @@ const symbols = Object.keys(cardsValue);
 const suits = ['\u2663', '\u2666', '\u2665', '\u2660'];
 
 const createDeck = () => {
-    return js.cartesianProduct(suits, symbols, (suit, symbol) => {
-        return new Card(suit, symbol);
-    });
+    return js.cartesianProduct(suits, symbols, (suit, symbol) => new Card(suit, symbol));
 };
 
 const getValue = (card) => cardsValue[card.symbol];
