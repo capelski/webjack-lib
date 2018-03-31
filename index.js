@@ -18,7 +18,7 @@ const configureRouter = (middleware) => {
 		}
 
 		var tableId = req.session.tableId;
-		res.render('index.ejs', { tableId });
+		res.render('index.ejs', { playerId, tableId });
 	});
 
 	router.get('/join', middleware.session, function (req, res, next) {
