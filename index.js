@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var path = require('path');
-const tableService = require('./services/table-service');
 const uuidV4 = require('uuid/v4');
+const tableService = require('./services/table-service');
+const orchestrationService = require('./services/orchestration-service');
 
 const configureRouter = (middleware) => {
 
@@ -44,7 +45,7 @@ const configureRouter = (middleware) => {
 			return noTableJoined(res);
 		}
 		else {
-			tableService.startRound(table);
+			orchestrationService.startRound(table);
             return serializedTable(res, table);
 		}
 	});
@@ -59,7 +60,7 @@ const configureRouter = (middleware) => {
 		}
 		else {
 			try {
-				tableService.makeDecision(table, playerId, decision);
+				orchestrationService.makeDecision(table, playerId, decision);
 				return serializedTable(res, table);
 			}
             catch(exception) {
@@ -74,7 +75,7 @@ const configureRouter = (middleware) => {
 			return noTableJoined(res);
 		}
 		else {
-        	tableService.endRound(table);
+        	orchestrationService.endRound(table);
             return serializedTable(res, table);
 		}
     });
@@ -85,7 +86,7 @@ const configureRouter = (middleware) => {
 			return noTableJoined(res);
 		}
 		else {
-        	tableService.collectPlayedCards(table);
+        	orchestrationService.collectPlayedCards(table);
             return serializedTable(res, table);
 		}
     });
