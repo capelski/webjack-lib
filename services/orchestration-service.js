@@ -2,11 +2,52 @@
 
 const js = require('../utils/js-generics');
 const cardSetService = require('./card-set-service');
-const playerSetService = require('./player-set-service');
-const rulesService = require('./rules-service');
-const handSetService = require('./hand-set-service');
 const playerService = require('./player-service');
+const playerSetService = require('./player-set-service');
 const handService = require('./hand-service');
+const handSetService = require('./hand-set-service');
+
+// TODO Control the game time
+
+const double = (player, card) => {
+    var playerHand = handSetService.getCurrentHand(player.handSet);
+    if (!handService.canDouble(playerHand)) {
+        throw 'Doubling is only allowed with 9, 10 or 11 points';
+    }
+
+    handSetService.doubleCurrentHand(player.handSet);
+    var handScore = handSetService.dealCard(player.handSet, card);
+    var playerHand = handSetService.getCurrentHand(player.handSet);
+    var isOverMaxScore = handService.isOverMaxScore(playerHand);
+    if (!isOverMaxScore) {
+        handService.setStatus(playerHand, 'Played');
+    }
+};
+
+const hit = (player, card) => {
+    var handScore = handSetService.dealCard(player.handSet, card);
+    var playerHand = handSetService.getCurrentHand(player.handSet);
+    var isOverMaxScore = handService.isOverMaxScore(playerHand);
+    return isOverMaxScore;
+};
+
+const split = (player, card) => {
+    var playerHand = handSetService.getCurrentHand(player.handSet);
+    if (!handService.canSplit(playerHand)) {
+        throw 'Splitting is only allowed with two equal cards!';
+    }
+     
+    handSetService.splitCurrentHand(player.handSet);
+    var handScore = handSetService.dealCard(player.handSet, card);
+    var playerHand = handSetService.getCurrentHand(player.handSet);
+    var isBlackJack = handService.isBlackJack(playerHand);
+    return isBlackJack;
+};
+
+const stand = (player) => {
+    var playerHand = handSetService.getCurrentHand(player.handSet);
+    handService.setStatus(playerHand, 'Played');
+};
 
 const collectPlayedCards = (table) => {
     var playedCards = playerSetService.collectPlayedCards(table.playerSet);
@@ -65,34 +106,26 @@ const makeDecision = (table, playerId, action) => {
     var player = ensurePlayer(table.playerSet, playerId);
     switch (action) {
         case 'Double': {
-            var playerHand = handSetService.getCurrentHand(player.handSet);
-            if (!handService.canDouble(playerHand)) {
-                throw 'Doubling is only allowed with 9, 10 or 11 points';
-            }
-            rulesService.double(player, cardSetService.getNextCard(table.cardSet));
+            double(player, cardSetService.getNextCard(table.cardSet));
             startNextHand(table, player);
             break;
         }
         case 'Hit': {
-            var isBurned = rulesService.hit(player, cardSetService.getNextCard(table.cardSet));
-            if (isBurned) {
+            var isOverMaxScore = hit(player, cardSetService.getNextCard(table.cardSet));
+            if (isOverMaxScore) {
                 startNextHand(table, player);
             }
             break;
         }
         case 'Split': {
-            var playerHand = handSetService.getCurrentHand(player.handSet);
-            if (!handService.canSplit(playerHand)) {
-                throw 'Splitting is only allowed with two equal cards!';
-            }
-            var isBlackJack = rulesService.split(player, cardSetService.getNextCard(table.cardSet));
+            var isBlackJack = split(player, cardSetService.getNextCard(table.cardSet));
             if (isBlackJack) {
                 startNextHand(table, player);
             }
             break;
         }
         case 'Stand': {
-            rulesService.stand(player);
+            stand(player);
             startNextHand(table, player);
             break;
         }

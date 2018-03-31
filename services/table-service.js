@@ -8,6 +8,8 @@ const uuidV4 = require('uuid/v4');
 
 let tables = [];
 
+// TODO Exit table functionality
+
 const create = () => {
     var tableId = uuidV4();
     var cardSet = cardSetService.create();

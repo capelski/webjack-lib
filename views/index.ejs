@@ -71,7 +71,7 @@
         function joinTable(){
             $.get('/blackjack/join').then(() => {
                 $('#join-table').hide();
-                setInterval(() =>  $.get('/blackjack/get').then(render), 4000);
+                setInterval(() =>  $.get('/blackjack/get').then(render), 1000);
             });
         }
 
@@ -90,7 +90,7 @@
         $(function() {
             if (tableId != '') {
                 $('#join-table').hide();
-                setInterval(() =>  $.get('/blackjack/get').then(render), 4000);
+                setInterval(() =>  $.get('/blackjack/get').then(render), 1000);
             }
         });
     </script>
