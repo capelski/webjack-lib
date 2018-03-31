@@ -6,23 +6,15 @@ const uuidV4 = require('uuid/v4');
 
 const configureRouter = (middleware) => {
 	router.get('/', function (req, res, next) {
-		res.render('index.ejs');
-	});
-
-	// TODO Instead of getting the playerId by parameter, set it by session
-
-	router.get('/create', middleware.session, function (req, res, next) {
-		var tableId = tableService.create();
 		var playerId = uuidV4();
-		tableService.joinTable(tableId, playerId);
-		return res.send(JSON.stringify({ tableId, playerId }));
+		// TODO Set the playerId in the session
+		res.render('index.ejs', { playerId });
 	});
 
 	router.get('/join', middleware.session, function (req, res, next) {
-		var tableId = req.query.tableId;
-		var playerId = uuidV4();
-		tableService.joinTable(tableId, playerId);
-		return res.send(playerId);
+		var playerId = req.query.playerId;
+		var tableId = tableService.joinTable(playerId);
+		return res.send(tableId);
 	});
 
 	router.get('/get', middleware.session, function (req, res, next) {

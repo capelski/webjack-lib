@@ -14,9 +14,7 @@
 </head>
 
 <body>
-    <button type="button" onclick="createGame();">Empty table</button>
-    <button type="button" onclick="joinGame();">Join table</button>
-    Table Id: <input type="text" id="table-id" />
+    <button type="button" onclick="joinTable();" id="join-table">Join table</button>
     <button type="button" onclick="startRound();">Start round</button>
     <button type="button" onclick="endRound();">End round</button>
     <button type="button" onclick="clearRound();">Clear round</button>
@@ -27,7 +25,8 @@
     <script src="<%= asset('js/app.js') %>" type="text/javascript"></script>
 
     <script>
-        var tableId, playerId;
+        var tableId;
+        var playerId = '<%= playerId %>';
 
         function render(stringifiedData) {
             var results = document.getElementById('results');
@@ -57,15 +56,6 @@
             $.get('/blackjack/clear-round?tableId=' + tableId).then(render);
         }
 
-        function createGame(){
-            $.get('/blackjack/create').then(response => {
-                var data = JSON.parse(response);
-                tableId = data.tableId;
-                playerId = data.playerId;
-                setInterval(() =>  $.get('/blackjack/get?tableId=' + tableId).then(render), 4000);
-            });
-        }
-
         function double(){
             $.get('/blackjack/make-decision?tableId=' + tableId + '&playerId=' + playerId + '&decision=Double').then(render);
         }
@@ -78,10 +68,10 @@
             $.get('/blackjack/make-decision?tableId=' + tableId + '&playerId=' + playerId + '&decision=Hit').then(render);
         }
 
-        function joinGame(){
-            tableId = $('#table-id').val();
-            $.get('/blackjack/join?tableId=' + tableId).then(response => {
-                playerId = response;
+        function joinTable(){
+            $.get('/blackjack/join?playerId=' + playerId).then(response => {
+                tableId = response;
+                $('#join-table').hide();
                 setInterval(() =>  $.get('/blackjack/get?tableId=' + tableId).then(render), 4000);
             });
         }

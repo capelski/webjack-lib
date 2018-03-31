@@ -27,7 +27,7 @@ const create = () => {
     var table = new Table(tableId, cardSet, playerSet);
     tables.push(table);
 
-    return tableId;
+    return table;
 };
 
 const endRound = (table) => {
@@ -82,15 +82,16 @@ const getTable = (tableId) => {
     return tables.find(t => t.id == tableId);
 };
 
-const joinTable = (tableId, playerId) => {
-    var table = getTable(tableId);
+const joinTable = (playerId) => {
+    // TODO Extract find predicate into method
+    var table = tables.find(t => t.playerSet.players.length <= 7);
     if (!table) {
-        throw 'No table identified by ' + tableId + ' was found';
+        table = create();
     }
 
     playerSetService.addPlayer(table.playerSet, playerId);
 
-    return table;
+    return table.id;
 };
 
 const makeDecision = (table, playerId, action) => {
@@ -180,7 +181,6 @@ const startRound = (table) => {
 
 module.exports = {
     collectPlayedCards,
-    create,
     endRound,
     getTable,
     joinTable,
