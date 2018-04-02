@@ -143,7 +143,26 @@ const startNextHand = (table, player) => {
 };
 
 const startNextTurn = (playerSet) => {
-    playerSetService.updateActivePlayer(playerSet);
+    if (playerSet.activePlayerId == null) {
+        playerSet.activePlayerId = playerSet.players[0].id;
+    }
+    else {
+        // TODO Refactor turn code...
+        var nextPlayer = null;
+        var index = 0;
+        while (!nextPlayer && (index < playerSet.players.length)) {
+            if (playerSet.players[index].handSet != null &&
+                handSetService.hasUnplayedHand(playerSet.players[index].handSet)) {
+                nextPlayer = playerSet.players[index];
+                playerSet.activePlayerId = nextPlayer.id;
+            }
+            ++index;
+        }
+        if (!nextPlayer && handSetService.hasUnplayedHand(playerSet.dealer.handSet)) {
+            nextPlayer = playerSet.dealer;
+            playerSet.activePlayerId = nextPlayer.id;
+        }
+    }
 };
 
 const startRound = (table) => {
