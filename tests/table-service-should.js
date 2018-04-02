@@ -10,7 +10,7 @@ const orchestrationService = require('../services/orchestration-service');
     orchestrationService.startRound(table);
     orchestrationService.makeDecision(table, playerId, 'Stand');
     orchestrationService.endRound(table);
-    orchestrationService.collectPlayedCards(table);
+    tableService.collectPlayedCards(table);
 
     console.log('Test successfully executed')
 })();

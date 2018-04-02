@@ -11,6 +11,7 @@ const dealCard = (handSet, card) => {
 };
 
 const collectPlayedCards = (handSet) => {
+    // TODO Remove the cards from the hands
     var cards = [];
     js.iterate(handSet.hands, (hand) => {
         cards = cards.concat(handService.getCards(hand));

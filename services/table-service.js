@@ -3,14 +3,22 @@
 const js = require('../utils/js-generics');
 const Table = require('../models/table');
 const cardService = require('./card-service');
-const playerSetService = require('./player-set-service');
+const handSetService = require('./hand-set-service');
+const playerService = require('./player-service');
 const uuidV4 = require('uuid/v4');
 
 let tables = [];
 
 // TODO Exit table functionality
 
-const addPlayedCards = (table, playedCards) => {
+const collectPlayedCards = (table) => {
+    var playedCards = table.players.filter(p => p.handSet != null)
+        .reduce((cards, player) => cards.concat(handSetService.collectPlayedCards(player.handSet)), []);
+    playedCards = playedCards.concat(handSetService.collectPlayedCards(table.dealer.handSet));
+
+    table.players.forEach(player => player.handSet = null);
+    table.dealer.handSet = null;
+
     table.playedCards = table.playedCards.concat(playedCards);
 
     if (table.playedCards.length > 80) {
@@ -22,8 +30,9 @@ const addPlayedCards = (table, playedCards) => {
 
 const create = () => {
     var tableId = uuidV4();
-    var playerSet = playerSetService.create();
+    var dealer = playerService.create(uuidV4(), 'Dealer');
 
+    // TODO Move to card service
     // TODO There should be 208 cards, not 104...
     // TODO Extract number into some configuration file
     var cards = (new Array(4, null))
@@ -31,11 +40,13 @@ const create = () => {
         .reduce((x, y) => x.concat(y), []);
     js.shuffleArray(cards);
 
-    var table = new Table(tableId, cards, playerSet);
+    var table = new Table(tableId, cards, dealer);
     tables.push(table);
 
     return table;
 };
+
+const getActivePlayer = (table) => table.players.find(p => p.id === table.activePlayerId);
 
 const getNextCard = (table) => {
     if (table.availableCards.length === 0) {
@@ -49,18 +60,20 @@ const getTable = (tableId) => tables.find(t => t.id == tableId);
 
 const joinTable = (playerId) => {
     // TODO Extract find predicate into method
-    var table = tables.find(t => t.playerSet.players.length <= 7);
+    var table = tables.find(t => t.players.length <= 7);
     if (!table) {
         table = create();
     }
 
-    playerSetService.addPlayer(table.playerSet, playerId);
+    var player = playerService.create(playerId);
+    table.players.push(player);
 
     return table.id;
 };
 
 module.exports = {
-    addPlayedCards,
+    collectPlayedCards,
+    getActivePlayer,
     getNextCard,
     getTable,
     joinTable

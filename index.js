@@ -10,7 +10,11 @@ const configureRouter = (middleware) => {
 	const noTableJoined = (res) =>
 		res.status(400).send(JSON.stringify({message: "No table has been joined"}));
 
-	const serializedTable = (res, table) => res.send(JSON.stringify(table.playerSet));
+	const serializedTable = (res, table) => res.send(JSON.stringify({
+		players: table.players,
+		dealer: table.dealer,
+		activePlayerId: table.activePlayerId
+	}));
 
 	router.get('/', middleware.session, function (req, res, next) {
 		var playerId = req.session.playerId;
@@ -86,7 +90,7 @@ const configureRouter = (middleware) => {
 			return noTableJoined(res);
 		}
 		else {
-        	orchestrationService.collectPlayedCards(table);
+        	tableService.collectPlayedCards(table);
             return serializedTable(res, table);
 		}
     });
