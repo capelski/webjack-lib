@@ -108,6 +108,7 @@ const makeDecision = (table, playerId, action) => {
     }
 };
 
+// TODO Merge nextHand / nextTurn
 const startNextHand = (table, player) => {
     var nextHand = handSetService.getNextHand(player.handSet);
     if (nextHand) {

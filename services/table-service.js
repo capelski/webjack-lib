@@ -40,6 +40,24 @@ const create = () => {
     return table;
 };
 
+const exitTable = (tableId, playerId) => {
+    var table = tables.find(t => t.id == tableId);
+    if (!table) {
+        throw 'No table identified by ' + tableId + ' was found';
+    }
+
+    var player = table.players.find(p => p.id == playerId);
+    if (!player) {
+        throw 'No player identified by ' + playerId + ' was found';
+    }
+
+    if (player.handSet != null) {
+        throw 'The current round must be ended before leaving the table';
+    }
+
+    table.players = table.players.filter(p => p.id != playerId);
+};
+
 const getActivePlayer = (table) => table.players.find(p => p.id === table.activePlayerId);
 
 const getNextCard = (table) => {
@@ -53,7 +71,7 @@ const getNextCard = (table) => {
 const getTable = (tableId) => tables.find(t => t.id == tableId);
 
 const joinTable = (playerId) => {
-    var table = tables.find(t => t.players.length <= gameParameters.maxPlayers);
+    var table = tables.find(t => t.players.length < gameParameters.maxPlayers);
     if (!table) {
         table = create();
     }
@@ -66,6 +84,7 @@ const joinTable = (playerId) => {
 
 module.exports = {
     collectPlayedCards,
+    exitTable,
     getActivePlayer,
     getNextCard,
     getTable,

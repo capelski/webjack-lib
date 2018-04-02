@@ -11,6 +11,7 @@ const orchestrationService = require('../services/orchestration-service');
     orchestrationService.makeDecision(table, playerId, 'Stand');
     orchestrationService.endRound(table);
     tableService.collectPlayedCards(table);
+    tableService.exitTable(tableId, playerId);
 
     console.log('Test successfully executed')
 })();

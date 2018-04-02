@@ -95,6 +95,14 @@ const configureRouter = (middleware) => {
 		}
     });
 
+	router.get('/exit', middleware.session, function (req, res, next) {
+		var playerId = req.session.playerId;
+		var tableId = req.session.tableId;
+		tableService.exitTable(tableId, playerId);
+		delete req.session.tableId;
+		return res.status(200).end();
+	});
+
 	return router;
 }
 
