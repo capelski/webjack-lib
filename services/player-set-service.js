@@ -43,10 +43,6 @@ const getActivePlayer = (playerSet) =>
     return activePlayer
 };
 
-const getDealer = (playerSet) => {
-    return playerSet.dealer;
-};
-
 const getPlayerById = (playerSet, playerId) => {
     var player = playerSet.players.find(p => p.id === playerId);
     if (!player && playerId == playerSet.dealer.id) {
@@ -55,7 +51,7 @@ const getPlayerById = (playerSet, playerId) => {
     return player;
 };
 
-const isDealerTurn = (playerSet) => getActivePlayer(playerSet).id === getDealer(playerSet).id;
+const isDealerTurn = (playerSet) => getActivePlayer(playerSet).id === playerSet.dealer.id;
 
 const updateActivePlayer = (playerSet) => {
     if (playerSet.activePlayerId == null) {
@@ -84,7 +80,6 @@ module.exports = {
     collectPlayedCards,
     create,
     getActivePlayer,
-    getDealer,
     getPlayerById,
     isDealerTurn,
     updateActivePlayer

@@ -59,7 +59,7 @@ const endRound = (table) => {
         throw 'Can\'t play dealer round yet!';
     }
     
-    var dealer = playerSetService.getDealer(table.playerSet);
+    var dealer = table.playerSet.dealer;
     var dealerHand = handSetService.getCurrentHand(dealer.handSet);
     var dealerScore = handService.getScore(dealerHand); // TODO Use score property
     while (dealerScore < 17) {
@@ -83,7 +83,7 @@ const ensurePlayer = (playerSet, playerId) => {
     }
 
     // TODO This shouldn't be here..
-    if (currentPlayer.id === playerSetService.getDealer(playerSet).id) {
+    if (currentPlayer.id === playerSet.dealer.id) {
         throw 'Can\'t play dealer\'s turn!';
     }
 
