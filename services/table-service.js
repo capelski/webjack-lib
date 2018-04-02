@@ -24,6 +24,7 @@ const create = () => {
     var tableId = uuidV4();
     var playerSet = playerSetService.create();
 
+    // TODO There should be 208 cards, not 104...
     // TODO Extract number into some configuration file
     var cards = (new Array(4, null))
         .map(x => cardService.createDeck())

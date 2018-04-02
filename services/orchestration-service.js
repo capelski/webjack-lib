@@ -67,9 +67,7 @@ const endRound = (table) => {
     }
 
     js.iterate(table.playerSet.players, (player, key) => {            
-        if (player !== playerSetService.getDealer(table.playerSet)) {
-            playerService.resolveHands(player, dealerScore);
-        }
+        playerService.resolveHands(player, dealerScore);
     });
 };
 
@@ -157,15 +155,15 @@ const startRound = (table) => {
         handSetService.dealCard(player.handSet, tableService.getNextCard(table));
     });
 
+    playerService.startRound(table.playerSet.dealer);
+    handSetService.dealCard(table.playerSet.dealer.handSet, tableService.getNextCard(table));
+
     table.playerSet.players.forEach(player => {
-        if (player !== playerSetService.getDealer(table.playerSet)) {
-            var handScore = handSetService.dealCard(player.handSet, tableService.getNextCard(table));
-            var playerHand = handSetService.getCurrentHand(player.handSet);
-            handService.isBlackJack(playerHand);
-        }
+        var handScore = handSetService.dealCard(player.handSet, tableService.getNextCard(table));
+        var playerHand = handSetService.getCurrentHand(player.handSet);
+        handService.isBlackJack(playerHand);
     });
 
-    table.playerSet.activePlayerId = playerSetService.updateActivePlayer(table.playerSet);
     startNextTurn(table.playerSet);
 };
 

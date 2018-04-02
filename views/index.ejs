@@ -34,6 +34,10 @@
 
             var data = JSON.parse(stringifiedData);
             if (data.players) {
+                var activePlayer = data.activePlayerId == null ?
+                    null :
+                    data.players.find(pl => pl.id == data.activePlayerId);
+
                 data.players.forEach(p => {
                     var serializedHands = '';
                     if (p.handSet != null) {
@@ -41,7 +45,7 @@
                             sH + hand.cards.reduce((sC, card) => sC + card.symbol + card.suit + ', ', '') + ' (' + hand.score + ') ' + hand.status + ' / ', '');
                     }
                     results.innerHTML += p.name + ' (' + p.earningRate + '): ' + serializedHands;
-                    if (data.activePlayerId != null && data.players.find(p => p.id == data.activePlayerId).id == p.id && p.id == playerId) {
+                    if (p.id == playerId && activePlayer && p.id == activePlayer.id) {
                         results.innerHTML += '<button type="button" onclick="hit();">Hit</button>' +
                                                 '<button type="button" onclick="stand();">Stand</button>' +
                                                 '<button type="button" onclick="double();">Double</button>' +
@@ -49,41 +53,48 @@
                     }
                     results.innerHTML += '<br />';
                 });
+
+                var serializedHands = '';
+                if (data.dealer.handSet != null) {
+                    serializedHands = data.dealer.handSet.hands.reduce((sH, hand) =>
+                        sH + hand.cards.reduce((sC, card) => sC + card.symbol + card.suit + ', ', '') + ' (' + hand.score + ')', '');
+                }
+                results.innerHTML += data.dealer.name + ': ' + serializedHands + '<br />';
             }
         }
 
-        function clearRound(){
+        function clearRound() {
             $.get('/blackjack/clear-round').then(render);
         }
 
-        function double(){
+        function double() {
             $.get('/blackjack/make-decision?decision=Double').then(render);
         }
 
-        function endRound(){
+        function endRound() {
             $.get('/blackjack/end-round').then(render);
         }
 
-        function hit(){
+        function hit() {
             $.get('/blackjack/make-decision?decision=Hit').then(render);
         }
 
-        function joinTable(){
+        function joinTable() {
             $.get('/blackjack/join').then(() => {
                 $('#join-table').hide();
                 setInterval(() =>  $.get('/blackjack/get').then(render), 1000);
             });
         }
 
-        function split(){
+        function split() {
             $.get('/blackjack/make-decision?decision=Split').then(render);
         }
 
-        function stand(){
+        function stand() {
             $.get('/blackjack/make-decision?decision=Stand').then(render);
         }
 
-        function startRound(){
+        function startRound() {
             $.get('/blackjack/start-round').then(render);
         }
 

@@ -18,7 +18,11 @@ const addPlayer = (playerSet, playerId) => {
 
 const collectPlayedCards = (playerSet) => {
     var playedCards = playerSet.players.reduce((cards, player) => cards.concat(handSetService.collectPlayedCards(player.handSet)), []);
+    playedCards = playedCards.concat(handSetService.collectPlayedCards(playerSet.dealer.handSet));
+
     playerSet.players.forEach(player => player.handSet = null);
+    playerSet.dealer.handSet = null;
+    
     return playedCards;
 };
 
@@ -30,13 +34,26 @@ const create = () => {
 };
 
 const getActivePlayer = (playerSet) =>
-    playerSet.players.find(p => p.id === playerSet.activePlayerId);
+{
+    var activePlayer = playerSet.players.find(p => p.id === playerSet.activePlayerId);
+    if (!activePlayer && playerSet.activePlayerId == playerSet.dealer.id) {
+        activePlayer = playerSet.dealer;
+    }
 
-const getDealer = (playerSet) => {
-    return playerSet.players[playerSet.players.length - 1];
+    return activePlayer
 };
 
-const getPlayerById = (playerSet, playerId) => playerSet.players.find(p => p.id === playerId);
+const getDealer = (playerSet) => {
+    return playerSet.dealer;
+};
+
+const getPlayerById = (playerSet, playerId) => {
+    var player = playerSet.players.find(p => p.id === playerId);
+    if (!player && playerId == playerSet.dealer.id) {
+        player = playerSet.dealer;
+    }
+    return player;
+};
 
 const isDealerTurn = (playerSet) => getActivePlayer(playerSet).id === getDealer(playerSet).id;
 
@@ -54,6 +71,10 @@ const updateActivePlayer = (playerSet) => {
                 playerSet.activePlayerId = nextPlayer.id;
             }
             ++index;
+        }
+        if (!nextPlayer && handSetService.hasUnplayedHand(playerSet.dealer.handSet)) {
+            nextPlayer = playerSet.dealer;
+            playerSet.activePlayerId = nextPlayer.id;
         }
     }
 };

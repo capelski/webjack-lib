@@ -2,7 +2,8 @@
 
 function PlayerSet(dealer) {
     this.activePlayerId = null;
-    this.players = [dealer];
+    this.dealer = dealer;
+    this.players = [];
 }
 
 module.exports = PlayerSet;
