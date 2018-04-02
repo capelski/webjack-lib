@@ -6,6 +6,7 @@ const cardService = require('./card-service');
 const handSetService = require('./hand-set-service');
 const playerService = require('./player-service');
 const uuidV4 = require('uuid/v4');
+const gameParameters = require('../game-parameters');
 
 let tables = [];
 
@@ -31,8 +32,7 @@ const collectPlayedCards = (table) => {
 const create = () => {
     var tableId = uuidV4();
     var dealer = playerService.create(uuidV4(), 'Dealer');
-    // TODO Extract number into some configuration file
-    var cards = cardService.createDecks(4);
+    var cards = cardService.createDecks(gameParameters.decksNumber);
 
     var table = new Table(tableId, cards, dealer);
     tables.push(table);
@@ -53,8 +53,7 @@ const getNextCard = (table) => {
 const getTable = (tableId) => tables.find(t => t.id == tableId);
 
 const joinTable = (playerId) => {
-    // TODO Extract find predicate into method
-    var table = tables.find(t => t.players.length <= 7);
+    var table = tables.find(t => t.players.length <= gameParameters.maxPlayers);
     if (!table) {
         table = create();
     }
