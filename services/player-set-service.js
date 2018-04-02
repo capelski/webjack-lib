@@ -29,30 +29,11 @@ const create = () => {
     return playerSet;
 };
 
-const getActivePlayer = (playerSet) => {
-    var activePlayer = playerSet.players.find(p => p.id === playerSet.activePlayerId);
-    if (!activePlayer && playerSet.activePlayerId == playerSet.dealer.id) {
-        activePlayer = playerSet.dealer;
-    }
-
-    return activePlayer
-};
-
-const getPlayerById = (playerSet, playerId) => {
-    var player = playerSet.players.find(p => p.id === playerId);
-    if (!player && playerId == playerSet.dealer.id) {
-        player = playerSet.dealer;
-    }
-    return player;
-};
-
-const isDealerTurn = (playerSet) => getActivePlayer(playerSet).id === playerSet.dealer.id;
+const getActivePlayer = (playerSet) => playerSet.players.find(p => p.id === playerSet.activePlayerId);
 
 module.exports = {
     addPlayer,
     collectPlayedCards,
     create,
-    getActivePlayer,
-    getPlayerById,
-    isDealerTurn
+    getActivePlayer
 };

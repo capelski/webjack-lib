@@ -55,46 +55,33 @@ const collectPlayedCards = (table) => {
 };
 
 const endRound = (table) => {
-    if (!playerSetService.isDealerTurn(table.playerSet)) {
+    if (table.playerSet.activePlayerId !== table.playerSet.dealer.id) {
         throw 'Can\'t play dealer round yet!';
     }
     
     var dealer = table.playerSet.dealer;
-    var dealerHand = handSetService.getCurrentHand(dealer.handSet);
-    var dealerScore = handService.getScore(dealerHand); // TODO Use score property
+    var dealerScore = 0;
     while (dealerScore < 17) {
         dealerScore = handSetService.dealCard(dealer.handSet, tableService.getNextCard(table));
     }
 
-    js.iterate(table.playerSet.players, (player, key) => {            
-        playerService.resolveHands(player, dealerScore);
-    });
+    table.playerSet.players.filter(p => p.handSet != null)
+        .forEach(p => playerService.resolveHands(p, dealerScore));
+
+    table.playerSet.activePlayerId = null;
 };
 
 const ensurePlayer = (playerSet, playerId) => {
-    if (playerSet.activePlayerId == null) {
-        throw 'No round has been started yet!';
-    }
-
     var currentPlayer = playerSetService.getActivePlayer(playerSet);
+    if (!currentPlayer) {
+        throw 'No one is playing now';
+    }
 
     if (playerSet.activePlayerId !== playerId) {
         throw 'Not allowed to play now. It is ' + currentPlayer.name + '\'s turn';
     }
 
-    // TODO This shouldn't be here..
-    if (currentPlayer.id === playerSet.dealer.id) {
-        throw 'Can\'t play dealer\'s turn!';
-    }
-
-    try {
-        handSetService.getCurrentHand(currentPlayer.handSet);
-        return currentPlayer;
-    }
-    catch (error) {
-        startNextTurn(playerSet);
-        throw 'Player ' + currentPlayer.name + ' can\'t play anymore this round!';
-    }
+    return currentPlayer;
 };
 
 const makeDecision = (table, playerId, action) => {
