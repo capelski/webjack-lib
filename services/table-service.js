@@ -31,14 +31,8 @@ const collectPlayedCards = (table) => {
 const create = () => {
     var tableId = uuidV4();
     var dealer = playerService.create(uuidV4(), 'Dealer');
-
-    // TODO Move to card service
-    // TODO There should be 208 cards, not 104...
     // TODO Extract number into some configuration file
-    var cards = (new Array(4, null))
-        .map(x => cardService.createDeck())
-        .reduce((x, y) => x.concat(y), []);
-    js.shuffleArray(cards);
+    var cards = cardService.createDecks(4);
 
     var table = new Table(tableId, cards, dealer);
     tables.push(table);

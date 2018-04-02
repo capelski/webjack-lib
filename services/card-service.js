@@ -21,13 +21,18 @@ const cardsValue = {
 const symbols = Object.keys(cardsValue);
 const suits = ['\u2663', '\u2666', '\u2665', '\u2660'];
 
-const createDeck = () => {
-    return js.cartesianProduct(suits, symbols, (suit, symbol) => new Card(suit, symbol));
-};
+const createDeck = () =>
+    js.cartesianProduct(suits, symbols, (suit, symbol) => new Card(suit, symbol));
+
+const createDecks = (decksNumber) => js.shuffleArray(
+    Array(decksNumber)
+    .fill(null)
+    .map(x => createDeck())
+    .reduce((x, y) => x.concat(y), []));
 
 const getValue = (card) => cardsValue[card.symbol];
 
 module.exports = {
-    createDeck,
+    createDecks,
     getValue
 };
