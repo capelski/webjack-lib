@@ -49,6 +49,10 @@ const isOverMaxScore = (hand) => {
     return _isOverMaxScore;
 };
 
+const markAsPlayed = (hand) => {
+    hand.played = true;
+};
+
 const resolve = (hand, dealerScore) => {
     if (hand.score > 21) {
         hand.status = 'Loses';
@@ -67,10 +71,6 @@ const resolve = (hand, dealerScore) => {
     }
 };
 
-const setStatus = (hand, status) => {
-    hand.status = status;
-};
-
 module.exports = {
     addCard,
     canDouble,
@@ -80,6 +80,6 @@ module.exports = {
     getScore,
     isBlackJack,
     isOverMaxScore,
-    resolve,
-    setStatus
+    markAsPlayed,
+    resolve
 };

@@ -18,15 +18,16 @@ const double = (player, card) => {
     var handScore = handSetService.dealCard(player.handSet, card);
     var playerHand = handSetService.getCurrentHand(player.handSet);
     var isOverMaxScore = handService.isOverMaxScore(playerHand);
-    if (!isOverMaxScore) {
-        handService.setStatus(playerHand, 'Played');
-    }
+    handService.markAsPlayed(playerHand);
 };
 
 const hit = (player, card) => {
     var handScore = handSetService.dealCard(player.handSet, card);
     var playerHand = handSetService.getCurrentHand(player.handSet);
     var isOverMaxScore = handService.isOverMaxScore(playerHand);
+    if (isOverMaxScore) {
+        handService.markAsPlayed(playerHand);
+    }
     return isOverMaxScore;
 };
 
@@ -40,12 +41,15 @@ const split = (player, card) => {
     var handScore = handSetService.dealCard(player.handSet, card);
     var playerHand = handSetService.getCurrentHand(player.handSet);
     var isBlackJack = handService.isBlackJack(playerHand);
+    if (isBlackJack) {
+        handService.markAsPlayed(playerHand);
+    }
     return isBlackJack;
 };
 
 const stand = (player) => {
     var playerHand = handSetService.getCurrentHand(player.handSet);
-    handService.setStatus(playerHand, 'Played');
+    handService.markAsPlayed(playerHand);
 };
 
 const endRound = (table) => {
@@ -126,6 +130,7 @@ const startNextHand = (table, player) => {
         var playerHand = handSetService.getCurrentHand(player.handSet);
         var isBlackJack = handService.isBlackJack(playerHand);
         if (isBlackJack) {
+            handService.markAsPlayed(playerHand);
             startNextHand(table, player);
         }
     }
@@ -168,7 +173,10 @@ const startRound = (table) => {
     players.forEach(player => {
         var handScore = handSetService.dealCard(player.handSet, tableService.getNextCard(table));
         var playerHand = handSetService.getCurrentHand(player.handSet);
-        handService.isBlackJack(playerHand);
+        var isBlackJack = handService.isBlackJack(playerHand);
+        if (isBlackJack) {
+            handService.markAsPlayed(playerHand);
+        }
     });
 
     startNextTurn(table);

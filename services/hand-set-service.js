@@ -43,7 +43,7 @@ const getCurrentHand = (handSet) => {
 };
 
 const hasUnplayedHand = (handSet) =>
-    handSet.hands.reduce((unplayedHand, hand) => unplayedHand || (hand.status === 'Unplayed'), false);
+    handSet.hands.reduce((unplayedHand, hand) => unplayedHand || !hand.played, false);
 
 const splitCurrentHand = (handSet) => {
     var currentHand = getCurrentHand(handSet);
