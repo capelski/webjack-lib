@@ -43,6 +43,17 @@ const configureRouter = (middleware) => {
 		}
 	});
 
+	router.get('/place-bet', middleware.session, function (req, res, next) {
+		var table = tableService.getTable(req.session.tableId);
+		if (!table) {
+			return noTableJoined(res);
+		}
+		else {
+			orchestrationService.placeBet(table, req.session.playerId);
+            return serializedTable(res, table);
+		}
+	});
+
 	router.get('/start-round', middleware.session, function (req, res, next) {
 		var table = tableService.getTable(req.session.tableId);
 		if (!table) {

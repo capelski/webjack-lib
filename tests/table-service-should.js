@@ -7,6 +7,7 @@ const orchestrationService = require('../services/orchestration-service');
     var tableId = tableService.joinTable(playerId);
     var table = tableService.getTable(tableId);
 
+    orchestrationService.placeBet(table, playerId);
     orchestrationService.startRound(table);
     orchestrationService.makeDecision(table, playerId, 'Stand');
     orchestrationService.endRound(table);

@@ -108,6 +108,16 @@ const makeDecision = (table, playerId, action) => {
     }
 };
 
+const placeBet = (table, playerId) => {
+    // TODO Allow only when round is not started
+    var player = table.players.find(p => p.id == playerId);
+    if (!player) {
+        throw 'No player identified by ' + playerId + ' was found';
+    }
+
+    playerService.initializeHand(player);
+};
+
 // TODO Merge nextHand / nextTurn
 const startNextHand = (table, player) => {
     var nextHand = handSetService.getNextHand(player.handSet);
@@ -125,41 +135,37 @@ const startNextHand = (table, player) => {
 };
 
 const startNextTurn = (table) => {
-    if (table.activePlayerId == null) {
-        table.activePlayerId = table.players[0].id;
-    }
-    else {
-        // TODO Refactor turn code...
-        var nextPlayer = null;
-        var index = 0;
-        while (!nextPlayer && (index < table.players.length)) {
-            if (table.players[index].handSet != null &&
-                handSetService.hasUnplayedHand(table.players[index].handSet)) {
-                nextPlayer = table.players[index];
-                table.activePlayerId = nextPlayer.id;
-            }
-            ++index;
-        }
-        if (!nextPlayer && handSetService.hasUnplayedHand(table.dealer.handSet)) {
-            nextPlayer = table.dealer;
+    // TODO Refactor turn code...
+    var nextPlayer = null;
+    var index = 0;
+    while (!nextPlayer && (index < table.players.length)) {
+        if (table.players[index].handSet != null &&
+            handSetService.hasUnplayedHand(table.players[index].handSet)) {
+            nextPlayer = table.players[index];
             table.activePlayerId = nextPlayer.id;
         }
+        ++index;
+    }
+    if (!nextPlayer && handSetService.hasUnplayedHand(table.dealer.handSet)) {
+        nextPlayer = table.dealer;
+        table.activePlayerId = nextPlayer.id;
     }
 };
 
 const startRound = (table) => {
-    // TODO Throw if no players
-    // TODO Exclude dealer from players
+    var players = table.players.filter(p => p.handSet != null);
+    if (players.length == 0) {
+        throw 'No one has placed a bet yet!';
+    }
 
-    table.players.forEach(player => {
-        playerService.startRound(player);
+    players.forEach(player => {
         handSetService.dealCard(player.handSet, tableService.getNextCard(table));
     });
 
-    playerService.startRound(table.dealer);
+    playerService.initializeHand(table.dealer);
     handSetService.dealCard(table.dealer.handSet, tableService.getNextCard(table));
 
-    table.players.forEach(player => {
+    players.forEach(player => {
         var handScore = handSetService.dealCard(player.handSet, tableService.getNextCard(table));
         var playerHand = handSetService.getCurrentHand(player.handSet);
         handService.isBlackJack(playerHand);
@@ -171,5 +177,6 @@ const startRound = (table) => {
 module.exports = {
     endRound,
     makeDecision,
+    placeBet,
     startRound
 };

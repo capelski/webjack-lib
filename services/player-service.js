@@ -13,7 +13,7 @@ const resolveHands = (player, dealerScore) => {
     player.earningRate += earningRate;
 };
 
-const startRound = (player) => {
+const initializeHand = (player) => {
     var handSet = handSetService.create();
     player.handSet = handSet;
 };
@@ -21,5 +21,5 @@ const startRound = (player) => {
 module.exports = {
     create,
     resolveHands,
-    startRound
+    initializeHand
 };

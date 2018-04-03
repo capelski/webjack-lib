@@ -15,6 +15,7 @@
 
 <body>
     <button type="button" onclick="joinTable();" id="join-table">Join table</button>
+    <button type="button" onclick="placeBet();">Place bet</button>
     <button type="button" onclick="startRound();">Start round</button>
     <button type="button" onclick="endRound();">End round</button>
     <button type="button" onclick="clearRound();">Clear round</button>
@@ -95,6 +96,10 @@
                 $('#join-table').hide();
                 interval = setInterval(() =>  $.get('/blackjack/get').then(render), 1000);
             });
+        }
+
+        function placeBet() {
+            $.get('/blackjack/place-bet').then(render);
         }
 
         function split() {
