@@ -118,6 +118,15 @@ const placeBet = (table, playerId) => {
     playerService.initializeHand(player);
 };
 
+const proceedToNextHand = (table) => {
+    var nextPlayer = table.players.find(p => playerService.hasUnplayedHand(p));
+    console.log(nextPlayer);
+    if (!nextPlayer) {
+        nextPlayer = table.dealer;
+    }
+    table.activePlayerId = nextPlayer.id;
+};
+
 // TODO Merge nextHand / nextTurn
 const startNextHand = (table, player) => {
     var nextHand = handSetService.getNextHand(player.handSet);
@@ -131,25 +140,7 @@ const startNextHand = (table, player) => {
         }
     }
     else {
-        startNextTurn(table);
-    }
-};
-
-const startNextTurn = (table) => {
-    // TODO Refactor turn code...
-    var nextPlayer = null;
-    var index = 0;
-    while (!nextPlayer && (index < table.players.length)) {
-        if (table.players[index].handSet != null &&
-            handSetService.hasUnplayedHand(table.players[index].handSet)) {
-            nextPlayer = table.players[index];
-            table.activePlayerId = nextPlayer.id;
-        }
-        ++index;
-    }
-    if (!nextPlayer && handSetService.hasUnplayedHand(table.dealer.handSet)) {
-        nextPlayer = table.dealer;
-        table.activePlayerId = nextPlayer.id;
+        proceedToNextHand(table);
     }
 };
 
@@ -175,7 +166,7 @@ const startRound = (table) => {
         }
     });
 
-    startNextTurn(table);
+    proceedToNextHand(table);
 };
 
 module.exports = {

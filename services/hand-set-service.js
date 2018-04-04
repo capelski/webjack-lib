@@ -42,9 +42,6 @@ const getCurrentHand = (handSet) => {
     return handSet.hands[handSet.currentHand];
 };
 
-const hasUnplayedHand = (handSet) =>
-    handSet.hands.reduce((unplayedHand, hand) => unplayedHand || !hand.played, false);
-
 const splitCurrentHand = (handSet) => {
     var currentHand = getCurrentHand(handSet);
     var firstCard = currentHand.cards.splice(-1)[0];
@@ -62,6 +59,5 @@ module.exports = {
     doubleCurrentHand,
     getCurrentHand,
     getNextHand,
-    hasUnplayedHand,
     splitCurrentHand
 };

@@ -6,18 +6,23 @@ const handSetService = require('./hand-set-service');
 
 const create = (id, name) => new Player(id, name);
 
-const resolveHands = (player, dealerScore) => {
-    var earningRate = player.handSet.hands.reduce((rate, hand) => rate + handService.resolve(hand, dealerScore), 0);
-    player.earningRate += earningRate;
-};
+const hasUnplayedHand = (player) => 
+    player.handSet != null &&
+    player.handSet.hands.reduce((unplayedHand, hand) => unplayedHand || !hand.played, false);
 
 const initializeHand = (player) => {
     var handSet = handSetService.create();
     player.handSet = handSet;
 };
 
+const resolveHands = (player, dealerScore) => {
+    var earningRate = player.handSet.hands.reduce((rate, hand) => rate + handService.resolve(hand, dealerScore), 0);
+    player.earningRate += earningRate;
+};
+
 module.exports = {
     create,
-    resolveHands,
-    initializeHand
+    hasUnplayedHand,
+    initializeHand,
+    resolveHands
 };
