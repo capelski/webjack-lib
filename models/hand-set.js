@@ -1,7 +1,7 @@
 'use strict';
 
+// TODO Move hands to player
 function HandSet(hands) {
-    this.currentHand = 0; // TODO Remove? Calculate every time based on played
     this.hands = hands;
 }
 

@@ -118,9 +118,8 @@ const placeBet = (table, playerId) => {
     playerService.initializeHand(player);
 };
 
-const proceedToNextHand = (table) => {
+const updateActivePlayer = (table) => {
     var nextPlayer = table.players.find(p => playerService.hasUnplayedHand(p));
-    console.log(nextPlayer);
     if (!nextPlayer) {
         nextPlayer = table.dealer;
     }
@@ -129,9 +128,9 @@ const proceedToNextHand = (table) => {
 
 // TODO Merge nextHand / nextTurn
 const startNextHand = (table, player) => {
-    var nextHand = handSetService.getNextHand(player.handSet);
+    var nextHand = handSetService.getCurrentHand(player.handSet);
     if (nextHand) {
-        var handScore = handSetService.dealCard(player.handSet, tableService.getNextCard(table));
+        handSetService.dealCard(player.handSet, tableService.getNextCard(table));
         var playerHand = handSetService.getCurrentHand(player.handSet);
         var isBlackJack = handService.isBlackJack(playerHand);
         if (isBlackJack) {
@@ -140,7 +139,7 @@ const startNextHand = (table, player) => {
         }
     }
     else {
-        proceedToNextHand(table);
+        updateActivePlayer(table);
     }
 };
 
@@ -166,7 +165,7 @@ const startRound = (table) => {
         }
     });
 
-    proceedToNextHand(table);
+    updateActivePlayer(table);
 };
 
 module.exports = {

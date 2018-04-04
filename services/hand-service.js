@@ -30,6 +30,7 @@ const getScore = (hand) => {
 const addCard = (hand, card) => {
     hand.cards.push(card);
     hand.score = getScore(hand);
+    // TODO Check black and overMaxScore here?
     return hand.score;
 };
 

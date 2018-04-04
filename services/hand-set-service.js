@@ -30,17 +30,7 @@ const doubleCurrentHand = (handSet) => {
     currentHand.value += 1;
 };
 
-const getNextHand = (handSet) => {
-    handSet.currentHand++;
-    return handSet.hands[handSet.currentHand];
-};
-
-const getCurrentHand = (handSet) => {
-    if (!handSet.hands || !handSet.hands[handSet.currentHand]) {
-        throw 'No available hands in the hand set!';
-    }
-    return handSet.hands[handSet.currentHand];
-};
+const getCurrentHand = (handSet) => handSet.hands.find(h => !h.played);
 
 const splitCurrentHand = (handSet) => {
     var currentHand = getCurrentHand(handSet);
@@ -58,6 +48,5 @@ module.exports = {
     create,
     doubleCurrentHand,
     getCurrentHand,
-    getNextHand,
     splitCurrentHand
 };
