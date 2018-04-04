@@ -55,19 +55,6 @@ const splitCurrentHand = (handSet) => {
     handSet.hands.splice(handSet.currentHand + 1, 0, newHand);
 };
 
-const updateEarningRate = (handSet) => {
-    handSet.earningRate = 0;
-    handSet.hands.forEach((hand) => {
-        var handReturningRate = 
-        1.5 * (hand.status === 'BlackJack') +
-        1 * (hand.status === 'Wins') +
-        0 * (hand.status === 'Ties') +
-        -1 * (hand.status === 'Loses');
-        handSet.earningRate += handReturningRate * hand.value;
-    });
-    return handSet.earningRate;
-};
-
 module.exports = {
     dealCard,
     collectPlayedCards,
@@ -76,6 +63,5 @@ module.exports = {
     getCurrentHand,
     getNextHand,
     hasUnplayedHand,
-    splitCurrentHand,
-    updateEarningRate
+    splitCurrentHand
 };

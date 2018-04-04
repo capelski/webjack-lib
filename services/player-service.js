@@ -7,9 +7,7 @@ const handSetService = require('./hand-set-service');
 const create = (id, name) => new Player(id, name);
 
 const resolveHands = (player, dealerScore) => {
-    player.handSet.hands.forEach(hand => handService.resolve(hand, dealerScore));
-    // TODO Move following to handService?
-    var earningRate = handSetService.updateEarningRate(player.handSet);
+    var earningRate = player.handSet.hands.reduce((rate, hand) => rate + handService.resolve(hand, dealerScore), 0);
     player.earningRate += earningRate;
 };
 

@@ -69,6 +69,12 @@ const resolve = (hand, dealerScore) => {
     else {
         hand.status = hand.score > dealerScore ? 'Wins' : 'Loses';
     }
+
+    return hand.value * (
+        1.5 * (hand.status === 'BlackJack') +
+        1 * (hand.status === 'Wins') +
+        0 * (hand.status === 'Ties') +
+        -1 * (hand.status === 'Loses'));
 };
 
 module.exports = {
