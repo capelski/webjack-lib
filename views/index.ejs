@@ -42,11 +42,8 @@
                     data.players.find(pl => pl.id == data.activePlayerId);
 
                 data.players.forEach(p => {
-                    var serializedHands = '';
-                    if (p.handSet != null) {
-                        serializedHands = p.handSet.hands.reduce((sH, hand) =>
-                            sH + hand.cards.reduce((sC, card) => sC + card.symbol + card.suit + ', ', '') + ' (' + hand.score + ') ' + hand.status + ' / ', '');
-                    }
+                    var serializedHands = p.hands.reduce((sH, hand) =>
+                        sH + hand.cards.reduce((sC, card) => sC + card.symbol + card.suit + ', ', '') + ' (' + hand.score + ') ' + hand.status + ' / ', '');
                     results.innerHTML += p.name + ' (' + p.earningRate + '): ' + serializedHands;
                     if (p.id == playerId && activePlayer && p.id == activePlayer.id) {
                         results.innerHTML += '<button type="button" onclick="hit();">Hit</button>' +
@@ -57,11 +54,8 @@
                     results.innerHTML += '<br />';
                 });
 
-                var serializedHands = '';
-                if (data.dealer.handSet != null) {
-                    serializedHands = data.dealer.handSet.hands.reduce((sH, hand) =>
-                        sH + hand.cards.reduce((sC, card) => sC + card.symbol + card.suit + ', ', '') + ' (' + hand.score + ')', '');
-                }
+                var serializedHands = data.dealer.hands.reduce((sH, hand) =>
+                    sH + hand.cards.reduce((sC, card) => sC + card.symbol + card.suit + ', ', '') + ' (' + hand.score + ')', '');
                 results.innerHTML += data.dealer.name + ': ' + serializedHands + '<br />';
             }
         }

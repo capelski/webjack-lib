@@ -3,7 +3,6 @@
 const js = require('../utils/js-generics');
 const Table = require('../models/table');
 const cardService = require('./card-service');
-const handSetService = require('./hand-set-service');
 const playerService = require('./player-service');
 const uuidV4 = require('uuid/v4');
 const gameParameters = require('../game-parameters');
@@ -13,12 +12,13 @@ let tables = [];
 // TODO Exit table functionality
 
 const collectPlayedCards = (table) => {
-    var playedCards = table.players.filter(p => p.handSet != null)
-        .reduce((cards, player) => cards.concat(handSetService.collectPlayedCards(player.handSet)), []);
-    playedCards = playedCards.concat(handSetService.collectPlayedCards(table.dealer.handSet));
+    // TODO PlayerService.hasHands
+    var playedCards = table.players.filter(p => p.hands.length > 0)
+        .reduce((cards, player) => cards.concat(playerService.collectPlayedCards(player)), []);
+    playedCards = playedCards.concat(playerService.collectPlayedCards(table.dealer));
 
-    table.players.forEach(player => player.handSet = null);
-    table.dealer.handSet = null;
+    table.players.forEach(player => player.hands = []);
+    table.dealer.hands = [];
 
     table.playedCards = table.playedCards.concat(playedCards);
 
@@ -51,7 +51,7 @@ const exitTable = (tableId, playerId) => {
         throw 'No player identified by ' + playerId + ' was found';
     }
 
-    if (player.handSet != null) {
+    if (player.hands.length > 0) {
         throw 'The current round must be ended before leaving the table';
     }
 
