@@ -15,8 +15,8 @@
 
 <body>
     <button type="button" onclick="joinTable();" id="join-table">Join table</button>
+    <button type="button" onclick="exitTable();" id="exit-table">Exit table</button>
     <button type="button" onclick="placeBet();">Place bet</button>
-    <button type="button" onclick="exitTable();">Exit table</button>
     <div id="results"></div>
   
     <script src="/plugins/jquery-2.1.1/jquery-2.1.1.min.js" type="text/javascript"></script>
@@ -71,6 +71,7 @@
         function exitTable() {
             $.get('/blackjack/exit').then(() => {
                 $('#join-table').show();
+                $('#exit-table').hide();
                 clearInterval(interval);
                 var results = document.getElementById('results');
                 results.innerHTML = '';
@@ -84,6 +85,7 @@
         function joinTable() {
             $.get('/blackjack/join').then(() => {
                 $('#join-table').hide();
+                $('#exit-table').show();
                 interval = setInterval(() =>  $.get('/blackjack/get').then(render), 1000);
             });
         }
@@ -103,7 +105,11 @@
         $(function() {
             if (tableId != '') {
                 $('#join-table').hide();
+                $('#exit-table').show();
                 interval = setInterval(() =>  $.get('/blackjack/get').then(render), 1000);
+            }
+            else {
+                $('#exit-table').hide();
             }
         });
     </script>

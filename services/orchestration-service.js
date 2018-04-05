@@ -13,6 +13,9 @@ const makeDecisionTrigger = (table, player) => tableService.setTrigger(table, 8,
 const playDealerTurnTrigger = (table) => tableService.setTrigger(table, 2, () => playDealerTurn(table));
 const collectPlayedCardsTrigger = (table) => tableService.setTrigger(table, 2, () => tableService.collectPlayedCards(table));
 
+// TODO Access to models properties should be done in the model service
+// e.g. table.players.forEach(whatever) => tableService.whatever
+
 const playDealerTurn = (table) => {
     tableService.clearTrigger(table);
 

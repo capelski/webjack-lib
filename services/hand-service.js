@@ -13,17 +13,10 @@ const canSplit = (hand) => hand.cards.length === 2 && cardService.getValue(hand.
 const create = () => new Hand();
 
 const getScore = (hand) => {
-    var cardReducer = (result, card) => {
-        return js.cartesianProduct(result, cardService.getValue(card), (x, y) => x + y);
-    };
+    var cardReducer = (result, card) => 
+        js.cartesianProduct(result, cardService.getValue(card), (x, y) => x + y);
     var allScores = hand.cards.reduce(cardReducer, [0]);
-    var score = allScores[0];
-    for (var i = 1; i < allScores.length; ++i) {
-        var potentialScore = allScores[i];
-        if (potentialScore < 22) {
-            score = potentialScore;
-        }
-    }
+    var score = allScores.reduce((bestScore, nextScore) => (bestScore == 0 || nextScore < 22) ? nextScore : bestScore, 0);
     return score;
 };
 

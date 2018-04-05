@@ -6,6 +6,9 @@ const js = require('../utils/js-generics');
 
 const create = (id, name) => new Player(id, name);
 
+// TODO Access to models properties should be done in the model service
+// e.g. player.hands.reduce(whatever) => handService.whatever
+
 const collectPlayedCards = (player) => {
     var cards = player.hands.reduce((cards, hand) => cards.concat(handService.getCards(hand)), []);
     player.hands = [];
