@@ -7,6 +7,33 @@ const tableService = require('./table-service');
 
 // TODO Control the game time
 
+const endRound = (table) => {
+    if (table.activePlayerId !== table.dealer.id) {
+        throw 'Can\'t play dealer round yet!';
+    }
+    
+    var dealerScore = 0;
+    while (dealerScore < 17) {
+        dealerScore = playerService.dealCard(table.dealer, tableService.getNextCard(table)).score;
+    }
+
+    table.players.forEach(p => playerService.resolveHands(p, dealerScore));
+    table.activePlayerId = null;
+};
+
+const ensurePlayer = (table, playerId) => {
+    var currentPlayer = tableService.getActivePlayer(table);
+    if (!currentPlayer) {
+        throw 'No one is playing now';
+    }
+
+    if (table.activePlayerId !== playerId) {
+        throw 'Not allowed to play now. It is ' + currentPlayer.name + '\'s turn';
+    }
+
+    return currentPlayer;
+};
+
 const double = (table, player) => {
     var playerHand = playerService.getCurrentHand(player);
     if (!handService.canDouble(playerHand)) {
@@ -43,35 +70,6 @@ const stand = (table, player) => {
     var playerHand = playerService.getCurrentHand(player);
     handService.markAsPlayed(playerHand);
     startNextHand(table, player);
-};
-
-const endRound = (table) => {
-    if (table.activePlayerId !== table.dealer.id) {
-        throw 'Can\'t play dealer round yet!';
-    }
-    
-    var dealer = table.dealer;
-    var dealerScore = 0;
-    while (dealerScore < 17) {
-        dealerScore = playerService.dealCard(dealer, tableService.getNextCard(table)).score;
-    }
-
-    table.players.forEach(p => playerService.resolveHands(p, dealerScore));
-
-    table.activePlayerId = null;
-};
-
-const ensurePlayer = (table, playerId) => {
-    var currentPlayer = tableService.getActivePlayer(table);
-    if (!currentPlayer) {
-        throw 'No one is playing now';
-    }
-
-    if (table.activePlayerId !== playerId) {
-        throw 'Not allowed to play now. It is ' + currentPlayer.name + '\'s turn';
-    }
-
-    return currentPlayer;
 };
 
 const makeDecision = (table, playerId, action) => {
@@ -133,16 +131,10 @@ const startRound = (table) => {
         throw 'No one has placed a bet yet!';
     }
 
-    players.forEach(player => {
-        playerService.dealCard(player, tableService.getNextCard(table));
-    });
-
+    players.forEach(p => playerService.dealCard(p, tableService.getNextCard(table)));
     playerService.initializeHand(table.dealer);
     playerService.dealCard(table.dealer, tableService.getNextCard(table));
-
-    players.forEach(player => {
-        playerService.dealCard(player, tableService.getNextCard(table));
-    });
+    players.forEach(p => playerService.dealCard(p, tableService.getNextCard(table)));
 
     updateActivePlayer(table);
 };
