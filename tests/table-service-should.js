@@ -10,7 +10,7 @@ const orchestrationService = require('../services/orchestration-service');
     orchestrationService.placeBet(table, playerId);
     orchestrationService.startRound(table);
     orchestrationService.makeDecision(table, playerId, 'Stand');
-    orchestrationService.endRound(table);
+    orchestrationService.playDealerTurn(table);
     tableService.collectPlayedCards(table);
     tableService.exitTable(tableId, playerId);
 

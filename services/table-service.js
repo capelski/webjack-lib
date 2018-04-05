@@ -9,7 +9,15 @@ const playerService = require('./player-service');
 
 let tables = [];
 
+const clearTrigger = (table) => {
+    clearTimeout(table.nextTrigger);
+    table.nextTrigger = null;
+    table.nextAction = null;
+};
+
 const collectPlayedCards = (table) => {
+    clearTrigger(table);
+
     var playedCards = table.players
         .reduce((cards, player) => cards.concat(playerService.collectPlayedCards(player)), [])
         .concat(playerService.collectPlayedCards(table.dealer));
@@ -78,11 +86,19 @@ const joinTable = (playerId) => {
     return table.id;
 };
 
+const setTrigger = (table, seconds, callback) => {
+    table.nextTrigger = setTimeout(callback, seconds * 1000);
+    table.nextAction = new Date();
+    table.nextAction.setSeconds(table.nextAction.getSeconds() + seconds);
+};
+
 module.exports = {
+    clearTrigger,
     collectPlayedCards,
     exitTable,
     getActivePlayer,
     getNextCard,
     getTable,
-    joinTable
+    joinTable,
+    setTrigger
 };

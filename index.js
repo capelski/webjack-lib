@@ -13,7 +13,8 @@ const configureRouter = (middleware) => {
 	const serializedTable = (res, table) => res.send(JSON.stringify({
 		players: table.players,
 		dealer: table.dealer,
-		activePlayerId: table.activePlayerId
+		activePlayerId: table.activePlayerId,
+		nextAction: table.nextAction
 	}));
 
 	router.get('/', middleware.session, function (req, res, next) {
@@ -54,17 +55,6 @@ const configureRouter = (middleware) => {
 		}
 	});
 
-	router.get('/start-round', middleware.session, function (req, res, next) {
-		var table = tableService.getTable(req.session.tableId);
-		if (!table) {
-			return noTableJoined(res);
-		}
-		else {
-			orchestrationService.startRound(table);
-            return serializedTable(res, table);
-		}
-	});
-
 	router.get('/make-decision', middleware.session, function (req, res, next) {
 
 		var playerId = req.session.playerId;
@@ -81,28 +71,6 @@ const configureRouter = (middleware) => {
             catch(exception) {
 				return res.status(400).send(exception);
 			}
-		}
-    });
-
-    router.get('/end-round', middleware.session, function (req, res, next) {
-		var table = tableService.getTable(req.session.tableId);
-		if (!table) {
-			return noTableJoined(res);
-		}
-		else {
-        	orchestrationService.endRound(table);
-            return serializedTable(res, table);
-		}
-    });
-
-    router.get('/clear-round', middleware.session, function (req, res, next) {
-		var table = tableService.getTable(req.session.tableId);
-		if (!table) {
-			return noTableJoined(res);
-		}
-		else {
-        	tableService.collectPlayedCards(table);
-            return serializedTable(res, table);
 		}
     });
 

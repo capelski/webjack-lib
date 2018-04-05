@@ -16,9 +16,6 @@
 <body>
     <button type="button" onclick="joinTable();" id="join-table">Join table</button>
     <button type="button" onclick="placeBet();">Place bet</button>
-    <button type="button" onclick="startRound();">Start round</button>
-    <button type="button" onclick="endRound();">End round</button>
-    <button type="button" onclick="clearRound();">Clear round</button>
     <button type="button" onclick="exitTable();">Exit table</button>
     <div id="results"></div>
   
@@ -57,19 +54,18 @@
                 var serializedHands = data.dealer.hands.reduce((sH, hand) =>
                     sH + hand.cards.reduce((sC, card) => sC + card.symbol + card.suit + ', ', '') + ' (' + hand.score + ')', '');
                 results.innerHTML += data.dealer.name + ': ' + serializedHands + '<br />';
-            }
-        }
 
-        function clearRound() {
-            $.get('/blackjack/clear-round').then(render);
+                if (data.nextAction) {
+                    var currentDate = new Date();
+                    var nextAction = new Date(data.nextAction);
+                    var secondsLeft = nextAction.getSeconds() - currentDate.getSeconds();
+                    results.innerHTML += secondsLeft + ' seconds left until next action';
+                }
+            }
         }
 
         function double() {
             $.get('/blackjack/make-decision?decision=Double').then(render);
-        }
-
-        function endRound() {
-            $.get('/blackjack/end-round').then(render);
         }
 
         function exitTable() {
@@ -102,10 +98,6 @@
 
         function stand() {
             $.get('/blackjack/make-decision?decision=Stand').then(render);
-        }
-
-        function startRound() {
-            $.get('/blackjack/start-round').then(render);
         }
 
         $(function() {

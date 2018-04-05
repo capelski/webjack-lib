@@ -5,9 +5,17 @@ const playerService = require('./player-service');
 const handService = require('./hand-service');
 const tableService = require('./table-service');
 
-// TODO Control the game time
+const startRoundTrigger = (table) => {
+    tableService.clearTrigger(table);
+    tableService.setTrigger(table, 8, () => startRound(table));
+};
+const makeDecisionTrigger = (table, player) => tableService.setTrigger(table, 8, () => stand(table, player));
+const playDealerTurnTrigger = (table) => tableService.setTrigger(table, 2, () => playDealerTurn(table));
+const collectPlayedCardsTrigger = (table) => tableService.setTrigger(table, 2, () => tableService.collectPlayedCards(table));
 
-const endRound = (table) => {
+const playDealerTurn = (table) => {
+    tableService.clearTrigger(table);
+
     if (table.activePlayerId !== table.dealer.id) {
         throw 'Can\'t play dealer round yet!';
     }
@@ -19,6 +27,8 @@ const endRound = (table) => {
 
     table.players.forEach(p => playerService.resolveHands(p, dealerScore));
     table.activePlayerId = null;
+
+    collectPlayedCardsTrigger(table);
 };
 
 const ensurePlayer = (table, playerId) => {
@@ -51,6 +61,9 @@ const hit = (table, player) => {
     if (!handStatus.isHandAlive) {
         startNextHand(table, player);
     }
+    else {
+        makeDecisionTrigger(table, player);
+    }
 };
 
 const split = (table, player) => {
@@ -64,6 +77,9 @@ const split = (table, player) => {
     if (!handStatus.isHandAlive) {
         startNextHand(table, player);
     }
+    else {
+        makeDecisionTrigger(table, player);
+    }
 };
 
 const stand = (table, player) => {
@@ -74,6 +90,7 @@ const stand = (table, player) => {
 
 const makeDecision = (table, playerId, action) => {
     var player = ensurePlayer(table, playerId);
+    tableService.clearTrigger(table);
     switch (action) {
         case 'Double': {
             double(table, player);
@@ -95,21 +112,28 @@ const makeDecision = (table, playerId, action) => {
 };
 
 const placeBet = (table, playerId) => {
-    // TODO Allow only when round is not started
     var player = table.players.find(p => p.id == playerId);
     if (!player) {
         throw 'No player identified by ' + playerId + ' was found';
     }
 
+    // TODO Allow only when round is not started
+
     playerService.initializeHand(player);
+    startRoundTrigger(table);
 };
 
 const updateActivePlayer = (table) => {
     var nextPlayer = table.players.find(playerService.hasUnplayedHands);
     if (!nextPlayer) {
         nextPlayer = table.dealer;
+        playDealerTurnTrigger(table);
+    }
+    else {
+        makeDecisionTrigger(table, nextPlayer);
     }
     table.activePlayerId = nextPlayer.id;
+    
 };
 
 const startNextHand = (table, player) => {
@@ -119,6 +143,7 @@ const startNextHand = (table, player) => {
         if (!handStatus.isHandAlive) {
             startNextHand(table, player);
         }
+        makeDecisionTrigger(table, player);
     }
     else {
         updateActivePlayer(table);
@@ -126,6 +151,8 @@ const startNextHand = (table, player) => {
 };
 
 const startRound = (table) => {
+    tableService.clearTrigger(table);
+
     var players = table.players.filter(playerService.hasHands);
     if (players.length == 0) {
         throw 'No one has placed a bet yet!';
@@ -140,7 +167,7 @@ const startRound = (table) => {
 };
 
 module.exports = {
-    endRound,
+    playDealerTurn,
     makeDecision,
     placeBet,
     startRound

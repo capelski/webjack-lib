@@ -7,6 +7,8 @@ function Table(tableId, cards, dealer) {
     this.id = tableId;
     this.playedCards = [];
     this.players = [];
+    this.nextTrigger = null;
+    this.nextAction = null;
 }
 
 module.exports = Table;
