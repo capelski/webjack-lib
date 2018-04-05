@@ -9,16 +9,12 @@ const gameParameters = require('../game-parameters');
 
 let tables = [];
 
-// TODO Exit table functionality
-
 const collectPlayedCards = (table) => {
     // TODO PlayerService.hasHands
-    var playedCards = table.players.filter(p => p.hands.length > 0)
-        .reduce((cards, player) => cards.concat(playerService.collectPlayedCards(player)), []);
-    playedCards = playedCards.concat(playerService.collectPlayedCards(table.dealer));
-
-    table.players.forEach(player => player.hands = []);
-    table.dealer.hands = [];
+    var playedCards = table.players
+        .filter(p => p.hands.length > 0)
+        .reduce((cards, player) => cards.concat(playerService.collectPlayedCards(player)), [])
+        .concat(playerService.collectPlayedCards(table.dealer));
 
     table.playedCards = table.playedCards.concat(playedCards);
 
@@ -27,6 +23,8 @@ const collectPlayedCards = (table) => {
         table.playedCards = [];
         js.shuffleArray(table.availableCards);
     }
+
+    console.log(table.playedCards.length, '/', table.availableCards.length);
 };
 
 const create = () => {

@@ -7,11 +7,8 @@ const js = require('../utils/js-generics');
 const create = (id, name) => new Player(id, name);
 
 const collectPlayedCards = (player) => {
-    // TODO Remove the cards from the hands
-    var cards = [];
-    js.iterate(player.hands, (hand) => {
-        cards = cards.concat(handService.getCards(hand));
-    });
+    var cards = player.hands.reduce((cards, hand) => cards.concat(handService.getCards(hand)), []);
+    player.hands = [];
     return cards;
 };
 
