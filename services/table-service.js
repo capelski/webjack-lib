@@ -10,9 +10,7 @@ const gameParameters = require('../game-parameters');
 let tables = [];
 
 const collectPlayedCards = (table) => {
-    // TODO PlayerService.hasHands
     var playedCards = table.players
-        .filter(p => p.hands.length > 0)
         .reduce((cards, player) => cards.concat(playerService.collectPlayedCards(player)), [])
         .concat(playerService.collectPlayedCards(table.dealer));
 
@@ -24,7 +22,7 @@ const collectPlayedCards = (table) => {
         js.shuffleArray(table.availableCards);
     }
 
-    console.log(table.playedCards.length, '/', table.availableCards.length);
+    // console.log(table.playedCards.length, '/', table.availableCards.length);
 };
 
 const create = () => {

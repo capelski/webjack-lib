@@ -25,7 +25,9 @@ const doubleCurrentHand = (player) => {
 
 const getCurrentHand = (player) => player.hands.find(h => !h.played);
 
-const hasUnplayedHand = (player) =>
+const hasHands = (player) => player.hands.length > 0;
+
+const hasUnplayedHands = (player) =>
     player.hands.reduce((unplayedHand, hand) => unplayedHand || !hand.played, false);
 
 const initializeHand = (player) => {
@@ -55,7 +57,8 @@ module.exports = {
     dealCard,
     doubleCurrentHand,
     getCurrentHand,
-    hasUnplayedHand,
+    hasHands,
+    hasUnplayedHands,
     initializeHand,
     resolveHands,
     splitCurrentHand

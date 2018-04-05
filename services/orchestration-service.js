@@ -66,8 +66,7 @@ const endRound = (table) => {
         dealerScore = playerService.dealCard(dealer, tableService.getNextCard(table));
     }
 
-    table.players.filter(p => p.hands.length > 0)
-        .forEach(p => playerService.resolveHands(p, dealerScore));
+    table.players.forEach(p => playerService.resolveHands(p, dealerScore));
 
     table.activePlayerId = null;
 };
@@ -118,7 +117,7 @@ const placeBet = (table, playerId) => {
 };
 
 const updateActivePlayer = (table) => {
-    var nextPlayer = table.players.find(p => playerService.hasUnplayedHand(p));
+    var nextPlayer = table.players.find(playerService.hasUnplayedHands);
     if (!nextPlayer) {
         nextPlayer = table.dealer;
     }
@@ -142,7 +141,7 @@ const startNextHand = (table, player) => {
 };
 
 const startRound = (table) => {
-    var players = table.players.filter(p => p.hands.length > 0);
+    var players = table.players.filter(playerService.hasHands);
     if (players.length == 0) {
         throw 'No one has placed a bet yet!';
     }
