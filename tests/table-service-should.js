@@ -14,5 +14,5 @@ const orchestrationService = require('../services/orchestration-service');
     tableService.collectPlayedCards(table);
     tableService.exitTable(tableId, playerId);
 
-    console.log('Test successfully executed')
+    console.log('allow_joining_a_table_and_play_a_round succeded');
 })();
