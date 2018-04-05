@@ -14,22 +14,16 @@ const double = (table, player) => {
     }
 
     playerService.doubleCurrentHand(player);
-    var handScore = playerService.dealCard(player, tableService.getNextCard(table));
-    var playerHand = playerService.getCurrentHand(player);
-    handService.isOverMaxScore(playerHand);
+    playerService.dealCard(player, tableService.getNextCard(table));
     handService.markAsPlayed(playerHand);
     startNextHand(table, player);
 };
 
 const hit = (table, player) => {
-    var handScore = playerService.dealCard(player, tableService.getNextCard(table));
-    var playerHand = playerService.getCurrentHand(player);
-    var isOverMaxScore = handService.isOverMaxScore(playerHand);
-    if (isOverMaxScore) {
-        handService.markAsPlayed(playerHand);
+    var handStatus = playerService.dealCard(player, tableService.getNextCard(table));
+    if (!handStatus.isHandAlive) {
         startNextHand(table, player);
     }
-    return isOverMaxScore;
 };
 
 const split = (table, player) => {
@@ -39,14 +33,10 @@ const split = (table, player) => {
     }
      
     playerService.splitCurrentHand(player);
-    var handScore = playerService.dealCard(player, tableService.getNextCard(table));
-    var playerHand = playerService.getCurrentHand(player);
-    var isBlackJack = handService.isBlackJack(playerHand);
-    if (isBlackJack) {
-        handService.markAsPlayed(playerHand);
+    var handStatus = playerService.dealCard(player, tableService.getNextCard(table));
+    if (!handStatus.isHandAlive) {
         startNextHand(table, player);
     }
-    return isBlackJack;
 };
 
 const stand = (table, player) => {
@@ -63,7 +53,7 @@ const endRound = (table) => {
     var dealer = table.dealer;
     var dealerScore = 0;
     while (dealerScore < 17) {
-        dealerScore = playerService.dealCard(dealer, tableService.getNextCard(table));
+        dealerScore = playerService.dealCard(dealer, tableService.getNextCard(table)).score;
     }
 
     table.players.forEach(p => playerService.resolveHands(p, dealerScore));
@@ -127,11 +117,8 @@ const updateActivePlayer = (table) => {
 const startNextHand = (table, player) => {
     var nextHand = playerService.getCurrentHand(player);
     if (nextHand) {
-        playerService.dealCard(player, tableService.getNextCard(table));
-        var playerHand = playerService.getCurrentHand(player);
-        var isBlackJack = handService.isBlackJack(playerHand);
-        if (isBlackJack) {
-            handService.markAsPlayed(playerHand);
+        var handStatus = playerService.dealCard(player, tableService.getNextCard(table));
+        if (!handStatus.isHandAlive) {
             startNextHand(table, player);
         }
     }
@@ -154,12 +141,7 @@ const startRound = (table) => {
     playerService.dealCard(table.dealer, tableService.getNextCard(table));
 
     players.forEach(player => {
-        var handScore = playerService.dealCard(player, tableService.getNextCard(table));
-        var playerHand = playerService.getCurrentHand(player);
-        var isBlackJack = handService.isBlackJack(playerHand);
-        if (isBlackJack) {
-            handService.markAsPlayed(playerHand);
-        }
+        playerService.dealCard(player, tableService.getNextCard(table));
     });
 
     updateActivePlayer(table);

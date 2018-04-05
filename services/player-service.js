@@ -14,8 +14,8 @@ const collectPlayedCards = (player) => {
 
 const dealCard = (player, card) => {
     var currentHand = getCurrentHand(player);
-    var handScore = handService.addCard(currentHand, card);
-    return handScore;
+    var handStatus = handService.addCard(currentHand, card);
+    return handStatus;
 };
 
 const doubleCurrentHand = (player) => {

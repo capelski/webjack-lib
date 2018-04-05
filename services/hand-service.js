@@ -27,13 +27,6 @@ const getScore = (hand) => {
     return score;
 };
 
-const addCard = (hand, card) => {
-    hand.cards.push(card);
-    hand.score = getScore(hand);
-    // TODO Check black and overMaxScore here?
-    return hand.score;
-};
-
 const isBlackJack = (hand) => {
     var _isBlackJack = hand.score === 21 && hand.cards.length === 2;
     if (_isBlackJack) {
@@ -52,6 +45,20 @@ const isOverMaxScore = (hand) => {
 
 const markAsPlayed = (hand) => {
     hand.played = true;
+};
+
+const addCard = (hand, card) => {
+    hand.cards.push(card);
+    hand.score = getScore(hand);
+    var isHandAlive = !isBlackJack(hand) && !isOverMaxScore(hand);
+    if (!isHandAlive) {
+        markAsPlayed(hand);
+    }
+
+    return {
+        score: hand.score,
+        isHandAlive
+    };
 };
 
 const resolve = (hand, dealerScore) => {
@@ -85,8 +92,6 @@ module.exports = {
     create,
     getCards,
     getScore,
-    isBlackJack,
-    isOverMaxScore,
     markAsPlayed,
     resolve
 };

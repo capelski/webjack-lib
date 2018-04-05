@@ -1,11 +1,11 @@
 'use strict';
 
+const uuidV4 = require('uuid/v4');
 const js = require('../utils/js-generics');
+const gameParameters = require('../game-parameters');
 const Table = require('../models/table');
 const cardService = require('./card-service');
 const playerService = require('./player-service');
-const uuidV4 = require('uuid/v4');
-const gameParameters = require('../game-parameters');
 
 let tables = [];
 
@@ -47,7 +47,7 @@ const exitTable = (tableId, playerId) => {
         throw 'No player identified by ' + playerId + ' was found';
     }
 
-    if (player.hands.length > 0) {
+    if (playerService.hasHands(player)) {
         throw 'The current round must be ended before leaving the table';
     }
 
