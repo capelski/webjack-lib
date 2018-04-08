@@ -22,9 +22,8 @@ const configureRouter = (middleware) => {
 		if (!playerId) {
 			playerId = req.session.playerId = uuidV4();
 		}
-
-		var tableId = req.session.tableId;
-		res.render('index.ejs', { playerId, tableId });
+		
+		res.sendFile(path.join(__dirname, 'public', 'index.html'));
 	});
 
 	router.get('/join', middleware.session, function (req, res, next) {
