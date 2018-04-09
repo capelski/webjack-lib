@@ -17,18 +17,27 @@ const configureRouter = (middleware) => {
 		nextAction: table.nextAction
 	}));
 
-	router.get('/', middleware.session, function (req, res, next) {
+	router.get('/', function (req, res, next) {	
+		return res.sendFile(path.join(__dirname, 'public', 'index.html'));
+	});
+
+	router.get('/register', middleware.session, function (req, res, next) {
 		var playerId = req.session.playerId;
+		var playerName = req.session.playerName;
+
 		if (!playerId) {
 			playerId = req.session.playerId = uuidV4();
+			// TODO Check player name does not exist (and != Dealer). Check req.query.name exists
+			playerName = req.session.playerName = req.query.name;
 		}
 		
-		res.sendFile(path.join(__dirname, 'public', 'index.html'));
+		return res.send(JSON.stringify({ playerId, playerName }));
 	});
 
 	router.get('/join', middleware.session, function (req, res, next) {
 		var playerId = req.session.playerId;
-		var tableId = tableService.joinTable(playerId);
+		var playerName = req.session.playerName;
+		var tableId = tableService.joinTable(playerId, playerName);
 		req.session.tableId = tableId;
 		return res.send(tableId);
 	});

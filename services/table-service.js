@@ -74,13 +74,13 @@ const getNextCard = (table) => {
 
 const getTable = (tableId) => tables.find(t => t.id == tableId);
 
-const joinTable = (playerId) => {
+const joinTable = (playerId, playerName) => {
     var table = tables.find(t => t.players.length < gameParameters.maxPlayers);
     if (!table) {
         table = create();
     }
 
-    var player = playerService.create(playerId);
+    var player = playerService.create(playerId, playerName);
     table.players.push(player);
 
     return table.id;
