@@ -21,17 +21,22 @@ const configureRouter = (middleware) => {
 		return res.sendFile(path.join(__dirname, 'public', 'index.html'));
 	});
 
+	router.get('/is-registered', middleware.session, function (req, res, next) {
+		var playerId = req.session.playerId;		
+		var tableId = req.session.tableId;		
+		return res.send(JSON.stringify({ playerId, tableId }));
+	});
+
 	router.get('/register', middleware.session, function (req, res, next) {
 		var playerId = req.session.playerId;
-		var playerName = req.session.playerName;
 
 		if (!playerId) {
 			playerId = req.session.playerId = uuidV4();
 			// TODO Check player name does not exist (and != Dealer). Check req.query.name exists
-			playerName = req.session.playerName = req.query.name;
+			req.session.playerName = req.query.name;
 		}
 		
-		return res.send(JSON.stringify({ playerId, playerName }));
+		return res.send(playerId);
 	});
 
 	router.get('/join', middleware.session, function (req, res, next) {
