@@ -21,13 +21,13 @@ const configureRouter = (middleware) => {
 		return res.sendFile(path.join(__dirname, 'public', 'index.html'));
 	});
 
-	router.get('/is-registered', middleware.session, function (req, res, next) {
+	router.get('/is-player-registered', middleware.session, function (req, res, next) {
 		var playerId = req.session.playerId;		
 		var tableId = req.session.tableId;		
 		return res.send(JSON.stringify({ playerId, tableId }));
 	});
 
-	router.get('/register', middleware.session, function (req, res, next) {
+	router.get('/register-player', middleware.session, function (req, res, next) {
 		var playerId = req.session.playerId;
 
 		if (!playerId) {
@@ -39,7 +39,7 @@ const configureRouter = (middleware) => {
 		return res.send(playerId);
 	});
 
-	router.get('/join', middleware.session, function (req, res, next) {
+	router.get('/join-table', middleware.session, function (req, res, next) {
 		var playerId = req.session.playerId;
 		var playerName = req.session.playerName;
 		var tableId = tableService.joinTable(playerId, playerName);
@@ -47,7 +47,7 @@ const configureRouter = (middleware) => {
 		return res.send(tableId);
 	});
 
-	router.get('/get', middleware.session, function (req, res, next) {
+	router.get('/table-status', middleware.session, function (req, res, next) {
 		var table = tableService.getTable(req.session.tableId);
 		if (!table) {
 			return noTableJoined(res);
@@ -87,7 +87,7 @@ const configureRouter = (middleware) => {
 		}
     });
 
-	router.get('/exit', middleware.session, function (req, res, next) {
+	router.get('/exit-table', middleware.session, function (req, res, next) {
 		var playerId = req.session.playerId;
 		var tableId = req.session.tableId;
 		tableService.exitTable(tableId, playerId);
