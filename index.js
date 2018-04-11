@@ -19,11 +19,22 @@ const configureRouter = (middleware) => {
 	const noTableJoined = (res) =>
 		res.status(400).send(JSON.stringify({message: "No table has been joined"}));
 
+	const getSecondsLeft = (date) => {
+		var seconds = -1;
+		if (date) {
+			var diff = date.getTime() - new Date().getTime();
+			if (diff >= 0) {
+				seconds = Math.floor(diff / 1000);
+			}
+		}
+		return seconds;
+	};
+
 	const serializedTable = (res, table) => res.send(JSON.stringify({
 		players: table.players,
 		dealer: table.dealer,
 		activePlayerId: table.activePlayerId,
-		nextAction: table.nextAction
+		secondsLeft: getSecondsLeft(table.nextAction)
 	}));
 
 	router.get('/', function (req, res, next) {	
