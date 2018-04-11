@@ -5,7 +5,16 @@ const uuidV4 = require('uuid/v4');
 const tableService = require('./services/table-service');
 const orchestrationService = require('./services/orchestration-service');
 
+const corsMiddleware = (req, res, next) => {
+	res.header("Access-Control-Allow-Origin", "http://localhost:8080");
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	res.header("Access-Control-Allow-Credentials", "true");
+	next();
+};
+
 const configureRouter = (middleware) => {
+
+	const appMiddleware = [ middleware.session, corsMiddleware ];
 
 	const noTableJoined = (res) =>
 		res.status(400).send(JSON.stringify({message: "No table has been joined"}));
@@ -21,13 +30,13 @@ const configureRouter = (middleware) => {
 		return res.sendFile(path.join(__dirname, 'public', 'index.html'));
 	});
 
-	router.get('/is-player-registered', middleware.session, function (req, res, next) {
-		var playerId = req.session.playerId;		
-		var tableId = req.session.tableId;		
+	router.get('/is-player-registered', appMiddleware, function (req, res, next) {
+		var playerId = req.session.playerId;
+		var tableId = req.session.tableId;
 		return res.send(JSON.stringify({ playerId, tableId }));
 	});
 
-	router.get('/register-player', middleware.session, function (req, res, next) {
+	router.get('/register-player', appMiddleware, function (req, res, next) {
 		var playerId = req.session.playerId;
 
 		if (!playerId) {
@@ -36,18 +45,17 @@ const configureRouter = (middleware) => {
 			req.session.playerName = req.query.name;
 		}
 		
-		return res.send(playerId);
+		return res.send(JSON.stringify({ playerId }));
 	});
 
-	router.get('/join-table', middleware.session, function (req, res, next) {
+	router.get('/join-table', appMiddleware, function (req, res, next) {
 		var playerId = req.session.playerId;
 		var playerName = req.session.playerName;
-		var tableId = tableService.joinTable(playerId, playerName);
-		req.session.tableId = tableId;
-		return res.send(tableId);
+		var tableId = req.session.tableId = tableService.joinTable(playerId, playerName);
+		return res.send(JSON.stringify({ tableId }));
 	});
 
-	router.get('/table-status', middleware.session, function (req, res, next) {
+	router.get('/table-status', appMiddleware, function (req, res, next) {
 		var table = tableService.getTable(req.session.tableId);
 		if (!table) {
 			return noTableJoined(res);
@@ -57,7 +65,7 @@ const configureRouter = (middleware) => {
 		}
 	});
 
-	router.get('/place-bet', middleware.session, function (req, res, next) {
+	router.get('/place-bet', appMiddleware, function (req, res, next) {
 		var table = tableService.getTable(req.session.tableId);
 		if (!table) {
 			return noTableJoined(res);
@@ -68,7 +76,7 @@ const configureRouter = (middleware) => {
 		}
 	});
 
-	router.get('/make-decision', middleware.session, function (req, res, next) {
+	router.get('/make-decision', appMiddleware, function (req, res, next) {
 
 		var playerId = req.session.playerId;
 		var decision = req.query.decision;
@@ -87,7 +95,7 @@ const configureRouter = (middleware) => {
 		}
     });
 
-	router.get('/exit-table', middleware.session, function (req, res, next) {
+	router.get('/exit-table', appMiddleware, function (req, res, next) {
 		var playerId = req.session.playerId;
 		var tableId = req.session.tableId;
 		tableService.exitTable(tableId, playerId);
