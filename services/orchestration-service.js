@@ -7,11 +7,11 @@ const tableService = require('./table-service');
 
 const startRoundTrigger = (table) => {
     tableService.clearTrigger(table);
-    tableService.setTrigger(table, 8, () => startRound(table));
+    tableService.setTrigger(table, 10, () => startRound(table));
 };
-const makeDecisionTrigger = (table, player) => tableService.setTrigger(table, 8, () => stand(table, player));
-const playDealerTurnTrigger = (table) => tableService.setTrigger(table, 2, () => playDealerTurn(table));
-const collectPlayedCardsTrigger = (table) => tableService.setTrigger(table, 2, () => tableService.collectPlayedCards(table));
+const makeDecisionTrigger = (table, player) => tableService.setTrigger(table, 30, () => stand(table, player));
+const playDealerTurnTrigger = (table) => tableService.setTrigger(table, 3, () => playDealerTurn(table));
+const collectPlayedCardsTrigger = (table) => tableService.setTrigger(table, 10, () => tableService.collectPlayedCards(table));
 
 // TODO Access to models properties should be done in the model service
 // e.g. table.players.forEach(whatever) => tableService.whatever
@@ -22,16 +22,21 @@ const playDealerTurn = (table) => {
     if (table.activePlayerId !== table.dealer.id) {
         throw 'Can\'t play dealer round yet!';
     }
+
+    var dealerScore = playerService.dealCard(table.dealer, tableService.getNextCard(table)).score;
+    var dealerInterval = setInterval(() => {
+        if (dealerScore >= 17) {
+            table.players.forEach(p => playerService.resolveHands(p, dealerScore));
+            table.activePlayerId = null;
+        
+            collectPlayedCardsTrigger(table);
     
-    var dealerScore = 0;
-    while (dealerScore < 17) {
-        dealerScore = playerService.dealCard(table.dealer, tableService.getNextCard(table)).score;
-    }
-
-    table.players.forEach(p => playerService.resolveHands(p, dealerScore));
-    table.activePlayerId = null;
-
-    collectPlayedCardsTrigger(table);
+            clearInterval(dealerInterval);
+        }
+        else {
+            dealerScore = playerService.dealCard(table.dealer, tableService.getNextCard(table)).score;
+        }
+    }, 1000);
 };
 
 const ensurePlayer = (table, playerId) => {
