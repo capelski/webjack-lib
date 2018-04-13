@@ -161,15 +161,20 @@ const startNextHand = (table, player) => {
 const startRound = (table) => {
     tableService.clearTrigger(table);
 
-    var players = table.players.filter(playerService.hasHands);
-    if (players.length == 0) {
+    var activePlayers = table.players.filter(playerService.hasHands);
+    var inactivePlayers = table.players.filter(p => !playerService.hasHands(p));
+
+    if (activePlayers.length == 0) {
         throw 'No one has placed a bet yet!';
     }
 
-    players.forEach(p => playerService.dealCard(p, tableService.getNextCard(table)));
+    activePlayers.forEach(p => p.inactiveRounds = 0);
+    inactivePlayers.forEach(p => p.inactiveRounds++);
+
+    activePlayers.forEach(p => playerService.dealCard(p, tableService.getNextCard(table)));
     playerService.initializeHand(table.dealer);
     playerService.dealCard(table.dealer, tableService.getNextCard(table));
-    players.forEach(p => playerService.dealCard(p, tableService.getNextCard(table)));
+    activePlayers.forEach(p => playerService.dealCard(p, tableService.getNextCard(table)));
 
     updateActivePlayer(table);
 };
