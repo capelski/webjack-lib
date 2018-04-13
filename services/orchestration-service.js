@@ -119,7 +119,7 @@ const makeDecision = (table, playerId, action) => {
     }
 };
 
-const placeBet = (table, playerId) => {
+const placeBet = (table, playerId, bet) => {
     var player = table.players.find(p => p.id == playerId);
     if (!player) {
         throw 'No player identified by ' + playerId + ' was found';
@@ -127,7 +127,7 @@ const placeBet = (table, playerId) => {
 
     // TODO Allow only when round is not started
 
-    playerService.initializeHand(player);
+    playerService.initializeHand(player, bet);
     startRoundTrigger(table);
 };
 

@@ -88,11 +88,13 @@ const configureRouter = (middleware) => {
 
 	router.get('/place-bet', appMiddleware, function (req, res, next) {
 		var table = tableService.getTable(req.session.tableId);
+		// TODO Check there is an amount set and is parsable
+		var bet = parseInt(req.query.bet);
 		if (!table) {
 			return noTableJoined(res);
 		}
 		else {
-			orchestrationService.placeBet(table, req.session.playerId);
+			orchestrationService.placeBet(table, req.session.playerId, bet);
             return serializedTable(res, table);
 		}
 	});

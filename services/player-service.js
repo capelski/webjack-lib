@@ -33,8 +33,8 @@ const hasHands = (player) => player.hands.length > 0;
 const hasUnplayedHands = (player) =>
     player.hands.reduce((unplayedHand, hand) => unplayedHand || !hand.played, false);
 
-const initializeHand = (player) => {
-    var hand = handService.create();
+const initializeHand = (player, bet) => {
+    var hand = handService.create(bet);
     player.hands = [hand];
 };
 

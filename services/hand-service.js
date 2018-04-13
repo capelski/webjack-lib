@@ -10,7 +10,7 @@ const canDouble = (hand) => hand.score > 8 && hand.score < 12;
 
 const canSplit = (hand) => hand.cards.length === 2 && cardService.getValue(hand.cards[0])[0] === cardService.getValue(hand.cards[1])[0];
 
-const create = () => new Hand();
+const create = (bet) => new Hand(bet);
 
 const getScore = (hand) => {
     var cardReducer = (result, card) => 
