@@ -1,4 +1,4 @@
-var express = require('express');
+const { express } = require('modena');
 var router = express.Router();
 var path = require('path');
 const uuidV4 = require('uuid/v4');
