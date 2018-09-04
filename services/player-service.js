@@ -36,6 +36,7 @@ const hasUnplayedHands = (player) =>
 const initializeHand = (player, bet) => {
     var hand = handService.create(bet);
     player.hands = [hand];
+    player.earningRate -= bet;
 };
 
 const resolveHands = (player, dealerScore) => {

@@ -72,10 +72,10 @@ const resolve = (hand, dealerScore) => {
     }
 
     return hand.value * (
-        1.5 * (hand.status === 'BlackJack') +
-        1 * (hand.status === 'Wins') +
-        0 * (hand.status === 'Ties') +
-        -1 * (hand.status === 'Loses'));
+        2.5 * (hand.status === 'BlackJack') +
+        2 * (hand.status === 'Wins') +
+        1 * (hand.status === 'Ties') +
+        0 * (hand.status === 'Loses'));
 };
 
 module.exports = {
