@@ -128,7 +128,9 @@ const placeBet = (table, playerId, bet) => {
     // TODO Allow only when round is not started
 
     playerService.initializeHand(player, bet);
-    startRoundTrigger(table);
+    if (!tableService.hasTrigger(table)) {
+        startRoundTrigger(table);
+    }
 };
 
 const updateActivePlayer = (table) => {

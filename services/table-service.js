@@ -74,6 +74,8 @@ const getNextCard = (table) => {
 
 const getTable = (tableId) => tables.find(t => t.id == tableId);
 
+const hasTrigger = (table) => table.nextTrigger != null;
+
 const joinTable = (playerId, playerName) => {
     var table = tables.find(t => t.players.length < gameParameters.maxPlayers);
     if (!table) {
@@ -99,6 +101,7 @@ module.exports = {
     getActivePlayer,
     getNextCard,
     getTable,
+    hasTrigger,
     joinTable,
     setTrigger
 };
