@@ -23,6 +23,7 @@ const dealCard = (player, card) => {
 
 const doubleCurrentHand = (player) => {
     var currentHand = getCurrentHand(player);
+    player.earningRate -= currentHand.value;
     currentHand.value += 1;
 };
 
@@ -48,7 +49,8 @@ const splitCurrentHand = (player) => {
     var currentHand = getCurrentHand(player);
     var firstCard = currentHand.cards.splice(-1)[0];
 
-    var newHand = handService.create();
+    player.earningRate -= currentHand.value;
+    var newHand = handService.create(currentHand.value);
     handService.addCard(newHand, firstCard);
 
     var index = player.hands.findIndex(h => h == currentHand);
