@@ -99,23 +99,30 @@ const stand = (table, player) => {
 const makeDecision = (table, playerId, action) => {
     var player = ensurePlayer(table, playerId);
     tableService.clearTrigger(table);
-    switch (action) {
-        case 'Double': {
-            double(table, player);
-            break;
+    try {
+        switch (action) {
+            case 'Double': {
+                double(table, player);
+                break;
+            }
+            case 'Hit': {
+                hit(table, player);
+                break;
+            }
+            case 'Split': {
+                split(table, player);
+                break;
+            }
+            case 'Stand': {
+                stand(table, player);
+                break;
+            }
         }
-        case 'Hit': {
-            hit(table, player);
-            break;
-        }
-        case 'Split': {
-            split(table, player);
-            break;
-        }
-        case 'Stand': {
-            stand(table, player);
-            break;
-        }
+    }
+    catch (error) {
+        // If an error is raised (e.g. doubling when not allowed), we set the trigger again
+        makeDecisionTrigger(table, player);
+        throw error;
     }
 };
 
@@ -143,7 +150,6 @@ const updateActivePlayer = (table) => {
         makeDecisionTrigger(table, nextPlayer);
     }
     table.activePlayerId = nextPlayer.id;
-    
 };
 
 const startNextHand = (table, player) => {

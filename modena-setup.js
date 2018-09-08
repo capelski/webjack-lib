@@ -123,7 +123,7 @@ const configureRouter = (middleware) => {
 		var tableId = req.session.tableId;
 		tableService.exitTable(tableId, playerId);
 		delete req.session.tableId;
-		return res.status(200).end();
+		return res.status(200).send(JSON.stringify({message: "Successfully exited table"}));
 	});
 
 	return router;
