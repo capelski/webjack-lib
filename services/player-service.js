@@ -8,6 +8,8 @@ let players = [];
 
 const create = (playerName) => {
     if (!playerName || !playerName.trim()) throw 'No player name was provided';
+    playerName = playerName.trim();
+    
     if (playerName.toLowerCase() == 'dealer') throw 'So you think you are funny, huh? Choose another name';
 
     const existingPlayer = players.find(p => p.name.toLowerCase() == playerName.toLowerCase());

@@ -6,9 +6,9 @@ const tableService = require('./services/table-service');
 const orchestrationService = require('./services/orchestration-service');
 
 const corsMiddleware = (req, res, next) => {
-	res.header("Access-Control-Allow-Origin", "http://localhost:8080");
-	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-	res.header("Access-Control-Allow-Credentials", "true");
+	res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
+	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+	res.header('Access-Control-Allow-Credentials', 'true');
 	next();
 };
 
@@ -17,7 +17,7 @@ const configureRouter = (middleware) => {
 	const appMiddleware = [ middleware.session, corsMiddleware ];
 
 	const noTableJoined = (res) =>
-		res.status(400).send(JSON.stringify({message: "No table has been joined"}));
+		res.status(400).send(JSON.stringify({ message: 'No table has been joined' }));
 
 	const getSecondsLeft = (date) => {
 		let seconds = -1;
@@ -54,7 +54,7 @@ const configureRouter = (middleware) => {
 				req.session.playerId = player.id;
 			}
 			catch (exception) {
-				return res.status(400).send(exception);
+				return res.status(400).send(JSON.stringify({ message: exception }));
 			}
 		}
 		
@@ -79,7 +79,7 @@ const configureRouter = (middleware) => {
 			if (player.inactiveRounds > 5) {
 				tableService.exitTable(req.session.tableId, req.session.playerId);
 				delete req.session.tableId;
-				return res.status(400).send(JSON.stringify({message: "You have been kicked out due to inactivity"}));
+				return res.status(400).send(JSON.stringify({ message: 'You have been kicked out due to inactivity' }));
 			}
 			else {
 				return serializedTable(res, table);
@@ -113,7 +113,7 @@ const configureRouter = (middleware) => {
 				return serializedTable(res, table);
 			}
             catch(exception) {
-				return res.status(400).send(exception);
+				return res.status(400).send(JSON.stringify({ message: exception }))
 			}
 		}
     });
@@ -123,7 +123,7 @@ const configureRouter = (middleware) => {
 		const tableId = req.session.tableId;
 		tableService.exitTable(tableId, playerId);
 		delete req.session.tableId;
-		return res.status(200).send(JSON.stringify({message: "Successfully exited table"}));
+		return res.status(200).send(JSON.stringify({ message: 'Successfully exited table' }));
 	});
 
 	return router;
