@@ -76,13 +76,13 @@ const getTable = (tableId) => tables.find(t => t.id == tableId);
 
 const hasTrigger = (table) => table.nextTrigger != null;
 
-const joinTable = (playerId, playerName) => {
+const joinTable = (playerId) => {
     var table = tables.find(t => t.players.length < gameParameters.maxPlayers);
     if (!table) {
         table = create();
     }
 
-    var player = playerService.create(playerId, playerName);
+    const player = playerService.getPlayer(playerId);
     table.players.push(player);
 
     return table.id;

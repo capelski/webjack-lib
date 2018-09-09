@@ -2,9 +2,17 @@
 
 const Player = require('../models/player');
 const handService = require('./hand-service');
-const js = require('../utils/js-generics');
 
-const create = (id, name) => new Player(id, name);
+let players = [];
+
+// TODO Create the id from this service
+const create = (id, name) => {
+    // TODO Throw exception if no name
+    // TODO Check player name does not exist (and != Dealer)
+    const player = new Player(id, name);
+    players.push(player);
+    return player;
+}
 
 // TODO Access to models properties should be done in the model service
 // e.g. player.hands.reduce(whatever) => handService.whatever
@@ -28,6 +36,8 @@ const doubleCurrentHand = (player) => {
 };
 
 const getCurrentHand = (player) => player.hands.find(h => !h.played);
+
+const getPlayer = playerId => players.find(p => p.id == playerId);
 
 const hasHands = (player) => player.hands.length > 0;
 
@@ -63,6 +73,7 @@ module.exports = {
     dealCard,
     doubleCurrentHand,
     getCurrentHand,
+    getPlayer,
     hasHands,
     hasUnplayedHands,
     initializeHand,
