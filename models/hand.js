@@ -6,6 +6,8 @@ function Hand(bet) {
     this.value = bet;
     this.score = 0;
     this.played = false;
+    this.canDouble = false;
+    this.canSplit = false;
 }
 
 module.exports = Hand;

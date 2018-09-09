@@ -43,7 +43,9 @@ const markAsPlayed = (hand) => {
 const addCard = (hand, card) => {
     hand.cards.push(card);
     hand.score = getScore(hand);
-    var isHandAlive = !isBlackJack(hand) && !isOverMaxScore(hand);
+    hand.canDouble = canDouble(hand);
+    hand.canSplit = canSplit(hand);
+    const isHandAlive = !isBlackJack(hand) && !isOverMaxScore(hand);
     if (!isHandAlive) {
         markAsPlayed(hand);
     }
