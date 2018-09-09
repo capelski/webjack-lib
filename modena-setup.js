@@ -1,7 +1,6 @@
 const { express } = require('modena');
 const router = express.Router();
 const path = require('path');
-const uuidV4 = require('uuid/v4');
 const playerService = require('./services/player-service');
 const tableService = require('./services/table-service');
 const orchestrationService = require('./services/orchestration-service');
@@ -50,8 +49,13 @@ const configureRouter = (middleware) => {
 
 	router.get('/register-player', appMiddleware, function (req, res, next) {
 		if (!req.session.playerId) {
-			const player = playerService.create(uuidV4(), req.query.name);
-			req.session.playerId = player.id;
+			try {
+				const player = playerService.create(req.query.name);
+				req.session.playerId = player.id;
+			}
+			catch (exception) {
+				return res.status(400).send(exception);
+			}
 		}
 		
 		return res.send(JSON.stringify({ playerId: req.session.playerId }));

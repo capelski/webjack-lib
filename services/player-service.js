@@ -1,18 +1,26 @@
 'use strict';
 
+const uuidV4 = require('uuid/v4');
 const Player = require('../models/player');
 const handService = require('./hand-service');
 
 let players = [];
 
-// TODO Create the id from this service
-const create = (id, name) => {
-    // TODO Throw exception if no name
-    // TODO Check player name does not exist (and != Dealer)
-    const player = new Player(id, name);
+const create = (playerName) => {
+    if (!playerName || !playerName.trim()) throw 'No player name was provided';
+    if (playerName.toLowerCase() == 'dealer') throw 'So you think you are funny, huh? Choose another name';
+
+    const existingPlayer = players.find(p => p.name.toLowerCase() == playerName.toLowerCase());
+    if (existingPlayer) {
+        throw playerName + ' is already taken. Please choose another name';
+    }
+
+    const player = new Player(uuidV4(), playerName);
     players.push(player);
     return player;
 }
+
+const createDealer = () => new Player(uuidV4(), 'Dealer');
 
 // TODO Access to models properties should be done in the model service
 // e.g. player.hands.reduce(whatever) => handService.whatever
@@ -70,6 +78,7 @@ const splitCurrentHand = (player) => {
 module.exports = {
     collectPlayedCards,
     create,
+    createDealer,
     dealCard,
     doubleCurrentHand,
     getCurrentHand,

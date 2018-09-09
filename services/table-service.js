@@ -35,7 +35,7 @@ const collectPlayedCards = (table) => {
 
 const create = () => {
     var tableId = uuidV4();
-    var dealer = playerService.create(uuidV4(), 'Dealer');
+    var dealer = playerService.createDealer();
     var cards = cardService.createDecks(gameParameters.decksNumber);
 
     var table = new Table(tableId, cards, dealer);
