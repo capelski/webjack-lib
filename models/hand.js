@@ -4,7 +4,7 @@ function Hand(bet) {
     this.cards = [];
     this.status = '';
     this.value = bet;
-    this.score = 0;
+    this.scores = [];
     this.played = false;
     this.canDouble = false;
     this.canSplit = false;

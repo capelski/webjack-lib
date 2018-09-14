@@ -23,18 +23,18 @@ const playDealerTurn = (table) => {
         throw 'Can\'t play dealer round yet!';
     }
 
-    var dealerScore = playerService.dealCard(table.dealer, tableService.getNextCard(table)).score;
-    var dealerInterval = setInterval(() => {
+    let dealerScore = playerService.dealCard(table.dealer, tableService.getNextCard(table), true).score;
+    const dealerInterval = setInterval(() => {
         if (dealerScore >= 17) {
+            clearInterval(dealerInterval);
+
             table.players.forEach(p => playerService.resolveHands(p, dealerScore));
             table.activePlayerId = null;
         
             collectPlayedCardsTrigger(table);
-    
-            clearInterval(dealerInterval);
         }
         else {
-            dealerScore = playerService.dealCard(table.dealer, tableService.getNextCard(table)).score;
+            dealerScore = playerService.dealCard(table.dealer, tableService.getNextCard(table), true).score;
         }
     }, 1000);
 };
@@ -59,13 +59,13 @@ const double = (table, player) => {
     }
 
     playerService.doubleCurrentHand(player);
-    playerService.dealCard(player, tableService.getNextCard(table));
+    playerService.dealCard(player, tableService.getNextCard(table), false);
     handService.markAsPlayed(playerHand);
     startNextHand(table, player);
 };
 
 const hit = (table, player) => {
-    var handStatus = playerService.dealCard(player, tableService.getNextCard(table));
+    var handStatus = playerService.dealCard(player, tableService.getNextCard(table), false);
     if (!handStatus.isHandAlive) {
         startNextHand(table, player);
     }
@@ -81,7 +81,7 @@ const split = (table, player) => {
     }
      
     playerService.splitCurrentHand(player);
-    var handStatus = playerService.dealCard(player, tableService.getNextCard(table));
+    var handStatus = playerService.dealCard(player, tableService.getNextCard(table), false);
     if (!handStatus.isHandAlive) {
         startNextHand(table, player);
     }
@@ -155,7 +155,7 @@ const updateActivePlayer = (table) => {
 const startNextHand = (table, player) => {
     var nextHand = playerService.getCurrentHand(player);
     if (nextHand) {
-        var handStatus = playerService.dealCard(player, tableService.getNextCard(table));
+        var handStatus = playerService.dealCard(player, tableService.getNextCard(table), false);
         if (!handStatus.isHandAlive) {
             startNextHand(table, player);
         }
@@ -179,10 +179,10 @@ const startRound = (table) => {
     activePlayers.forEach(p => p.inactiveRounds = 0);
     inactivePlayers.forEach(p => p.inactiveRounds++);
 
-    activePlayers.forEach(p => playerService.dealCard(p, tableService.getNextCard(table)));
+    activePlayers.forEach(p => playerService.dealCard(p, tableService.getNextCard(table), false));
     playerService.initializeHand(table.dealer);
-    playerService.dealCard(table.dealer, tableService.getNextCard(table));
-    activePlayers.forEach(p => playerService.dealCard(p, tableService.getNextCard(table)));
+    playerService.dealCard(table.dealer, tableService.getNextCard(table), true);
+    activePlayers.forEach(p => playerService.dealCard(p, tableService.getNextCard(table), false));
 
     updateActivePlayer(table);
 };
