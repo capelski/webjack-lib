@@ -1,0 +1,3 @@
+[submodule "webjack-ui"]
+	path = webjack-ui
+	url = https://github.com/L3bowski/webjack-ui
