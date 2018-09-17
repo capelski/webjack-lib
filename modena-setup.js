@@ -38,7 +38,7 @@ const configureRouter = (middleware) => {
 	}));
 
 	router.get('/', function (req, res, next) {	
-		return res.sendFile(path.join(__dirname, 'public', 'index.html'));
+		return res.sendFile(path.join(__dirname, 'webjack-ui', 'dist', 'index.html'));
 	});
 
 	router.get('/is-player-registered', appMiddleware, function (req, res, next) {
