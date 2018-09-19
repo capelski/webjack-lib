@@ -1,6 +1,5 @@
 'use strict';
 
-const js = require('../utils/js-generics');
 const playerService = require('./player-service');
 const handService = require('./hand-service');
 const tableService = require('./table-service');

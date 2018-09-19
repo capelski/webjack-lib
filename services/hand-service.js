@@ -34,13 +34,15 @@ const setScore = (hand) => {
     hand.scores = hand.cards.reduce(handReducer, [0]);
 };
 
-const isBlackJack = (hand) => {
+const isBlackJack = (hand, isDealer) => {
     const _isBlackJack = getScore(hand) === 21 && hand.cards.length === 2;
-    if (_isBlackJack) {
+    if (_isBlackJack && !isDealer) {
         hand.status = 'BlackJack!';
     }
     return _isBlackJack;
 };
+
+const isMaxScore = (hand) => getScore(hand) === 21;
 
 const isOverMaxScore = (hand, isDealer) => {
     const _isOverMaxScore = getScore(hand) > 21;
@@ -59,7 +61,7 @@ const addCard = (hand, card, isDealer) => {
     setScore(hand);
     hand.canDouble = canDouble(hand);
     hand.canSplit = canSplit(hand);
-    const isHandAlive = !isBlackJack(hand) && !isOverMaxScore(hand, isDealer);
+    const isHandAlive = !isBlackJack(hand, isDealer) && !isOverMaxScore(hand, isDealer) && !isMaxScore(hand);
     // TODO This logic shouldn't be here but in the orchestration service
     if (!isHandAlive) {
         markAsPlayed(hand);
