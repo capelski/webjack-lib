@@ -8,6 +8,7 @@ const cardService = require('./card-service');
 const playerService = require('./player-service');
 
 let tables = [];
+let developmentCardsSet;
 
 const clearTrigger = (table) => {
     clearTimeout(table.nextTrigger);
@@ -29,16 +30,14 @@ const collectPlayedCards = (table) => {
         table.playedCards = [];
         js.shuffleArray(table.availableCards);
     }
-
-    // console.log(table.playedCards.length, '/', table.availableCards.length);
 };
 
 const create = () => {
-    var tableId = uuidV4();
-    var dealer = playerService.createDealer();
-    var cards = cardService.createDecks(gameParameters.decksNumber);
+    const tableId = uuidV4();
+    const dealer = playerService.createDealer();
+    const cards = getCardsSet();
 
-    var table = new Table(tableId, cards, dealer);
+    const table = new Table(tableId, cards, dealer);
     tables.push(table);
 
     return table;
@@ -63,6 +62,8 @@ const exitTable = (tableId, playerId) => {
 };
 
 const getActivePlayer = (table) => table.players.find(p => p.id === table.activePlayerId);
+
+const getCardsSet = () => developmentCardsSet ? developmentCardsSet : cardService.createDecks(gameParameters.decksNumber);
 
 const getNextCard = (table) => {
     if (table.availableCards.length === 0) {
@@ -94,6 +95,8 @@ const setTrigger = (table, seconds, callback) => {
     table.nextAction.setSeconds(table.nextAction.getSeconds() + seconds);
 };
 
+const useDevelopmentCardsSet = cardsSet => developmentCardsSet = cardsSet;
+
 module.exports = {
     clearTrigger,
     collectPlayedCards,
@@ -103,5 +106,6 @@ module.exports = {
     getTable,
     hasTrigger,
     joinTable,
-    setTrigger
+    setTrigger,
+    useDevelopmentCardsSet
 };

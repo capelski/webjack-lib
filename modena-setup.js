@@ -12,7 +12,11 @@ const corsMiddleware = (req, res, next) => {
 	next();
 };
 
-const configureRouter = (middleware) => {
+const configureRouter = (middleware, utils, appConfig) => {
+
+	if (appConfig.ENABLE_DEVELOPMENT_MODE && appConfig.developmentCardsSet) {
+		tableService.useDevelopmentCardsSet(appConfig.developmentCardsSet);
+	}
 
 	const appMiddleware = [ middleware.session, corsMiddleware ];
 
