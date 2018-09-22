@@ -1,5 +1,4 @@
-const { express } = require('modena');
-const router = express.Router();
+const { configureEndpoints } = require('modena');
 const path = require('path');
 const playerService = require('./services/player-service');
 const tableService = require('./services/table-service');
@@ -12,34 +11,34 @@ const corsMiddleware = (req, res, next) => {
 	next();
 };
 
-const configureRouter = (middleware, utils, appConfig) => {
-
-	if (appConfig.ENABLE_DEVELOPMENT_MODE && appConfig.developmentCardsSet) {
-		tableService.useDevelopmentCardsSet(appConfig.developmentCardsSet);
+const getSecondsLeft = (date) => {
+	let seconds = -1;
+	if (date) {
+		const diff = date.getTime() - new Date().getTime();
+		if (diff >= 0) {
+			seconds = Math.floor(diff / 1000);
+		}
 	}
+	return seconds;
+};
+
+const serializeTable = (res, table) => res.send(JSON.stringify({
+	players: table.players,
+	dealer: table.dealer,
+	activePlayerId: table.activePlayerId,
+	secondsLeft: getSecondsLeft(table.nextAction)
+}));
+
+const noTableJoined = res =>
+	res.status(400).send(JSON.stringify({ message: 'No table has been joined' }));
+
+module.exports = configureEndpoints((router, config, middleware) => {
 
 	const appMiddleware = [ middleware.session, corsMiddleware ];
 
-	const noTableJoined = (res) =>
-		res.status(400).send(JSON.stringify({ message: 'No table has been joined' }));
-
-	const getSecondsLeft = (date) => {
-		let seconds = -1;
-		if (date) {
-			const diff = date.getTime() - new Date().getTime();
-			if (diff >= 0) {
-				seconds = Math.floor(diff / 1000);
-			}
-		}
-		return seconds;
-	};
-
-	const serializedTable = (res, table) => res.send(JSON.stringify({
-		players: table.players,
-		dealer: table.dealer,
-		activePlayerId: table.activePlayerId,
-		secondsLeft: getSecondsLeft(table.nextAction)
-	}));
+	if (config.ENABLE_DEVELOPMENT_MODE && config.developmentCardsSet) {
+		tableService.useDevelopmentCardsSet(config.developmentCardsSet);
+	}
 
 	router.get('/', function (req, res, next) {	
 		return res.sendFile(path.join(__dirname, 'webjack-ui', 'dist', 'index.html'));
@@ -86,7 +85,7 @@ const configureRouter = (middleware, utils, appConfig) => {
 				return res.status(400).send(JSON.stringify({ message: 'You have been kicked out due to inactivity' }));
 			}
 			else {
-				return serializedTable(res, table);
+				return serializeTable(res, table);
 			}
 		}
 	});
@@ -100,7 +99,7 @@ const configureRouter = (middleware, utils, appConfig) => {
 		}
 		else {
 			orchestrationService.placeBet(table, req.session.playerId, bet);
-            return serializedTable(res, table);
+            return serializeTable(res, table);
 		}
 	});
 
@@ -114,7 +113,7 @@ const configureRouter = (middleware, utils, appConfig) => {
 		else {
 			try {
 				orchestrationService.makeDecision(table, playerId, decision);
-				return serializedTable(res, table);
+				return serializeTable(res, table);
 			}
             catch(exception) {
 				return res.status(400).send(JSON.stringify({ message: exception }))
@@ -129,8 +128,4 @@ const configureRouter = (middleware, utils, appConfig) => {
 		delete req.session.tableId;
 		return res.status(200).send(JSON.stringify({ message: 'Successfully exited table' }));
 	});
-
-	return router;
-}
-
-module.exports = { configureRouter };
+});
