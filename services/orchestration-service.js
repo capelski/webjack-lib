@@ -6,11 +6,11 @@ const tableService = require('./table-service');
 
 const startRoundTrigger = (table) => {
     tableService.clearTrigger(table);
-    tableService.setTrigger(table, 10, () => startRound(table));
+    tableService.setTrigger(table, 7, () => startRound(table));
 };
 const makeDecisionTrigger = (table, player) => tableService.setTrigger(table, 20, () => stand(table, player));
 const playDealerTurnTrigger = (table) => tableService.setTrigger(table, 3, () => playDealerTurn(table));
-const collectPlayedCardsTrigger = (table) => tableService.setTrigger(table, 10, () => tableService.collectPlayedCards(table));
+const collectPlayedCardsTrigger = (table) => tableService.setTrigger(table, 5, () => tableService.collectPlayedCards(table));
 
 // TODO Access to models properties should be done in the model service
 // e.g. table.players.forEach(whatever) => tableService.whatever
