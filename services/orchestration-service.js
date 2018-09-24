@@ -39,7 +39,7 @@ const playDealerTurn = (table) => {
 };
 
 const ensurePlayer = (table, playerId) => {
-    var currentPlayer = tableService.getActivePlayer(table);
+    const currentPlayer = tableService.getActivePlayer(table);
     if (!currentPlayer) {
         throw 'No one is playing now';
     }
@@ -95,11 +95,10 @@ const stand = (table, player) => {
     startNextHand(table, player);
 };
 
-const makeDecision = (table, playerId, action) => {
-    var player = ensurePlayer(table, playerId);
+const _makeDecision = (table, player, decision) => {
     tableService.clearTrigger(table);
     try {
-        switch (action) {
+        switch (decision) {
             case 'Double': {
                 double(table, player);
                 break;
@@ -123,6 +122,16 @@ const makeDecision = (table, playerId, action) => {
         makeDecisionTrigger(table, player);
         throw error;
     }
+};
+
+const makeDecision = (table, playerId, decision) => {
+    const player = ensurePlayer(table, playerId);
+    _makeDecision(table, player, decision)
+};
+
+const makeVirtualDecision = (table, decision) => {
+    const currentPlayer = tableService.getActivePlayer(table);
+    _makeDecision(table, currentPlayer, decision);
 };
 
 const placeBet = (table, playerId, bet) => {
@@ -189,6 +198,7 @@ const startRound = (table) => {
 module.exports = {
     playDealerTurn,
     makeDecision,
+    makeVirtualDecision,
     placeBet,
     startRound
 };

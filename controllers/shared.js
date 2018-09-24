@@ -12,6 +12,7 @@ const getSecondsLeft = (date) => {
 const serializeTable = (res, table) => res.send(JSON.stringify({
 	players: table.players,
 	dealer: table.dealer,
+	isVirtualTable: table.isVirtual,
 	activePlayerId: table.activePlayerId,
 	secondsLeft: getSecondsLeft(table.nextAction)
 }));

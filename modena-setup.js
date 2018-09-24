@@ -22,7 +22,7 @@ module.exports = configureEndpoints((router, config, middleware) => {
 
 	router.get('/', (req, res, next) =>	
 		res.sendFile(join(__dirname, 'webjack-ui', 'dist', 'index.html')));
-
+		
 	router.get('/is-player-registered', appMiddleware, playerController.isPlayerRegistered);
 	router.get('/register-player', appMiddleware, playerController.registerPlayer);
 	router.get('/join-table', appMiddleware, tableController.joinTable);
@@ -30,4 +30,11 @@ module.exports = configureEndpoints((router, config, middleware) => {
 	router.get('/place-bet', appMiddleware, gameController.placeBet);
 	router.get('/make-decision', appMiddleware, gameController.makeDecision);
 	router.get('/exit-table', appMiddleware, tableController.exitTable);
+
+	router.get('/join-virtual-table', appMiddleware, tableController.createVirtualTable);
+	router.get('/virtual-table-status', appMiddleware, tableController.getVirtualTableStatus);
+	router.get('/start-virtual-round', appMiddleware, gameController.startVirtualRound);
+	router.get('/make-virtual-decision', appMiddleware, gameController.makeVirtualDecision);
+	router.get('/exit-virtual-table', appMiddleware, tableController.exitVirtualTable);
+
 });

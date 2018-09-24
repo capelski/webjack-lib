@@ -8,15 +8,16 @@ const cardService = require('./card-service');
 const playerService = require('./player-service');
 
 let tables = [];
+let virtualTables = [];
 let developmentCardsSet;
 
-const clearTrigger = (table) => {
+const clearTrigger = table => {
     clearTimeout(table.nextTrigger);
     table.nextTrigger = null;
     table.nextAction = null;
 };
 
-const collectPlayedCards = (table) => {
+const collectPlayedCards = table => {
     clearTrigger(table);
 
     var playedCards = table.players
@@ -32,7 +33,7 @@ const collectPlayedCards = (table) => {
     }
 };
 
-const create = () => {
+const createTable = () => {
     const tableId = uuidV4();
     const dealer = playerService.createDealer();
     const cards = getCardsSet();
@@ -43,13 +44,32 @@ const create = () => {
     return table;
 };
 
+const createVirtualTable = () => {
+    const tableId = uuidV4();
+    const dealer = playerService.createDealer();
+    const players = ' '.repeat(7).split('')
+        .map((_, index) => playerService.createVirtualPlayer(`Robot ${index + 1}`));
+    const cards = cardService.createDecks(gameParameters.decksNumber);
+
+    const table = new Table(tableId, cards, dealer);
+    table.isVirtual = true;
+    players.forEach(player => table.players.push(player));
+    virtualTables.push(table);
+
+    return table.id;
+};
+
+const exitVirtualTable = tableId => {
+    virtualTables = virtualTables.filter(t => t.id !== tableId);
+};
+
 const exitTable = (tableId, playerId) => {
-    var table = tables.find(t => t.id == tableId);
+    const table = tables.find(t => t.id == tableId);
     if (!table) {
         throw 'No table identified by ' + tableId + ' was found';
     }
 
-    var player = table.players.find(p => p.id == playerId);
+    const player = table.players.find(p => p.id == playerId);
     if (!player) {
         throw 'No player identified by ' + playerId + ' was found';
     }
@@ -61,11 +81,11 @@ const exitTable = (tableId, playerId) => {
     table.players = table.players.filter(p => p.id != playerId);
 };
 
-const getActivePlayer = (table) => table.players.find(p => p.id === table.activePlayerId);
+const getActivePlayer = table => table.players.find(p => p.id === table.activePlayerId);
 
 const getCardsSet = () => developmentCardsSet ? developmentCardsSet : cardService.createDecks(gameParameters.decksNumber);
 
-const getNextCard = (table) => {
+const getNextCard = table => {
     if (table.availableCards.length === 0) {
         throw 'No more cards left!';
     }
@@ -73,14 +93,16 @@ const getNextCard = (table) => {
     return nextCard;
 };
 
-const getTable = (tableId) => tables.find(t => t.id == tableId);
+const getTable = tableId => tables.find(t => t.id == tableId);
 
-const hasTrigger = (table) => table.nextTrigger != null;
+const getVirtualTable = tableId => virtualTables.find(t => t.id == tableId);
 
-const joinTable = (playerId) => {
+const hasTrigger = table => table.nextTrigger != null;
+
+const joinTable = playerId => {
     var table = tables.find(t => t.players.length < gameParameters.maxPlayers);
     if (!table) {
-        table = create();
+        table = createTable();
     }
 
     const player = playerService.getPlayer(playerId);
@@ -100,10 +122,13 @@ const useDevelopmentCardsSet = cardsSet => developmentCardsSet = cardsSet;
 module.exports = {
     clearTrigger,
     collectPlayedCards,
+    createVirtualTable,
+    exitVirtualTable,
     exitTable,
     getActivePlayer,
     getNextCard,
     getTable,
+    getVirtualTable,
     hasTrigger,
     joinTable,
     setTrigger,

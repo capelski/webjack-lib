@@ -1,12 +1,24 @@
 const tableService = require('../services/table-service');
 const { noTableJoined, serializeTable } = require('./shared');
 
+const createVirtualTable = (req, res, next) => {
+    const tableId = req.session.tableId = tableService.createVirtualTable();
+    return res.send(JSON.stringify({ tableId }));
+};
+
 const exitTable = (req, res, next) => {
     const playerId = req.session.playerId;
     const tableId = req.session.tableId;
     tableService.exitTable(tableId, playerId);
     delete req.session.tableId;
     return res.status(200).send(JSON.stringify({ message: 'Successfully exited table' }));
+};
+
+const exitVirtualTable = (req, res, next) => {
+    const tableId = req.session.tableId;
+    tableService.exitVirtualTable(tableId);
+    delete req.session.tableId;
+    return res.status(200).send(JSON.stringify({ message: 'Successfully exited virtual table' }));
 };
 
 const getTableStatus = (req, res, next) => {
@@ -29,6 +41,16 @@ const getTableStatus = (req, res, next) => {
     }
 };
 
+const getVirtualTableStatus = (req, res, next) => {
+    const table = tableService.getVirtualTable(req.session.tableId);
+    if (!table) {
+        return noTableJoined(res);
+    }
+    else {
+        return serializeTable(res, table);
+    }
+};
+
 const joinTable = (req, res, next) => {
     const playerId = req.session.playerId;
     const tableId = req.session.tableId = tableService.joinTable(playerId);
@@ -36,7 +58,10 @@ const joinTable = (req, res, next) => {
 };
 
 module.exports = {
+    createVirtualTable,
     exitTable,
+    exitVirtualTable,
+    getVirtualTableStatus,
     getTableStatus,
     joinTable
 };

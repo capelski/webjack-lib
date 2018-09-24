@@ -6,7 +6,9 @@ const handService = require('./hand-service');
 
 let players = [];
 
-const create = (playerName) => {
+const createDealer = () => new Player(uuidV4(), 'Dealer');
+
+const createPlayer = (playerName) => {
     if (!playerName || !playerName.trim()) throw 'No player name was provided';
     playerName = playerName.trim();
     
@@ -22,7 +24,7 @@ const create = (playerName) => {
     return player;
 }
 
-const createDealer = () => new Player(uuidV4(), 'Dealer');
+const createVirtualPlayer = playerName => new Player(uuidV4(), playerName);
 
 // TODO Access to models properties should be done in the model service
 // e.g. player.hands.reduce(whatever) => handService.whatever
@@ -79,8 +81,9 @@ const splitCurrentHand = (player) => {
 
 module.exports = {
     collectPlayedCards,
-    create,
     createDealer,
+    createPlayer,
+    createVirtualPlayer,
     dealCard,
     doubleCurrentHand,
     getCurrentHand,
