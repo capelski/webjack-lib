@@ -56,10 +56,18 @@ const hasHands = (player) => player.hands.length > 0;
 const hasUnplayedHands = (player) =>
     player.hands.reduce((unplayedHand, hand) => unplayedHand || !hand.played, false);
 
+const increaseInactiveRounds = player => {
+    player.inactiveRounds++;
+};
+
 const initializeHand = (player, bet) => {
     var hand = handService.create(bet);
     player.hands = [hand];
     player.earningRate -= bet;
+};
+
+const resetInactiveRounds = (player) => {
+    player.inactiveRounds = 0;
 };
 
 const resolveHands = (player, dealerScore) => {
@@ -90,7 +98,9 @@ module.exports = {
     getPlayer,
     hasHands,
     hasUnplayedHands,
+    increaseInactiveRounds,
     initializeHand,
+    resetInactiveRounds,
     resolveHands,
     splitCurrentHand
 };

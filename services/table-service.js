@@ -106,6 +106,7 @@ const joinTable = playerId => {
     }
 
     const player = playerService.getPlayer(playerId);
+    playerService.resetInactiveRounds(player);
     table.players.push(player);
 
     return table.id;

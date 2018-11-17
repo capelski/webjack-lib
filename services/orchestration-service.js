@@ -1,5 +1,6 @@
 'use strict';
 
+const gameParameters = require('../game-parameters');
 const playerService = require('./player-service');
 const handService = require('./hand-service');
 const tableService = require('./table-service');
@@ -185,7 +186,12 @@ const startRound = (table) => {
     }
 
     activePlayers.forEach(p => p.inactiveRounds = 0);
-    inactivePlayers.forEach(p => p.inactiveRounds++);
+    inactivePlayers.forEach(p => {
+        playerService.increaseInactiveRounds(p);
+        if (p.inactiveRounds > gameParameters.maxInactiveRounds) {
+            tableService.exitTable(table.id, p.id);
+        }
+    });
 
     activePlayers.forEach(p => playerService.dealCard(p, tableService.getNextCard(table), false));
     playerService.initializeHand(table.dealer);

@@ -39,7 +39,6 @@ const makeVirtualDecision = (req, res, next) => {
 
 const placeBet = (req, res, next) => {
     const table = tableService.getTable(req.session.tableId);
-    // TODO Check there is an amount set and is parsable
     const bet = parseInt(req.query.bet);
     if (!table) {
         return noTableJoined(res);

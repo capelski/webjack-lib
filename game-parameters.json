@@ -1,4 +1,5 @@
 {
 	"decksNumber": 4,
-	"maxPlayers": 7
+	"maxPlayers": 7,
+	"maxInactiveRounds": 4
 }

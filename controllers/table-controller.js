@@ -29,9 +29,7 @@ const getTableStatus = (req, res, next) => {
     else {
         const player = table.players.find(p => p.id == req.session.playerId);
 
-        // TODO Extract max inactive rounds into parameters
-        if (player.inactiveRounds > 5) {
-            tableService.exitTable(req.session.tableId, req.session.playerId);
+        if (!player) {
             delete req.session.tableId;
             return res.status(400).send(JSON.stringify({ message: 'You have been kicked out due to inactivity' }));
         }
