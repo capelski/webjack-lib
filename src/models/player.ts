@@ -8,8 +8,6 @@ export class Player {
     constructor (public id: string, public name: string = 'Unnamed') {
         this.earningRate = 0;
         this.hands = [];
-        // this.id = id;
         this.inactiveRounds = 0;
-        // this.name = name || 'Unnamed';
     }
 }

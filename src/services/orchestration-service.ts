@@ -3,7 +3,7 @@ import { Table } from '../models/table';
 import playerService from './player-service';
 import handService from './hand-service';
 import tableService from './table-service';
-const gameParameters = require('../game-parameters');
+const gameParameters = require('../../game-parameters');
 
 const startRoundTrigger = (table: Table) => {
     tableService.clearTrigger(table);

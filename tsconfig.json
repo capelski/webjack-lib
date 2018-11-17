@@ -5,12 +5,12 @@
         "target": "es2017",
         "noImplicitAny": true,
         "moduleResolution": "node",
-        "outDir": ".",
+        "outDir": "./build",
         "baseUrl": ".",
         "skipLibCheck": true
     },
     "include": [
-        "modena-setup.ts"
+        "src/index.ts"
     ],
     "exclude": []
 }

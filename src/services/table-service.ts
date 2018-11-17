@@ -5,7 +5,7 @@ import cardService from './card-service';
 import playerService from './player-service';
 
 const uuidV4 = require('uuid/v4');
-const gameParameters = require('../game-parameters');
+const gameParameters = require('../../game-parameters');
 
 let tables: Table[] = [];
 let virtualTables: Table[] = [];

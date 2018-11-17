@@ -15,6 +15,5 @@ export class Hand{
         this.played = false;
         this.scores = [];
         this.status = '';
-        //this.value = bet;
     }
 }
