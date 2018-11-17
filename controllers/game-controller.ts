@@ -1,6 +1,6 @@
-const orchestrationService = require('../services/orchestration-service');
-const tableService = require('../services/table-service');
-const { noTableJoined, serializeTable } = require('./shared');
+import orchestrationService from '../services/orchestration-service';
+import tableService from '../services/table-service';
+import { noTableJoined, serializeTable } from './shared';
 
 const makeDecision = (req: any, res: any, next: any) => {
     const playerId = req.session.playerId;
@@ -61,6 +61,13 @@ const startVirtualRound = (req: any, res: any, next: any) => {
         return serializeTable(res, table);
     }
 }
+
+export {
+    makeDecision,
+    makeVirtualDecision,
+    placeBet,
+    startVirtualRound,
+};
 
 export default {
     makeDecision,

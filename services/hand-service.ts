@@ -1,23 +1,23 @@
-'use strict';
+import { Card } from '../models/card';
+import { Hand } from '../models/hand';
+import cardService from './card-service';
+import js from '../utils/js-generics';
 
-const Hand = require('../models/hand');
-const cardService = require('./card-service');
-const js = require('../utils/js-generics');
+const getCards = (hand: Hand) => hand.cards;
 
-const getCards = (hand) => hand.cards;
+const canDouble = (hand: Hand) => getScore(hand) > 8 && getScore(hand) < 12;
 
-const canDouble = (hand) => getScore(hand) > 8 && getScore(hand) < 12;
+const canSplit = (hand: Hand) => hand.cards.length === 2 && cardService.getValue(hand.cards[0])[0] === cardService.getValue(hand.cards[1])[0];
 
-const canSplit = (hand) => hand.cards.length === 2 && cardService.getValue(hand.cards[0])[0] === cardService.getValue(hand.cards[1])[0];
+const create = (bet: number) => new Hand(bet);
 
-const create = (bet) => new Hand(bet);
+const getScore = (hand: Hand) => hand.scores[hand.scores.length - 1];
 
-const getScore = (hand) => hand.scores[hand.scores.length - 1];
-
-const setScore = (hand) => {
-    const handReducer = (result, card) => {
-        const values = js.cartesianProduct(result, cardService.getValue(card), (x, y) => x + y);
-        const uniqueValuesDictionary = values.reduce((uniques, next) => ({...uniques, [next]: next}), {});
+const setScore = (hand: Hand) => {
+    const handReducer = (result: number[], card: Card) => {
+        const values: number[] = js.cartesianProduct(result, cardService.getValue(card), (x, y) => x + y);
+        const uniqueValuesDictionary: { [key: string]: number } =
+            values.reduce((uniques, next) => ({...uniques, [next]: next}), {});
         const uniqueValuesArray = Object.keys(uniqueValuesDictionary).map(x => parseInt(x));
         let filteredValuesArray = uniqueValuesArray;
 
@@ -34,7 +34,7 @@ const setScore = (hand) => {
     hand.scores = hand.cards.reduce(handReducer, [0]);
 };
 
-const isBlackJack = (hand, isDealer) => {
+const isBlackJack = (hand: Hand, isDealer: boolean) => {
     const _isBlackJack = getScore(hand) === 21 && hand.cards.length === 2;
     if (_isBlackJack && !isDealer) {
         hand.status = 'BlackJack!';
@@ -42,9 +42,9 @@ const isBlackJack = (hand, isDealer) => {
     return _isBlackJack;
 };
 
-const isMaxScore = (hand) => getScore(hand) === 21;
+const isMaxScore = (hand: Hand) => getScore(hand) === 21;
 
-const isOverMaxScore = (hand, isDealer) => {
+const isOverMaxScore = (hand: Hand, isDealer: boolean) => {
     const _isOverMaxScore = getScore(hand) > 21;
     if (_isOverMaxScore && !isDealer) {
         hand.status = 'Dealer wins';
@@ -52,11 +52,11 @@ const isOverMaxScore = (hand, isDealer) => {
     return _isOverMaxScore;
 };
 
-const markAsPlayed = (hand) => {
+const markAsPlayed = (hand: Hand) => {
     hand.played = true;
 };
 
-const addCard = (hand, card, isDealer) => {
+const addCard = (hand: Hand, card: Card, isDealer: boolean) => {
     hand.cards.push(card);
     setScore(hand);
     hand.canDouble = canDouble(hand);
@@ -73,7 +73,7 @@ const addCard = (hand, card, isDealer) => {
     };
 };
 
-const resolve = (hand, dealerScore) => {
+const resolve = (hand: Hand, dealerScore: number) => {
     const score = getScore(hand);
     if (score > 21) {
         hand.status = 'Dealer wins';
@@ -92,13 +92,23 @@ const resolve = (hand, dealerScore) => {
     }
 
     return hand.value * (
-        2.5 * (hand.status === 'BlackJack!') +
-        2 * (hand.status === 'Player wins') +
-        1 * (hand.status === 'Push') +
-        0 * (hand.status === 'Dealer wins'));
+        2.5 * +(hand.status === 'BlackJack!') +
+        2 * +(hand.status === 'Player wins') +
+        1 * +(hand.status === 'Push') +
+        0 * +(hand.status === 'Dealer wins'));
 };
 
-module.exports = {
+export {
+    addCard,
+    canDouble,
+    canSplit,
+    create,
+    getCards,
+    markAsPlayed,
+    resolve
+};
+
+export default {
     addCard,
     canDouble,
     canSplit,

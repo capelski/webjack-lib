@@ -1,4 +1,4 @@
-const tableService = require('../services/table-service');
+import tableService from '../services/table-service';
 import { noTableJoined, serializeTable } from './shared';
 
 const createVirtualTable = (req: any, res: any, next: any) => {
@@ -53,6 +53,15 @@ const joinTable = (req: any, res: any, next: any) => {
     const playerId = req.session.playerId;
     const tableId = req.session.tableId = tableService.joinTable(playerId);
     return res.send(JSON.stringify({ tableId }));
+};
+
+export {
+    createVirtualTable,
+    exitTable,
+    exitVirtualTable,
+    getVirtualTableStatus,
+    getTableStatus,
+    joinTable
 };
 
 export default {

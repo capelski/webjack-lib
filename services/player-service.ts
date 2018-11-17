@@ -1,14 +1,13 @@
-'use strict';
-
+import { Card } from '../models/card';
+import { Player } from '../models/player';
+import handService from './hand-service';
 const uuidV4 = require('uuid/v4');
-const Player = require('../models/player');
-const handService = require('./hand-service');
 
-let players = [];
+let players: Player[] = [];
 
 const createDealer = () => new Player(uuidV4(), 'Dealer');
 
-const createPlayer = (playerName) => {
+const createPlayer = (playerName: string) => {
     if (!playerName || !playerName.trim()) throw 'No player name was provided';
     playerName = playerName.trim();
     
@@ -24,58 +23,58 @@ const createPlayer = (playerName) => {
     return player;
 }
 
-const createVirtualPlayer = playerName => new Player(uuidV4(), playerName);
+const createVirtualPlayer = (playerName: string) => new Player(uuidV4(), playerName);
 
 // TODO Access to models properties should be done in the model service
 // e.g. player.hands.reduce(whatever) => handService.whatever
 
-const collectPlayedCards = (player) => {
+const collectPlayedCards = (player: Player) => {
     var cards = player.hands.reduce((cards, hand) => cards.concat(handService.getCards(hand)), []);
     player.hands = [];
     return cards;
 };
 
-const dealCard = (player, card, isDealer) => {
+const dealCard = (player: Player, card: Card, isDealer: boolean) => {
     var currentHand = getCurrentHand(player);
     var handStatus = handService.addCard(currentHand, card, isDealer);
     return handStatus;
 };
 
-const doubleCurrentHand = (player) => {
+const doubleCurrentHand = (player: Player) => {
     var currentHand = getCurrentHand(player);
     player.earningRate -= currentHand.value;
     currentHand.value += 1;
 };
 
-const getCurrentHand = (player) => player.hands.find(h => !h.played);
+const getCurrentHand = (player: Player) => player.hands.find(h => !h.played);
 
-const getPlayer = playerId => players.find(p => p.id == playerId);
+const getPlayer = (playerId: string) => players.find(p => p.id == playerId);
 
-const hasHands = (player) => player.hands.length > 0;
+const hasHands = (player: Player) => player.hands.length > 0;
 
-const hasUnplayedHands = (player) =>
+const hasUnplayedHands = (player: Player) =>
     player.hands.reduce((unplayedHand, hand) => unplayedHand || !hand.played, false);
 
-const increaseInactiveRounds = player => {
+const increaseInactiveRounds = (player: Player) => {
     player.inactiveRounds++;
 };
 
-const initializeHand = (player, bet) => {
-    var hand = handService.create(bet);
+const initializeHand = (player: Player, bet?: number) => {
+    var hand = handService.create(bet || 0);
     player.hands = [hand];
     player.earningRate -= bet;
 };
 
-const resetInactiveRounds = (player) => {
+const resetInactiveRounds = (player: Player) => {
     player.inactiveRounds = 0;
 };
 
-const resolveHands = (player, dealerScore) => {
+const resolveHands = (player: Player, dealerScore: number) => {
     var earningRate = player.hands.reduce((rate, hand) => rate + handService.resolve(hand, dealerScore), 0);
     player.earningRate += earningRate;
 };
 
-const splitCurrentHand = (player) => {
+const splitCurrentHand = (player: Player) => {
     var currentHand = getCurrentHand(player);
     var firstCard = currentHand.cards.splice(-1)[0];
 
@@ -87,7 +86,25 @@ const splitCurrentHand = (player) => {
     player.hands.splice(index + 1, 0, newHand);
 };
 
-module.exports = {
+export {
+    collectPlayedCards,
+    createDealer,
+    createPlayer,
+    createVirtualPlayer,
+    dealCard,
+    doubleCurrentHand,
+    getCurrentHand,
+    getPlayer,
+    hasHands,
+    hasUnplayedHands,
+    increaseInactiveRounds,
+    initializeHand,
+    resetInactiveRounds,
+    resolveHands,
+    splitCurrentHand
+};
+
+export default {
     collectPlayedCards,
     createDealer,
     createPlayer,

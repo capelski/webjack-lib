@@ -1,9 +1,7 @@
-'use strict';
+import { Card } from '../models/card';
+import js from '../utils/js-generics';
 
-const Card = require('../models/card');
-const js = require('../utils/js-generics');
-
-const cardsValue = {
+const cardsValue: { [key: string]: number[] } = {
     'A': [1, 11],
     '2': [2],
     '3': [3],
@@ -24,15 +22,20 @@ const suits = ['\u2663', '\u2666', '\u2665', '\u2660'];
 const createDeck = () =>
     js.cartesianProduct(suits, symbols, (suit, symbol) => new Card(suit, symbol));
 
-const createDecks = (decksNumber) => js.shuffleArray(
+const createDecks = (decksNumber: number) => js.shuffleArray(
     Array(decksNumber)
     .fill(null)
     .map(x => createDeck())
     .reduce((x, y) => x.concat(y), []));
 
-const getValue = (card) => cardsValue[card.symbol];
+const getValue = (card: Card) => cardsValue[card.symbol];
 
-module.exports = {
+export {
+    createDecks,
+    getValue
+};
+
+export default {
     createDecks,
     getValue
 };

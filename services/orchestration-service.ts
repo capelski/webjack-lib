@@ -1,22 +1,22 @@
-'use strict';
-
+import { Player } from '../models/player';
+import { Table } from '../models/table';
+import playerService from './player-service';
+import handService from './hand-service';
+import tableService from './table-service';
 const gameParameters = require('../game-parameters');
-const playerService = require('./player-service');
-const handService = require('./hand-service');
-const tableService = require('./table-service');
 
-const startRoundTrigger = (table) => {
+const startRoundTrigger = (table: Table) => {
     tableService.clearTrigger(table);
     tableService.setTrigger(table, 7, () => startRound(table));
 };
-const makeDecisionTrigger = (table, player) => tableService.setTrigger(table, 20, () => stand(table, player));
-const playDealerTurnTrigger = (table) => tableService.setTrigger(table, 3, () => playDealerTurn(table));
-const collectPlayedCardsTrigger = (table) => tableService.setTrigger(table, 5, () => tableService.collectPlayedCards(table));
+const makeDecisionTrigger = (table: Table, player: Player) => tableService.setTrigger(table, 20, () => stand(table, player));
+const playDealerTurnTrigger = (table: Table) => tableService.setTrigger(table, 3, () => playDealerTurn(table));
+const collectPlayedCardsTrigger = (table: Table) => tableService.setTrigger(table, 5, () => tableService.collectPlayedCards(table));
 
 // TODO Access to models properties should be done in the model service
 // e.g. table.players.forEach(whatever) => tableService.whatever
 
-const playDealerTurn = (table) => {
+const playDealerTurn = (table: Table) => {
     tableService.clearTrigger(table);
 
     if (table.activePlayerId !== table.dealer.id) {
@@ -39,7 +39,7 @@ const playDealerTurn = (table) => {
     }, 1000);
 };
 
-const ensurePlayer = (table, playerId) => {
+const ensurePlayer = (table: Table, playerId: string) => {
     const currentPlayer = tableService.getActivePlayer(table);
     if (!currentPlayer) {
         throw 'No one is playing now';
@@ -52,7 +52,7 @@ const ensurePlayer = (table, playerId) => {
     return currentPlayer;
 };
 
-const double = (table, player) => {
+const double = (table: Table, player: Player) => {
     var playerHand = playerService.getCurrentHand(player);
     if (!handService.canDouble(playerHand)) {
         throw 'Doubling is only allowed with 9, 10 or 11 points';
@@ -64,7 +64,7 @@ const double = (table, player) => {
     startNextHand(table, player);
 };
 
-const hit = (table, player) => {
+const hit = (table: Table, player: Player) => {
     var handStatus = playerService.dealCard(player, tableService.getNextCard(table), false);
     if (!handStatus.isHandAlive) {
         startNextHand(table, player);
@@ -74,7 +74,7 @@ const hit = (table, player) => {
     }
 };
 
-const split = (table, player) => {
+const split = (table: Table, player: Player) => {
     var playerHand = playerService.getCurrentHand(player);
     if (!handService.canSplit(playerHand)) {
         throw 'Splitting is only allowed with two equal cards!';
@@ -90,13 +90,13 @@ const split = (table, player) => {
     }
 };
 
-const stand = (table, player) => {
+const stand = (table: Table, player: Player) => {
     var playerHand = playerService.getCurrentHand(player);
     handService.markAsPlayed(playerHand);
     startNextHand(table, player);
 };
 
-const _makeDecision = (table, player, decision) => {
+const _makeDecision = (table: Table, player: Player, decision: string) => {
     tableService.clearTrigger(table);
     try {
         switch (decision) {
@@ -125,17 +125,17 @@ const _makeDecision = (table, player, decision) => {
     }
 };
 
-const makeDecision = (table, playerId, decision) => {
+const makeDecision = (table: Table, playerId: string, decision: string) => {
     const player = ensurePlayer(table, playerId);
     _makeDecision(table, player, decision)
 };
 
-const makeVirtualDecision = (table, decision) => {
+const makeVirtualDecision = (table: Table, decision: string) => {
     const currentPlayer = tableService.getActivePlayer(table);
     _makeDecision(table, currentPlayer, decision);
 };
 
-const placeBet = (table, playerId, bet) => {
+const placeBet = (table: Table, playerId: string, bet: number) => {
     var player = table.players.find(p => p.id == playerId);
     if (!player) {
         throw 'No player identified by ' + playerId + ' was found';
@@ -149,7 +149,7 @@ const placeBet = (table, playerId, bet) => {
     }
 };
 
-const updateActivePlayer = (table) => {
+const updateActivePlayer = (table: Table) => {
     var nextPlayer = table.players.find(playerService.hasUnplayedHands);
     if (!nextPlayer) {
         nextPlayer = table.dealer;
@@ -161,7 +161,7 @@ const updateActivePlayer = (table) => {
     table.activePlayerId = nextPlayer.id;
 };
 
-const startNextHand = (table, player) => {
+const startNextHand = (table: Table, player: Player) => {
     var nextHand = playerService.getCurrentHand(player);
     if (nextHand) {
         var handStatus = playerService.dealCard(player, tableService.getNextCard(table), false);
@@ -175,7 +175,7 @@ const startNextHand = (table, player) => {
     }
 };
 
-const startRound = (table) => {
+const startRound = (table: Table) => {
     tableService.clearTrigger(table);
 
     var activePlayers = table.players.filter(playerService.hasHands);
@@ -201,7 +201,15 @@ const startRound = (table) => {
     updateActivePlayer(table);
 };
 
-module.exports = {
+export {
+    playDealerTurn,
+    makeDecision,
+    makeVirtualDecision,
+    placeBet,
+    startRound
+};
+
+export default {
     playDealerTurn,
     makeDecision,
     makeVirtualDecision,

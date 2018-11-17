@@ -24,3 +24,8 @@ export {
     noTableJoined,
     serializeTable
 }; 
+
+export default {
+    noTableJoined,
+    serializeTable
+}; 

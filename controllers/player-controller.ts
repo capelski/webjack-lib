@@ -1,5 +1,5 @@
-const playerService = require('../services/player-service');
-const tableService = require('../services/table-service');
+import playerService from '../services/player-service';
+import tableService from '../services/table-service';
 
 const isPlayerRegistered = (req: any, res: any, next: any) => {
     const playerId = req.session.playerId;
@@ -20,6 +20,11 @@ const registerPlayer = (req: any, res: any, next: any) => {
     }
     
     return res.send(JSON.stringify({ playerId: req.session.playerId }));
+};
+
+export {
+    isPlayerRegistered,
+    registerPlayer
 };
 
 export default {

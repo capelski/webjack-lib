@@ -1,1 +1,4 @@
 modena-setup.js
+controllers/*.js
+services/*.js
+models/*.js

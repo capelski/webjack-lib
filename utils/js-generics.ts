@@ -1,6 +1,6 @@
 'use strict';
 
-const cartesianProduct = (firstArray, secondArray, elementBuilder) => {
+const cartesianProduct = <T, U>(firstArray: T[], secondArray: U[], elementBuilder: (t: T, u: U) => any) => {
     return [].concat.apply([], firstArray.map(function (x) {
         return [].concat.apply([], secondArray.map(function (y) {
             return [elementBuilder(x, y)];
@@ -8,18 +8,12 @@ const cartesianProduct = (firstArray, secondArray, elementBuilder) => {
     }));
 };
 
-const iterate = (array, functionExpression) => {
-    for (var key in array) {
-        functionExpression(array[key], key);
-    }
-};
-
-const clone = (source) => {
+const clone = (source: any) => {
     if (typeof(source) !== typeof({})) {
         return source;
     }
-    var newObject = source instanceof Array ? [] : {};
-    iterate(source, (element, key) => {
+    var newObject = source instanceof Array ? [] : {} as {[key: string]: any};
+    iterate(source, (element: any, key: string) => {
         if (element instanceof Array || typeof(element) === typeof({})) {
             newObject[key] = clone(source[key]);
         } else {
@@ -29,15 +23,9 @@ const clone = (source) => {
     return newObject;
 };
 
-const repeat = (iterationsNumber, functionExpression) => {
-    for (var i = 1; i < (iterationsNumber + 1); ++i) {
-        functionExpression(i);
-    }
-};
-
-const createArray = (size, elementBuilder) => {
-    var array = [];
-    repeat(size, (iterationNumber) => {
+const createArray = (size: number, elementBuilder: Function) => {
+    var array: any[] = [];
+    repeat(size, (iterationNumber: number) => {
         var newArray = elementBuilder(array, iterationNumber - 1);
         if (newArray) {
             array = newArray;
@@ -46,13 +34,19 @@ const createArray = (size, elementBuilder) => {
     return array;
 };
 
-const iterateFor = (array, functionExpression) => {
+const iterate = (iterable: any[], functionExpression: Function) => {
+    for (var key in iterable) {
+        functionExpression(iterable[key], key);
+    }
+};
+
+const iterateFor = (array: any[], functionExpression: Function) => {
     for (var i = 0; i < array.length; ++i) {
         functionExpression(array[i], i);
     }
 };
 
-const numericalRange = (lowerBoundary, upperBoundary) => {
+const numericalRange = (lowerBoundary: number, upperBoundary: number) => {
     let range = [];
     for (var i = lowerBoundary; i <= upperBoundary; ++i) {
         range.push(i);
@@ -78,7 +72,13 @@ const percentizeValues = () => {
     return values;
 };
 
-const shuffleArray = (array) => {
+const repeat = (iterationsNumber: number, functionExpression: Function) => {
+    for (var i = 1; i < (iterationsNumber + 1); ++i) {
+        functionExpression(i);
+    }
+};
+
+const shuffleArray = (array: any[]) => {
     for (var i = array.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
         var temp = array[i];
@@ -88,7 +88,19 @@ const shuffleArray = (array) => {
     return array;
 };
 
-module.exports = {
+export {
+    cartesianProduct,
+    iterate,
+    clone,
+    repeat,
+    createArray,
+    iterateFor,
+    numericalRange,
+    percentizeValues,
+    shuffleArray
+};
+
+export default {
     cartesianProduct,
     iterate,
     clone,
