@@ -1,17 +1,17 @@
-const { configureEndpoints } = require('modena');
-const { join } = require('path');
-const playerController = require('./controllers/player-controller');
-const tableController = require('./controllers/table-controller');
-const gameController = require('./controllers/game-controller');
+import modena from 'modena';
+import { join } from 'path';
+import playerController from './controllers/player-controller';
+import tableController from './controllers/table-controller';
+import gameController from './controllers/game-controller';
 
-const corsMiddleware = (req, res, next) => {
+const corsMiddleware = (req: any, res: any, next: any) => {
 	res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
 	res.header('Access-Control-Allow-Credentials', 'true');
 	next();
 };
 
-module.exports = configureEndpoints((router, config, middleware) => {
+module.exports = modena.configureEndpoints((router: any, config: any, middleware: any) => {
 
 	const appMiddleware = [ middleware.session, corsMiddleware ];
 
@@ -20,7 +20,7 @@ module.exports = configureEndpoints((router, config, middleware) => {
 		tableService.useDevelopmentCardsSet(config.developmentCardsSet);
 	}
 
-	router.get('/', (req, res, next) =>	
+	router.get('/', (req: any, res: any, next: any) =>	
 		res.sendFile(join(__dirname, 'webjack-ui', 'dist', 'index.html')));
 		
 	router.get('/is-player-registered', appMiddleware, playerController.isPlayerRegistered);
@@ -36,5 +36,4 @@ module.exports = configureEndpoints((router, config, middleware) => {
 	router.get('/start-virtual-round', appMiddleware, gameController.startVirtualRound);
 	router.get('/make-virtual-decision', appMiddleware, gameController.makeVirtualDecision);
 	router.get('/exit-virtual-table', appMiddleware, tableController.exitVirtualTable);
-
 });

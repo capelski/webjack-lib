@@ -1,4 +1,4 @@
-const getSecondsLeft = (date) => {
+const getSecondsLeft = (date: Date) => {
 	let seconds = -1;
 	if (date) {
 		const diff = date.getTime() - new Date().getTime();
@@ -9,7 +9,7 @@ const getSecondsLeft = (date) => {
 	return seconds;
 };
 
-const serializeTable = (res, table) => res.send(JSON.stringify({
+const serializeTable = (res: any, table: any) => res.send(JSON.stringify({
 	players: table.players,
 	dealer: table.dealer,
 	isVirtualTable: table.isVirtual,
@@ -17,10 +17,10 @@ const serializeTable = (res, table) => res.send(JSON.stringify({
 	secondsLeft: getSecondsLeft(table.nextAction)
 }));
 
-const noTableJoined = res =>
+const noTableJoined = (res: any) =>
     res.status(400).send(JSON.stringify({ message: 'No table has been joined' }));
     
-module.exports = {
+export {
     noTableJoined,
     serializeTable
 }; 

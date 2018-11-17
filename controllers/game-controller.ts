@@ -2,7 +2,7 @@ const orchestrationService = require('../services/orchestration-service');
 const tableService = require('../services/table-service');
 const { noTableJoined, serializeTable } = require('./shared');
 
-const makeDecision = (req, res, next) => {
+const makeDecision = (req: any, res: any, next: any) => {
     const playerId = req.session.playerId;
     const decision = req.query.decision;
     const table = tableService.getTable(req.session.tableId);
@@ -20,7 +20,7 @@ const makeDecision = (req, res, next) => {
     }
 };
 
-const makeVirtualDecision = (req, res, next) => {
+const makeVirtualDecision = (req: any, res: any, next: any) => {
     const decision = req.query.decision;
     const table = tableService.getVirtualTable(req.session.tableId);
     if (!table) {
@@ -37,7 +37,7 @@ const makeVirtualDecision = (req, res, next) => {
     }
 };
 
-const placeBet = (req, res, next) => {
+const placeBet = (req: any, res: any, next: any) => {
     const table = tableService.getTable(req.session.tableId);
     const bet = parseInt(req.query.bet);
     if (!table) {
@@ -49,20 +49,20 @@ const placeBet = (req, res, next) => {
     }
 };
 
-const startVirtualRound = (req, res, next) => {
+const startVirtualRound = (req: any, res: any, next: any) => {
     const bet = parseInt(req.query.bet);
     const table = tableService.getVirtualTable(req.session.tableId);
     if (!table) {
         return noTableJoined(res);
     }
     else {
-        table.players.forEach(player =>
+        table.players.forEach((player: any) =>
             orchestrationService.placeBet(table, player.id, bet));
         return serializeTable(res, table);
     }
 }
 
-module.exports = {
+export default {
     makeDecision,
     makeVirtualDecision,
     placeBet,

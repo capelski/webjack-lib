@@ -1,12 +1,12 @@
 const tableService = require('../services/table-service');
-const { noTableJoined, serializeTable } = require('./shared');
+import { noTableJoined, serializeTable } from './shared';
 
-const createVirtualTable = (req, res, next) => {
+const createVirtualTable = (req: any, res: any, next: any) => {
     const tableId = req.session.tableId = tableService.createVirtualTable();
     return res.send(JSON.stringify({ tableId }));
 };
 
-const exitTable = (req, res, next) => {
+const exitTable = (req: any, res: any, next: any) => {
     const playerId = req.session.playerId;
     const tableId = req.session.tableId;
     tableService.exitTable(tableId, playerId);
@@ -14,20 +14,20 @@ const exitTable = (req, res, next) => {
     return res.status(200).send(JSON.stringify({ message: 'Successfully exited table' }));
 };
 
-const exitVirtualTable = (req, res, next) => {
+const exitVirtualTable = (req: any, res: any, next: any) => {
     const tableId = req.session.tableId;
     tableService.exitVirtualTable(tableId);
     delete req.session.tableId;
     return res.status(200).send(JSON.stringify({ message: 'Successfully exited virtual table' }));
 };
 
-const getTableStatus = (req, res, next) => {
+const getTableStatus = (req: any, res: any, next: any) => {
     const table = tableService.getTable(req.session.tableId);
     if (!table) {
         return noTableJoined(res);
     }
     else {
-        const player = table.players.find(p => p.id == req.session.playerId);
+        const player = table.players.find((p: any) => p.id == req.session.playerId);
 
         if (!player) {
             delete req.session.tableId;
@@ -39,7 +39,7 @@ const getTableStatus = (req, res, next) => {
     }
 };
 
-const getVirtualTableStatus = (req, res, next) => {
+const getVirtualTableStatus = (req: any, res: any, next: any) => {
     const table = tableService.getVirtualTable(req.session.tableId);
     if (!table) {
         return noTableJoined(res);
@@ -49,13 +49,13 @@ const getVirtualTableStatus = (req, res, next) => {
     }
 };
 
-const joinTable = (req, res, next) => {
+const joinTable = (req: any, res: any, next: any) => {
     const playerId = req.session.playerId;
     const tableId = req.session.tableId = tableService.joinTable(playerId);
     return res.send(JSON.stringify({ tableId }));
 };
 
-module.exports = {
+export default {
     createVirtualTable,
     exitTable,
     exitVirtualTable,

@@ -1,14 +1,14 @@
 const playerService = require('../services/player-service');
 const tableService = require('../services/table-service');
 
-const isPlayerRegistered = (req, res, next) => {
+const isPlayerRegistered = (req: any, res: any, next: any) => {
     const playerId = req.session.playerId;
     const tableId = req.session.tableId;
     const isVirtualTable = !!tableService.getVirtualTable(tableId);
     return res.send(JSON.stringify({ playerId, tableId, isVirtualTable }));
 };
 
-const registerPlayer = (req, res, next) => {
+const registerPlayer = (req: any, res: any, next: any) => {
     if (!req.session.playerId) {
         try {
             const player = playerService.createPlayer(req.query.name);
@@ -22,7 +22,7 @@ const registerPlayer = (req, res, next) => {
     return res.send(JSON.stringify({ playerId: req.session.playerId }));
 };
 
-module.exports = {
+export default {
     isPlayerRegistered,
     registerPlayer
 };
