@@ -16,8 +16,8 @@ module.exports = modena.configureEndpoints((router: any, config: any, middleware
 	const appMiddleware = [ middleware.session, corsMiddleware ];
 
 	if (config.ENABLE_DEVELOPMENT_MODE && config.developmentCardsSet) {
-		const tableService = require('./services/table-service');
-		tableService.useDevelopmentCardsSet(config.developmentCardsSet);
+		const cardSetService = require('./services/card-set-service');
+		cardSetService.useDevelopmentCards(config.developmentCardsSet);
 	}
 
 	router.get('/', (req: any, res: any, next: any) =>	

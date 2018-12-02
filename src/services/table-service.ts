@@ -1,7 +1,5 @@
-import { Card } from '../models/card';
 import { Table } from '../models/table';
-import js from '../utils/js-generics';
-import cardService from './card-service';
+import cardSetService from './card-set-service';
 import playerService from './player-service';
 
 const uuidV4 = require('uuid/v4');
@@ -9,7 +7,6 @@ const gameParameters = require('../../game-parameters');
 
 let tables: Table[] = [];
 let virtualTables: Table[] = [];
-let developmentCardsSet: Card[];
 
 const clearTrigger = (table: Table) => {
     clearTimeout(table.nextTrigger);
@@ -19,26 +16,17 @@ const clearTrigger = (table: Table) => {
 
 const collectPlayedCards = (table: Table) => {
     clearTrigger(table);
-
-    var playedCards = table.players
-        .reduce((cards, player) => cards.concat(playerService.collectPlayedCards(player)), [])
-        .concat(playerService.collectPlayedCards(table.dealer));
-
-    table.playedCards = table.playedCards.concat(playedCards);
-
-    if (table.playedCards.length > 80) {
-        table.availableCards = table.availableCards.concat(table.playedCards);
-        table.playedCards = [];
-        js.shuffleArray(table.availableCards);
-    }
+    cardSetService.collectPlayedCards(table.cardSet);
+    table.players.forEach(player => playerService.clearPlayerHands(player));
+    playerService.clearPlayerHands(table.dealer);
 };
 
 const createTable = () => {
     const tableId = uuidV4();
     const dealer = playerService.createDealer();
-    const cards = getCardsSet();
+    const cardSet = cardSetService.createCardSet(gameParameters.decksNumber);
 
-    const table = new Table(tableId, cards, dealer);
+    const table = new Table(tableId, cardSet, dealer);
     tables.push(table);
 
     return table;
@@ -47,13 +35,14 @@ const createTable = () => {
 const createVirtualTable = () => {
     const tableId = uuidV4();
     const dealer = playerService.createDealer();
+    const cardSet = cardSetService.createCardSet(gameParameters.decksNumber);
+
     const players = ' '.repeat(7).split('')
         .map((_, index) => playerService.createVirtualPlayer(`Robot ${index + 1}`));
-    const cards = cardService.createDecks(gameParameters.decksNumber);
 
-    const table = new Table(tableId, cards, dealer);
+    const table = new Table(tableId, cardSet, dealer);
     table.isVirtual = true;
-    players.forEach(player => table.players.push(player));
+    table.players = players;
     virtualTables.push(table);
 
     return table.id;
@@ -83,15 +72,7 @@ const exitTable = (tableId: string, playerId: string) => {
 
 const getActivePlayer = (table: Table) => table.players.find(p => p.id === table.activePlayerId);
 
-const getCardsSet = () => developmentCardsSet ? developmentCardsSet : cardService.createDecks(gameParameters.decksNumber);
-
-const getNextCard = (table: Table) => {
-    if (table.availableCards.length === 0) {
-        throw 'No more cards left!';
-    }
-    var nextCard = table.availableCards.splice(0, 1)[0];
-    return nextCard;
-};
+const getNextCard = (table: Table) => cardSetService.getNextCard(table.cardSet);
 
 const getTable = (tableId: string) => tables.find(t => t.id == tableId);
 
@@ -118,9 +99,7 @@ const setTrigger = (table: Table, seconds: number, callback: Function) => {
     table.nextAction.setSeconds(table.nextAction.getSeconds() + seconds);
 };
 
-const useDevelopmentCardsSet = (cardsSet: Card[]) => developmentCardsSet = cardsSet;
-
-export const exportedMethods = module.exports = {
+export const exportedMethods = {
     clearTrigger,
     collectPlayedCards,
     createVirtualTable,
@@ -132,8 +111,7 @@ export const exportedMethods = module.exports = {
     getVirtualTable,
     hasTrigger,
     joinTable,
-    setTrigger,
-    useDevelopmentCardsSet
+    setTrigger
 };
 
 export default {
@@ -148,6 +126,5 @@ export default {
     getVirtualTable,
     hasTrigger,
     joinTable,
-    setTrigger,
-    useDevelopmentCardsSet
+    setTrigger
 };

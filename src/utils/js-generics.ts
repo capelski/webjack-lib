@@ -85,7 +85,6 @@ const shuffleArray = (array: any[]) => {
         array[i] = array[j];
         array[j] = temp;
     }
-    return array;
 };
 
 export {

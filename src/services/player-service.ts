@@ -28,10 +28,8 @@ const createVirtualPlayer = (playerName: string) => new Player(uuidV4(), playerN
 // TODO Access to models properties should be done in the model service
 // e.g. player.hands.reduce(whatever) => handService.whatever
 
-const collectPlayedCards = (player: Player) => {
-    var cards = player.hands.reduce((cards, hand) => cards.concat(handService.getCards(hand)), []);
+const clearPlayerHands = (player: Player) => {
     player.hands = [];
-    return cards;
 };
 
 const dealCard = (player: Player, card: Card, isDealer: boolean) => {
@@ -89,7 +87,7 @@ const splitCurrentHand = (player: Player) => {
 };
 
 export {
-    collectPlayedCards,
+    clearPlayerHands,
     createDealer,
     createPlayer,
     createVirtualPlayer,
@@ -107,7 +105,7 @@ export {
 };
 
 export default {
-    collectPlayedCards,
+    clearPlayerHands,
     createDealer,
     createPlayer,
     createVirtualPlayer,

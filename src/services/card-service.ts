@@ -22,20 +22,14 @@ const suits = ['\u2663', '\u2666', '\u2665', '\u2660'];
 const createDeck = () =>
     js.cartesianProduct(suits, symbols, (suit, symbol) => new Card(suit, symbol));
 
-const createDecks = (decksNumber: number) => js.shuffleArray(
-    Array(decksNumber)
-    .fill(null)
-    .map(x => createDeck())
-    .reduce((x, y) => x.concat(y), []));
-
 const getValue = (card: Card) => cardsValue[card.symbol];
 
 export {
-    createDecks,
+    createDeck,
     getValue
 };
 
 export default {
-    createDecks,
+    createDeck,
     getValue
 };
