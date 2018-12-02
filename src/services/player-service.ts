@@ -32,9 +32,10 @@ const clearPlayerHands = (player: Player) => {
     player.hands = [];
 };
 
+// TODO DealCard shouldn't return handStatus. Get it from orchestration-service instead
 const dealCard = (player: Player, card: Card, isDealer: boolean) => {
-    var currentHand = getCurrentHand(player);
-    var handStatus = handService.addCard(currentHand, card, isDealer);
+    const currentHand = getCurrentHand(player);
+    const handStatus = handService.addCard(currentHand, card, isDealer);
     return handStatus;
 };
 

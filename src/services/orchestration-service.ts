@@ -10,9 +10,12 @@ const startRoundTrigger = (table: Table) => {
     tableService.clearTrigger(table);
     tableService.setTrigger(table, 7, () => startRound(table));
 };
-const makeDecisionTrigger = (table: Table, player: Player) => tableService.setTrigger(table, 20, () => stand(table, player));
-const playDealerTurnTrigger = (table: Table) => tableService.setTrigger(table, 3, () => playDealerTurn(table));
-const collectPlayedCardsTrigger = (table: Table) => tableService.setTrigger(table, 5, () => tableService.collectPlayedCards(table));
+const makeDecisionTrigger = (table: Table, player: Player) =>
+    tableService.setTrigger(table, 20, () => stand(table, player));
+const playDealerTurnTrigger = (table: Table) =>
+    tableService.setTrigger(table, 3, () => playDealerTurn(table));
+const endRoundTrigger = (table: Table) =>
+tableService.setTrigger(table, 5, () => tableService.endRound(table));
 
 // TODO Access to models properties should be done in the model service
 // e.g. table.players.forEach(whatever) => tableService.whatever
@@ -32,7 +35,7 @@ const playDealerTurn = (table: Table) => {
             table.players.forEach(p => playerService.resolveHands(p, dealerScore));
             table.activePlayerId = null;
         
-            collectPlayedCardsTrigger(table);
+            endRoundTrigger(table);
         }
         else {
             dealerScore = playerService.dealCard(table.dealer, tableService.getNextCard(table), true).score;
@@ -137,12 +140,14 @@ const makeVirtualDecision = (table: Table, decision: string) => {
 };
 
 const placeBet = (table: Table, playerId: string, bet: number) => {
-    var player = table.players.find(p => p.id == playerId);
+    const player = table.players.find(p => p.id == playerId);
     if (!player) {
         throw 'No player identified by ' + playerId + ' was found';
     }
 
-    // TODO Allow only when round is not started
+    if (tableService.isRoundBeingPlayed(table)) {
+        throw 'Bets can only be placed before a round starts';
+    }
 
     playerService.initializeHand(player, bet);
     if (!tableService.hasTrigger(table)) {
@@ -151,7 +156,7 @@ const placeBet = (table: Table, playerId: string, bet: number) => {
 };
 
 const updateActivePlayer = (table: Table) => {
-    var nextPlayer = table.players.find(playerService.hasUnplayedHands);
+    let nextPlayer = table.players.find(playerService.hasUnplayedHands);
     if (!nextPlayer) {
         nextPlayer = table.dealer;
         playDealerTurnTrigger(table);
@@ -163,7 +168,7 @@ const updateActivePlayer = (table: Table) => {
 };
 
 const startNextHand = (table: Table, player: Player) => {
-    var nextHand = playerService.getCurrentHand(player);
+    const nextHand = playerService.getCurrentHand(player);
     if (nextHand) {
         var handStatus = playerService.dealCard(player, tableService.getNextCard(table), false);
         if (!handStatus.isHandAlive) {
@@ -193,6 +198,8 @@ const startRound = (table: Table) => {
             tableService.exitTable(table.id, p.id);
         }
     });
+
+    tableService.setRoundBeingPlayed(table, true);
 
     activePlayers.forEach(p => playerService.dealCard(p, tableService.getNextCard(table), false));
     playerService.initializeHand(table.dealer);

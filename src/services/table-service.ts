@@ -14,13 +14,6 @@ const clearTrigger = (table: Table) => {
     table.nextAction = null;
 };
 
-const collectPlayedCards = (table: Table) => {
-    clearTrigger(table);
-    cardSetService.collectPlayedCards(table.cardSet);
-    table.players.forEach(player => playerService.clearPlayerHands(player));
-    playerService.clearPlayerHands(table.dealer);
-};
-
 const createTable = () => {
     const table = tableCreator();
     tables.push(table);
@@ -37,6 +30,14 @@ const createVirtualTable = () => {
     virtualTables.push(virtualTable);
 
     return virtualTable.id;
+};
+
+const endRound = (table: Table) => {
+    clearTrigger(table);
+    cardSetService.collectPlayedCards(table.cardSet);
+    table.players.forEach(playerService.clearPlayerHands);
+    playerService.clearPlayerHands(table.dealer);
+    setRoundBeingPlayed(table, false);
 };
 
 const exitVirtualTable = (tableId: string) => {
@@ -71,6 +72,8 @@ const getVirtualTable = (tableId: string) => virtualTables.find(t => t.id == tab
 
 const hasTrigger = (table: Table) => table.nextTrigger != null;
 
+const isRoundBeingPlayed = (table: Table) => table.isRoundBeingPlayed;
+
 const joinTable = (playerId: string) => {
     var table = tables.find(t => t.players.length < gameParameters.maxPlayers);
     if (!table) {
@@ -83,6 +86,10 @@ const joinTable = (playerId: string) => {
 
     return table.id;
 };
+
+const setRoundBeingPlayed = (table: Table, isRoundBeingPlayed: boolean) => {
+    table.isRoundBeingPlayed = isRoundBeingPlayed;
+}
 
 const setTrigger = (table: Table, seconds: number, callback: Function) => {
     table.nextTrigger = setTimeout(callback, seconds * 1000);
@@ -100,8 +107,8 @@ const tableCreator = () => {
 
 export const exportedMethods = {
     clearTrigger,
-    collectPlayedCards,
     createVirtualTable,
+    endRound,
     exitVirtualTable,
     exitTable,
     getActivePlayer,
@@ -109,14 +116,16 @@ export const exportedMethods = {
     getTable,
     getVirtualTable,
     hasTrigger,
+    isRoundBeingPlayed,
     joinTable,
+    setRoundBeingPlayed,
     setTrigger
 };
 
 export default {
     clearTrigger,
-    collectPlayedCards,
     createVirtualTable,
+    endRound,
     exitVirtualTable,
     exitTable,
     getActivePlayer,
@@ -124,6 +133,8 @@ export default {
     getTable,
     getVirtualTable,
     hasTrigger,
+    isRoundBeingPlayed,
     joinTable,
+    setRoundBeingPlayed,
     setTrigger
 };
