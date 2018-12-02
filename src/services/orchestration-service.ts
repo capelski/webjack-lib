@@ -1,5 +1,6 @@
 import { Player } from '../models/player';
 import { Table } from '../models/table';
+import blackJackService from './black-jack-service';
 import playerService from './player-service';
 import handService from './hand-service';
 import tableService from './table-service';
@@ -80,7 +81,7 @@ const split = (table: Table, player: Player) => {
         throw 'Splitting is only allowed with two equal cards!';
     }
      
-    playerService.splitCurrentHand(player);
+    blackJackService.splitPlayerCurrentHand(player);
     var handStatus = playerService.dealCard(player, tableService.getNextCard(table), false);
     if (!handStatus.isHandAlive) {
         startNextHand(table, player);

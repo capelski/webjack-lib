@@ -60,7 +60,7 @@ const increaseInactiveRounds = (player: Player) => {
 };
 
 const initializeHand = (player: Player, bet?: number) => {
-    var hand = handService.create(bet || 0);
+    const hand = handService.create(bet || 0);
     player.hands = [hand];
     player.earningRate -= bet;
 };
@@ -70,20 +70,8 @@ const resetInactiveRounds = (player: Player) => {
 };
 
 const resolveHands = (player: Player, dealerScore: number) => {
-    var earningRate = player.hands.reduce((rate, hand) => rate + handService.resolve(hand, dealerScore), 0);
+    const earningRate = player.hands.reduce((rate, hand) => rate + handService.resolve(hand, dealerScore), 0);
     player.earningRate += earningRate;
-};
-
-const splitCurrentHand = (player: Player) => {
-    var currentHand = getCurrentHand(player);
-    var firstCard = currentHand.cards.splice(-1)[0];
-
-    player.earningRate -= currentHand.value;
-    var newHand = handService.create(currentHand.value);
-    handService.addCard(newHand, firstCard, false);
-
-    var index = player.hands.findIndex(h => h == currentHand);
-    player.hands.splice(index + 1, 0, newHand);
 };
 
 export {
@@ -100,8 +88,7 @@ export {
     increaseInactiveRounds,
     initializeHand,
     resetInactiveRounds,
-    resolveHands,
-    splitCurrentHand
+    resolveHands
 };
 
 export default {
@@ -118,6 +105,5 @@ export default {
     increaseInactiveRounds,
     initializeHand,
     resetInactiveRounds,
-    resolveHands,
-    splitCurrentHand
+    resolveHands
 };

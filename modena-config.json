@@ -2,7 +2,7 @@
 	"assetsFolder": "webjack-ui/dist",
 	"developmentCardsSet": [
 		{
-		  "symbol": "9",
+		  "symbol": "8",
 		  "suit": "!"
 		},
 		{
@@ -10,11 +10,15 @@
 		  "suit": "!"
 		},
 		{
-		  "symbol": "3",
+		  "symbol": "8",
 		  "suit": "!"
 		},
 		{
-		  "symbol": "9",
+		  "symbol": "A",
+		  "suit": "!"
+		},
+		{
+		  "symbol": "A",
 		  "suit": "!"
 		},
 		{
@@ -22,7 +26,7 @@
 		  "suit": "!"
 		},
 		{
-		  "symbol": "10",
+		  "symbol": "J",
 		  "suit": "!"
 		}
 	]
