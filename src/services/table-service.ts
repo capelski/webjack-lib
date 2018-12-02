@@ -22,30 +22,21 @@ const collectPlayedCards = (table: Table) => {
 };
 
 const createTable = () => {
-    const tableId = uuidV4();
-    const dealer = playerService.createDealer();
-    const cardSet = cardSetService.createCardSet(gameParameters.decksNumber);
-
-    const table = new Table(tableId, cardSet, dealer);
+    const table = tableCreator();
     tables.push(table);
-
     return table;
 };
 
 const createVirtualTable = () => {
-    const tableId = uuidV4();
-    const dealer = playerService.createDealer();
-    const cardSet = cardSetService.createCardSet(gameParameters.decksNumber);
+    const virtualTable = tableCreator();
 
-    const players = ' '.repeat(7).split('')
+    virtualTable.isVirtual = true;
+    virtualTable.players = ' '.repeat(7).split('')
         .map((_, index) => playerService.createVirtualPlayer(`Robot ${index + 1}`));
+    
+    virtualTables.push(virtualTable);
 
-    const table = new Table(tableId, cardSet, dealer);
-    table.isVirtual = true;
-    table.players = players;
-    virtualTables.push(table);
-
-    return table.id;
+    return virtualTable.id;
 };
 
 const exitVirtualTable = (tableId: string) => {
@@ -97,6 +88,14 @@ const setTrigger = (table: Table, seconds: number, callback: Function) => {
     table.nextTrigger = setTimeout(callback, seconds * 1000);
     table.nextAction = new Date();
     table.nextAction.setSeconds(table.nextAction.getSeconds() + seconds);
+};
+
+const tableCreator = () => {
+    const tableId = uuidV4();
+    const dealer = playerService.createDealer();
+    const cardSet = cardSetService.createCardSet(gameParameters.decksNumber);
+
+    return new Table(tableId, cardSet, dealer);
 };
 
 export const exportedMethods = {
