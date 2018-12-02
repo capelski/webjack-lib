@@ -40,10 +40,12 @@ const dealCard = (player: Player, card: Card, isDealer: boolean) => {
     return handStatus;
 };
 
-const doubleCurrentHand = (player: Player) => {
-    var currentHand = getCurrentHand(player);
-    player.earningRate -= currentHand.value;
-    currentHand.value += 1;
+const multiplyCurrentHandValue = (player: Player, multiplier: number) => {
+    const currentHand = getCurrentHand(player);
+    const currentValue = currentHand.value;
+    const nextValue = currentHand.value * multiplier;
+    player.earningRate += currentValue - nextValue;
+    currentHand.value = nextValue;
 };
 
 const getCurrentHand = (player: Player) => player.hands.find(h => !h.played);
@@ -92,7 +94,7 @@ export {
     createPlayer,
     createVirtualPlayer,
     dealCard,
-    doubleCurrentHand,
+    multiplyCurrentHandValue,
     getCurrentHand,
     getPlayer,
     hasHands,
@@ -110,7 +112,7 @@ export default {
     createPlayer,
     createVirtualPlayer,
     dealCard,
-    doubleCurrentHand,
+    multiplyCurrentHandValue,
     getCurrentHand,
     getPlayer,
     hasHands,

@@ -58,7 +58,7 @@ const double = (table: Table, player: Player) => {
         throw 'Doubling is only allowed with 9, 10 or 11 points';
     }
 
-    playerService.doubleCurrentHand(player);
+    playerService.multiplyCurrentHandValue(player, 2);
     playerService.dealCard(player, tableService.getNextCard(table), false);
     handService.markAsPlayed(playerHand);
     startNextHand(table, player);

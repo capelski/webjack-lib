@@ -120,7 +120,7 @@ const setTrigger = (table: Table, seconds: number, callback: Function) => {
 
 const useDevelopmentCardsSet = (cardsSet: Card[]) => developmentCardsSet = cardsSet;
 
-export const exportedMethods = {
+export const exportedMethods = module.exports = {
     clearTrigger,
     collectPlayedCards,
     createVirtualTable,
