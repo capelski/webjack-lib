@@ -8,7 +8,7 @@ export class Hand{
     scores: number[];
     status: string;
 
-    constructor (public value: number) {
+    constructor (public bet: number) {
         this.canDouble = false;
         this.canSplit = false;
         this.cards = [];

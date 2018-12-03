@@ -62,7 +62,8 @@ const double = (table: Table, player: Player) => {
         throw 'Doubling is only allowed with 9, 10 or 11 points';
     }
 
-    playerService.multiplyCurrentHandValue(player, 2);
+    const bet = playerService.getCurrentHandBet(player);
+    playerService.setCurrentHandBet(player, bet * 2);
     playerService.dealCard(player, tableService.getNextCard(table), false);
     handService.markAsPlayed(playerHand);
     startNextHand(table, player);
@@ -120,6 +121,8 @@ const _makeDecision = (table: Table, player: Player, decision: string) => {
                 stand(table, player);
                 break;
             }
+            default:
+                throw 'Action not supported';
         }
     }
     catch (error) {

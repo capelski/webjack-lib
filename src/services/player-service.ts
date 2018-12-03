@@ -39,15 +39,12 @@ const dealCard = (player: Player, card: Card, isDealer: boolean) => {
     return handStatus;
 };
 
-const multiplyCurrentHandValue = (player: Player, multiplier: number) => {
-    const currentHand = getCurrentHand(player);
-    const currentValue = currentHand.value;
-    const nextValue = currentHand.value * multiplier;
-    player.earningRate += currentValue - nextValue;
-    currentHand.value = nextValue;
-};
-
 const getCurrentHand = (player: Player) => player.hands.find(h => !h.played);
+
+const getCurrentHandBet = (player: Player) => {
+    const currentHand = player.hands.find(h => !h.played);
+    return currentHand.bet;
+}
 
 const getPlayer = (playerId: string) => players.find(p => p.id == playerId);
 
@@ -75,21 +72,29 @@ const resolveHands = (player: Player, dealerScore: number) => {
     player.earningRate += earningRate;
 };
 
+const setCurrentHandBet = (player: Player, handBet: number) => {
+    const currentHand = getCurrentHand(player);
+    const currentBet = currentHand.bet;
+    player.earningRate += currentBet - handBet;
+    currentHand.bet = handBet;
+};
+
 export {
     clearPlayerHands,
     createDealer,
     createPlayer,
     createVirtualPlayer,
     dealCard,
-    multiplyCurrentHandValue,
     getCurrentHand,
+    getCurrentHandBet,
     getPlayer,
     hasHands,
     hasUnplayedHands,
     increaseInactiveRounds,
     initializeHand,
     resetInactiveRounds,
-    resolveHands
+    resolveHands,
+    setCurrentHandBet
 };
 
 export default {
@@ -98,13 +103,14 @@ export default {
     createPlayer,
     createVirtualPlayer,
     dealCard,
-    multiplyCurrentHandValue,
     getCurrentHand,
+    getCurrentHandBet,
     getPlayer,
     hasHands,
     hasUnplayedHands,
     increaseInactiveRounds,
     initializeHand,
     resetInactiveRounds,
-    resolveHands
+    resolveHands,
+    setCurrentHandBet
 };

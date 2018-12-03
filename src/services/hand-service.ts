@@ -91,7 +91,7 @@ const resolve = (hand: Hand, dealerScore: number) => {
         hand.status = score > dealerScore ? 'Player wins' : 'Dealer wins';
     }
 
-    return hand.value * (
+    return hand.bet * (
         2.5 * +(hand.status === 'BlackJack!') +
         2 * +(hand.status === 'Player wins') +
         1 * +(hand.status === 'Push') +
