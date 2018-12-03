@@ -7,7 +7,7 @@ const splitPlayerCurrentHand = (player: Player) => {
     const handLastCard = playerCurrentHand.cards.splice(-1)[0];
 
     const newHand = handService.create(playerCurrentHand.bet);
-    handService.addCard(newHand, handLastCard, false);
+    handService.addCard(newHand, handLastCard);
 
     const index = player.hands.findIndex(hand => hand == playerCurrentHand);
     player.hands.splice(index + 1, 0, newHand);

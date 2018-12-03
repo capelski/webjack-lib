@@ -3,6 +3,12 @@ import { Hand } from '../models/hand';
 import cardService from './card-service';
 import js from '../utils/js-generics';
 
+interface HandMetrics {
+    isBlackJack: boolean;
+    isMaxScore: boolean;
+    isBurned: boolean;
+}
+
 const getCards = (hand: Hand) => hand.cards;
 
 const canDouble = (hand: Hand) => getScore(hand) > 8 && getScore(hand) < 12;
@@ -34,45 +40,30 @@ const setScore = (hand: Hand) => {
     hand.scores = hand.cards.reduce(handReducer, [0]);
 };
 
-const isBlackJack = (hand: Hand, isDealer: boolean) => {
-    const _isBlackJack = getScore(hand) === 21 && hand.cards.length === 2;
-    if (_isBlackJack && !isDealer) {
-        hand.status = 'BlackJack!';
-    }
-    return _isBlackJack;
-};
+const isBlackJack = (hand: Hand) => isMaxScore(hand) && hand.cards.length === 2;
 
 const isMaxScore = (hand: Hand) => getScore(hand) === 21;
 
-const isOverMaxScore = (hand: Hand, isDealer: boolean) => {
-    const _isOverMaxScore = getScore(hand) > 21;
-    if (_isOverMaxScore && !isDealer) {
-        hand.status = 'Dealer wins';
-    }
-    return _isOverMaxScore;
-};
+const isBurned = (hand: Hand) => getScore(hand) > 21;
 
 const markAsPlayed = (hand: Hand) => {
     hand.played = true;
 };
 
-const addCard = (hand: Hand, card: Card, isDealer: boolean) => {
+const addCard = (hand: Hand, card: Card) => {
     hand.cards.push(card);
     setScore(hand);
     hand.canDouble = canDouble(hand);
     hand.canSplit = canSplit(hand);
-    const isHandAlive = !isBlackJack(hand, isDealer) && !isOverMaxScore(hand, isDealer) && !isMaxScore(hand);
-    // TODO This logic shouldn't be here but in the orchestration service
-    if (!isHandAlive) {
-        markAsPlayed(hand);
-    }
-
-    return {
-        score: getScore(hand),
-        isHandAlive
-    };
 };
 
+const getHandMetrics = (hand: Hand): HandMetrics => {
+    return {
+        isBlackJack: isBlackJack(hand),
+        isMaxScore: isMaxScore(hand),
+        isBurned: isBurned(hand)
+    };
+}
 const resolve = (hand: Hand, dealerScore: number) => {
     const score = getScore(hand);
     if (score > 21) {
@@ -98,14 +89,27 @@ const resolve = (hand: Hand, dealerScore: number) => {
         0 * +(hand.status === 'Dealer wins'));
 };
 
+const setHandStatus = (hand: Hand, handMetrics: HandMetrics) => {
+    if (handMetrics.isBurned) {
+        hand.status = 'Dealer wins';
+    }
+    if (handMetrics.isBlackJack) {
+        hand.status = 'BlackJack!';
+    }
+}
+
+
 export {
     addCard,
     canDouble,
     canSplit,
     create,
     getCards,
+    getHandMetrics,
+    getScore,
     markAsPlayed,
-    resolve
+    resolve,
+    setHandStatus
 };
 
 export default {
@@ -114,6 +118,9 @@ export default {
     canSplit,
     create,
     getCards,
+    getHandMetrics,
+    getScore,
     markAsPlayed,
-    resolve
+    resolve,
+    setHandStatus
 };

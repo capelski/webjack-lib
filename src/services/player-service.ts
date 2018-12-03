@@ -33,17 +33,22 @@ const clearPlayerHands = (player: Player) => {
 };
 
 // TODO DealCard shouldn't return handStatus. Get it from orchestration-service instead
-const dealCard = (player: Player, card: Card, isDealer: boolean) => {
+const dealCard = (player: Player, card: Card) => {
+    // TODO Deal the card to the hand, not to the player
     const currentHand = getCurrentHand(player);
-    const handStatus = handService.addCard(currentHand, card, isDealer);
-    return handStatus;
+    handService.addCard(currentHand, card);
 };
 
 const getCurrentHand = (player: Player) => player.hands.find(h => !h.played);
 
 const getCurrentHandBet = (player: Player) => {
-    const currentHand = player.hands.find(h => !h.played);
+    const currentHand = getCurrentHand(player);
     return currentHand.bet;
+}
+
+const getCurrentHandScore = (player: Player) => {
+    const currentHand = getCurrentHand(player);
+    return handService.getScore(currentHand);
 }
 
 const getPlayer = (playerId: string) => players.find(p => p.id == playerId);
@@ -87,6 +92,7 @@ export {
     dealCard,
     getCurrentHand,
     getCurrentHandBet,
+    getCurrentHandScore,
     getPlayer,
     hasHands,
     hasUnplayedHands,
@@ -105,6 +111,7 @@ export default {
     dealCard,
     getCurrentHand,
     getCurrentHandBet,
+    getCurrentHandScore,
     getPlayer,
     hasHands,
     hasUnplayedHands,
