@@ -4,6 +4,7 @@ import blackJackService from './black-jack-service';
 import playerService from './player-service';
 import handService from './hand-service';
 import tableService from './table-service';
+import { Hand } from 'src/models/hand';
 const gameParameters = require('../../game-parameters');
 
 const startRoundTrigger = (table: Table) => {
@@ -73,11 +74,7 @@ const double = (table: Table, player: Player) => {
     startNextHand(table, player);
 };
 
-const hit = (table: Table, player: Player) => {
-    const playerHand = playerService.getCurrentHand(player);
-    handService.addCard(playerHand, tableService.getNextCard(table));
-console.log(playerHand)
-    // TODO Code repetition
+const checkHandStatus = (table: Table, player: Player, playerHand: Hand) => {
     const handMetrics = handService.getHandMetrics(playerHand);
     if (handMetrics.isBlackJack || handMetrics.isMaxScore || handMetrics.isBurned) {
         handService.setHandStatus(playerHand, handMetrics);
@@ -86,6 +83,12 @@ console.log(playerHand)
     else {
         makeDecisionTrigger(table, player);
     }
+}
+
+const hit = (table: Table, player: Player) => {
+    const playerHand = playerService.getCurrentHand(player);
+    handService.addCard(playerHand, tableService.getNextCard(table));
+    checkHandStatus(table, player, playerHand);
 };
 
 const split = (table: Table, player: Player) => {
@@ -97,15 +100,7 @@ const split = (table: Table, player: Player) => {
      
     blackJackService.splitPlayerCurrentHand(player);
     handService.addCard(playerHand, tableService.getNextCard(table));
-    
-    const handMetrics = handService.getHandMetrics(playerHand);
-    if (handMetrics.isBlackJack || handMetrics.isMaxScore || handMetrics.isBurned) {
-        handService.setHandStatus(playerHand, handMetrics);
-        startNextHand(table, player);
-    }
-    else {
-        makeDecisionTrigger(table, player);
-    }
+    checkHandStatus(table, player, playerHand);
 };
 
 const stand = (table: Table, player: Player) => {
@@ -184,15 +179,10 @@ const updateActivePlayer = (table: Table) => {
 };
 
 const startNextHand = (table: Table, player: Player) => {
-    const nextHand = playerService.getCurrentHand(player);
-    if (nextHand) {
-        handService.addCard(nextHand, tableService.getNextCard(table));
-        const handMetrics = handService.getHandMetrics(nextHand);
-        if (handMetrics.isBlackJack || handMetrics.isMaxScore || handMetrics.isBurned) {
-            handService.setHandStatus(nextHand, handMetrics);
-            startNextHand(table, player);
-        }
-        makeDecisionTrigger(table, player);
+    const playerHand = playerService.getCurrentHand(player);
+    if (playerHand) {
+        handService.addCard(playerHand, tableService.getNextCard(table));
+        checkHandStatus(table, player, playerHand);
     }
     else {
         updateActivePlayer(table);
