@@ -64,6 +64,7 @@ const getHandMetrics = (hand: Hand): HandMetrics => {
         isBurned: isBurned(hand)
     };
 }
+
 const resolve = (hand: Hand, dealerScore: number) => {
     const score = getScore(hand);
     if (score > 21) {
@@ -96,6 +97,7 @@ const setHandStatus = (hand: Hand, handMetrics: HandMetrics) => {
     if (handMetrics.isBlackJack) {
         hand.status = 'BlackJack!';
     }
+    hand.played = handMetrics.isBlackJack || handMetrics.isMaxScore || handMetrics.isBurned;
 }
 
 export {
