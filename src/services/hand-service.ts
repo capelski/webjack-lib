@@ -2,6 +2,7 @@ import { Card } from '../models/card';
 import { Hand } from '../models/hand';
 import cardService from './card-service';
 import js from '../utils/js-generics';
+import { HandStatus } from '../models/hand-status';
 
 const getCards = (hand: Hand) => hand.cards;
 
@@ -49,21 +50,21 @@ const addCard = (hand: Hand, card: Card) => {
 const resolve = (hand: Hand, dealerScore: number) => {
     const score = getValue(hand);
     if (score > 21) {
-        hand.status = 'Burned';
+        hand.status = HandStatus.Burned;
     }
     else if (score === 21 && hand.cards.length === 2) {
-        hand.status = 'BlackJack!';
+        hand.status = HandStatus.BlackJack;
         // TODO Check if dealer has blackjack too!
     }
     else if (dealerScore > 21) {
-        hand.status = 'Player wins';
+        hand.status = HandStatus.PlayerWins;
         // TODO Check if dealer has blackjack!
     }
     else if (score === dealerScore) {
-        hand.status = 'Push';
+        hand.status = HandStatus.Push;
     }
     else {
-        hand.status = score > dealerScore ? 'Player wins' : 'Dealer wins';
+        hand.status = score > dealerScore ? HandStatus.PlayerWins : HandStatus.DealerWins;
     }
 
     return hand.bet * (
@@ -72,8 +73,7 @@ const resolve = (hand: Hand, dealerScore: number) => {
         1 * +(hand.status === 'Push'));
 };
 
-// TODO Create enum with hand status
-const setStatus = (hand: Hand, status: string) => {
+const setStatus = (hand: Hand, status: HandStatus) => {
     hand.status = status;
 }
 

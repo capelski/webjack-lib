@@ -5,6 +5,7 @@ import playerService from './player-service';
 import handService from './hand-service';
 import tableService from './table-service';
 import { Hand } from '../models/hand';
+import { HandStatus } from '../models/hand-status';
 const gameParameters = require('../../game-parameters');
 
 const startRoundTrigger = (table: Table) => {
@@ -80,10 +81,10 @@ const updateHandStatus = (table: Table, player: Player, playerHand: Hand) => {
     const isMaxScore = blackJackService.isMaxScore(playerHand);
 
     if (isBurned) {
-        handService.setStatus(playerHand, 'Burned');
+        handService.setStatus(playerHand, HandStatus.Burned);
     }
     else if (isBlackJack) {
-        handService.setStatus(playerHand, 'BlackJack!');
+        handService.setStatus(playerHand, HandStatus.BlackJack);
     }
     
     const isHandFinished = isBlackJack || isBurned || isMaxScore;

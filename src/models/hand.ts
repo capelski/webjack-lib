@@ -1,4 +1,5 @@
 import { Card } from './card';
+import { HandStatus } from './hand-status';
 
 export class Hand{
     canDouble: boolean;
@@ -6,7 +7,7 @@ export class Hand{
     cards: Card[];
     played: boolean;
     values: number[];
-    status: string;
+    status: HandStatus;
 
     constructor (public bet: number) {
         this.canDouble = false;
@@ -14,6 +15,6 @@ export class Hand{
         this.cards = [];
         this.played = false;
         this.values = [];
-        this.status = '';
+        this.status = HandStatus.Unplayed;
     }
 }
