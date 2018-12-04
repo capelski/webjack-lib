@@ -59,8 +59,8 @@ const resetInactiveRounds = (player: Player) => {
     player.inactiveRounds = 0;
 };
 
-const resolveHands = (player: Player, dealerScore: number) => {
-    const earningRate = player.hands.reduce((rate, hand) => rate + handService.resolve(hand, dealerScore), 0);
+const resolveHands = (player: Player, dealerHandValue: number) => {
+    const earningRate = player.hands.reduce((rate, hand) => rate + handService.resolve(hand, dealerHandValue), 0);
     player.earningRate += earningRate;
 };
 

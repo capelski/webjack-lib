@@ -78,7 +78,7 @@ const double = (table: Table, player: Player) => {
 const updateHandStatus = (table: Table, player: Player, playerHand: Hand) => {
     const isBlackJack = blackJackService.isBlackJack(playerHand);
     const isBurned = blackJackService.isBurned(playerHand);
-    const isMaxScore = blackJackService.isMaxScore(playerHand);
+    const isMaxValue = blackJackService.isMaxValue(playerHand);
 
     if (isBurned) {
         handService.setStatus(playerHand, HandStatus.Burned);
@@ -87,7 +87,7 @@ const updateHandStatus = (table: Table, player: Player, playerHand: Hand) => {
         handService.setStatus(playerHand, HandStatus.BlackJack);
     }
     
-    const isHandFinished = isBlackJack || isBurned || isMaxScore;
+    const isHandFinished = isBlackJack || isBurned || isMaxValue;
     
     if (isHandFinished) {
         handService.markAsPlayed(playerHand);

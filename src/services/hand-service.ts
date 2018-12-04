@@ -14,7 +14,7 @@ const create = (bet: number) => new Hand(bet);
 
 const getValue = (hand: Hand) => hand.values[hand.values.length - 1];
 
-const setScore = (hand: Hand) => {
+const updateValues = (hand: Hand) => {
     const handReducer = (result: number[], card: Card) => {
         const values: number[] = js.cartesianProduct(result, cardService.getValue(card), (x, y) => x + y);
         const uniqueValuesDictionary: { [key: string]: number } =
@@ -41,30 +41,31 @@ const markAsPlayed = (hand: Hand) => {
 
 const addCard = (hand: Hand, card: Card) => {
     hand.cards.push(card);
-    setScore(hand);
+    updateValues(hand);
     hand.canDouble = canDouble(hand);
     hand.canSplit = canSplit(hand);
 };
 
 // TODO Move to black-jack-service
-const resolve = (hand: Hand, dealerScore: number) => {
-    const score = getValue(hand);
-    if (score > 21) {
-        hand.status = HandStatus.Burned;
+// TODO Set the bet to 0 after updating player earningRate
+const resolve = (hand: Hand, dealerHandValue: number) => {
+    const handValue = getValue(hand);
+    if (handValue > 21) {
+        setStatus(hand, HandStatus.Burned);
     }
-    else if (score === 21 && hand.cards.length === 2) {
-        hand.status = HandStatus.BlackJack;
+    else if (handValue === 21 && hand.cards.length === 2) {
+        setStatus(hand, HandStatus.BlackJack);
         // TODO Check if dealer has blackjack too!
     }
-    else if (dealerScore > 21) {
-        hand.status = HandStatus.PlayerWins;
+    else if (dealerHandValue > 21) {
+        setStatus(hand, HandStatus.PlayerWins);
         // TODO Check if dealer has blackjack!
     }
-    else if (score === dealerScore) {
-        hand.status = HandStatus.Push;
+    else if (handValue === dealerHandValue) {
+        setStatus(hand, HandStatus.Push);
     }
     else {
-        hand.status = score > dealerScore ? HandStatus.PlayerWins : HandStatus.DealerWins;
+        setStatus(hand, handValue > dealerHandValue ? HandStatus.PlayerWins : HandStatus.DealerWins);
     }
 
     return hand.bet * (

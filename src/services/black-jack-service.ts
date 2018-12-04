@@ -3,11 +3,11 @@ import handService from '../services/hand-service';
 import playerService from '../services/player-service';
 import { Hand } from '../models/hand';
 
-const isBlackJack = (hand: Hand) => isMaxScore(hand) && hand.cards.length === 2;
+const isBlackJack = (hand: Hand) => isMaxValue(hand) && hand.cards.length === 2;
 
 const isBurned = (hand: Hand) => handService.getValue(hand) > 21;
 
-const isMaxScore = (hand: Hand) => handService.getValue(hand) === 21;
+const isMaxValue = (hand: Hand) => handService.getValue(hand) === 21;
 
 const splitPlayerCurrentHand = (player: Player) => {
     const playerCurrentHand = playerService.getCurrentHand(player);
@@ -25,13 +25,13 @@ const splitPlayerCurrentHand = (player: Player) => {
 export {
     isBlackJack,
     isBurned,
-    isMaxScore,
+    isMaxValue,
     splitPlayerCurrentHand
 };
 
 export default {
     isBlackJack,
     isBurned,
-    isMaxScore,
+    isMaxValue,
     splitPlayerCurrentHand
 };
