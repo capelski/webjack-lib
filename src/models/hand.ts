@@ -5,7 +5,7 @@ export class Hand{
     canSplit: boolean;
     cards: Card[];
     played: boolean;
-    scores: number[];
+    values: number[];
     status: string;
 
     constructor (public bet: number) {
@@ -13,7 +13,7 @@ export class Hand{
         this.canSplit = false;
         this.cards = [];
         this.played = false;
-        this.scores = [];
+        this.values = [];
         this.status = '';
     }
 }

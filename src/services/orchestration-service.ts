@@ -4,7 +4,7 @@ import blackJackService from './black-jack-service';
 import playerService from './player-service';
 import handService from './hand-service';
 import tableService from './table-service';
-import { Hand } from 'src/models/hand';
+import { Hand } from '../models/hand';
 const gameParameters = require('../../game-parameters');
 
 const startRoundTrigger = (table: Table) => {
@@ -30,19 +30,19 @@ const playDealerTurn = (table: Table) => {
 
     const dealerHand = playerService.getCurrentHand(table.dealer);
     handService.addCard(dealerHand, tableService.getNextCard(table));
-    let dealerScore = handService.getScore(dealerHand);
+    let dealerHandValue = handService.getValue(dealerHand);
     const dealerInterval = setInterval(() => {
-        if (dealerScore >= 17) {
+        if (dealerHandValue >= 17) {
             clearInterval(dealerInterval);
 
-            table.players.forEach(p => playerService.resolveHands(p, dealerScore));
+            table.players.forEach(p => playerService.resolveHands(p, dealerHandValue));
             table.activePlayerId = null;
         
             endRoundTrigger(table);
         }
         else {
             handService.addCard(dealerHand, tableService.getNextCard(table));
-            dealerScore = handService.getScore(dealerHand);
+            dealerHandValue = handService.getValue(dealerHand);
         }
     }, 1000);
 };
@@ -74,10 +74,22 @@ const double = (table: Table, player: Player) => {
     startNextHand(table, player);
 };
 
-const checkHandStatus = (table: Table, player: Player, playerHand: Hand) => {
-    const handMetrics = handService.getHandMetrics(playerHand);
-    if (handMetrics.isBlackJack || handMetrics.isMaxScore || handMetrics.isBurned) {
-        handService.setHandStatus(playerHand, handMetrics);
+const updateHandStatus = (table: Table, player: Player, playerHand: Hand) => {
+    const isBlackJack = blackJackService.isBlackJack(playerHand);
+    const isBurned = blackJackService.isBurned(playerHand);
+    const isMaxScore = blackJackService.isMaxScore(playerHand);
+
+    if (isBurned) {
+        handService.setStatus(playerHand, 'Burned');
+    }
+    else if (isBlackJack) {
+        handService.setStatus(playerHand, 'BlackJack!');
+    }
+    
+    const isHandFinished = isBlackJack || isBurned || isMaxScore;
+    
+    if (isHandFinished) {
+        handService.markAsPlayed(playerHand);
         startNextHand(table, player);
     }
     else {
@@ -88,7 +100,7 @@ const checkHandStatus = (table: Table, player: Player, playerHand: Hand) => {
 const hit = (table: Table, player: Player) => {
     const playerHand = playerService.getCurrentHand(player);
     handService.addCard(playerHand, tableService.getNextCard(table));
-    checkHandStatus(table, player, playerHand);
+    updateHandStatus(table, player, playerHand);
 };
 
 const split = (table: Table, player: Player) => {
@@ -100,7 +112,7 @@ const split = (table: Table, player: Player) => {
      
     blackJackService.splitPlayerCurrentHand(player);
     handService.addCard(playerHand, tableService.getNextCard(table));
-    checkHandStatus(table, player, playerHand);
+    updateHandStatus(table, player, playerHand);
 };
 
 const stand = (table: Table, player: Player) => {
@@ -182,7 +194,7 @@ const startNextHand = (table: Table, player: Player) => {
     const playerHand = playerService.getCurrentHand(player);
     if (playerHand) {
         handService.addCard(playerHand, tableService.getNextCard(table));
-        checkHandStatus(table, player, playerHand);
+        updateHandStatus(table, player, playerHand);
     }
     else {
         updateActivePlayer(table);
