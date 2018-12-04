@@ -36,7 +36,9 @@ const getCurrentHand = (player: Player) => player.hands.find(h => !h.played);
 const getCurrentHandBet = (player: Player) => {
     const currentHand = getCurrentHand(player);
     return currentHand.bet;
-}
+};
+
+const getHands = (player: Player) => player.hands;
 
 const getPlayer = (playerId: string) => players.find(p => p.id == playerId);
 
@@ -49,6 +51,7 @@ const increaseInactiveRounds = (player: Player) => {
     player.inactiveRounds++;
 };
 
+// TODO Replace with a setHands?
 const initializeHand = (player: Player, bet?: number) => {
     const hand = handService.create(bet || 0);
     player.hands = [hand];
@@ -59,16 +62,15 @@ const resetInactiveRounds = (player: Player) => {
     player.inactiveRounds = 0;
 };
 
-const resolveHands = (player: Player, dealerHandValue: number) => {
-    const earningRate = player.hands.reduce((rate, hand) => rate + handService.resolve(hand, dealerHandValue), 0);
-    player.earningRate += earningRate;
-};
-
 const setCurrentHandBet = (player: Player, handBet: number) => {
     const currentHand = getCurrentHand(player);
     const currentBet = currentHand.bet;
     player.earningRate += currentBet - handBet;
     currentHand.bet = handBet;
+};
+
+const updateEarningRate = (player: Player, earningRate: number) => {
+    player.earningRate += earningRate;
 };
 
 export {
@@ -78,14 +80,15 @@ export {
     createVirtualPlayer,
     getCurrentHand,
     getCurrentHandBet,
+    getHands,
     getPlayer,
     hasHands,
     hasUnplayedHands,
     increaseInactiveRounds,
     initializeHand,
     resetInactiveRounds,
-    resolveHands,
-    setCurrentHandBet
+    setCurrentHandBet,
+    updateEarningRate
 };
 
 export default {
@@ -95,12 +98,13 @@ export default {
     createVirtualPlayer,
     getCurrentHand,
     getCurrentHandBet,
+    getHands,
     getPlayer,
     hasHands,
     hasUnplayedHands,
     increaseInactiveRounds,
     initializeHand,
     resetInactiveRounds,
-    resolveHands,
-    setCurrentHandBet
+    setCurrentHandBet,
+    updateEarningRate
 };

@@ -46,34 +46,6 @@ const addCard = (hand: Hand, card: Card) => {
     hand.canSplit = canSplit(hand);
 };
 
-// TODO Move to black-jack-service
-// TODO Set the bet to 0 after updating player earningRate
-const resolve = (hand: Hand, dealerHandValue: number) => {
-    const handValue = getValue(hand);
-    if (handValue > 21) {
-        setStatus(hand, HandStatus.Burned);
-    }
-    else if (handValue === 21 && hand.cards.length === 2) {
-        setStatus(hand, HandStatus.BlackJack);
-        // TODO Check if dealer has blackjack too!
-    }
-    else if (dealerHandValue > 21) {
-        setStatus(hand, HandStatus.PlayerWins);
-        // TODO Check if dealer has blackjack!
-    }
-    else if (handValue === dealerHandValue) {
-        setStatus(hand, HandStatus.Push);
-    }
-    else {
-        setStatus(hand, handValue > dealerHandValue ? HandStatus.PlayerWins : HandStatus.DealerWins);
-    }
-
-    return hand.bet * (
-        2.5 * +(hand.status === 'BlackJack!') +
-        2 * +(hand.status === 'Player wins') +
-        1 * +(hand.status === 'Push'));
-};
-
 const setStatus = (hand: Hand, status: HandStatus) => {
     hand.status = status;
 }
@@ -86,7 +58,6 @@ export {
     getCards,
     getValue,
     markAsPlayed,
-    resolve,
     setStatus
 };
 
@@ -98,6 +69,5 @@ export default {
     getCards,
     getValue,
     markAsPlayed,
-    resolve,
     setStatus
 };

@@ -36,7 +36,12 @@ const playDealerTurn = (table: Table) => {
         if (dealerHandValue >= 17) {
             clearInterval(dealerInterval);
 
-            table.players.forEach(p => playerService.resolveHands(p, dealerHandValue));
+            table.players.forEach(player => {
+                const playerHands = playerService.getHands(player);
+                const earningRates = playerHands.map(hand => blackJackService.resolveHand(hand, dealerHandValue));
+                const earningRate = earningRates.reduce((x, y) => x + y, 0);
+                playerService.updateEarningRate(player, earningRate);
+            });
             table.activePlayerId = null;
         
             endRoundTrigger(table);
