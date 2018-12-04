@@ -87,6 +87,10 @@ const joinTable = (playerId: string) => {
     return table.id;
 };
 
+const setActivePlayer = (table: Table, playerId: string) => {
+    table.activePlayerId = playerId;
+}
+
 const setRoundBeingPlayed = (table: Table, isRoundBeingPlayed: boolean) => {
     table.isRoundBeingPlayed = isRoundBeingPlayed;
 }
@@ -118,6 +122,7 @@ export const exportedMethods = {
     hasTrigger,
     isRoundBeingPlayed,
     joinTable,
+    setActivePlayer,
     setRoundBeingPlayed,
     setTrigger
 };
@@ -135,6 +140,7 @@ export default {
     hasTrigger,
     isRoundBeingPlayed,
     joinTable,
+    setActivePlayer,
     setRoundBeingPlayed,
     setTrigger
 };

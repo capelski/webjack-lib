@@ -1,8 +1,10 @@
 import { Player } from '../models/player';
+import cardSetService from '../services/card-set-service';
 import handService from '../services/hand-service';
 import playerService from '../services/player-service';
 import { Hand } from '../models/hand';
 import { HandStatus } from '../models/hand-status';
+import { CardSet } from '../models/card-set';
 
 const isBlackJack = (hand: Hand) => isMaxValue(hand) && hand.cards.length === 2;
 
@@ -37,8 +39,13 @@ const resolveHand = (hand: Hand, dealerHandValue: number) => {
         1 * +(hand.status === 'Push'));
 };
 
-const splitPlayerCurrentHand = (player: Player) => {
+const splitPlayerCurrentHand = (player: Player, cardSet: CardSet) => {
     const playerCurrentHand = playerService.getCurrentHand(player);
+
+    if (!handService.canSplit(playerCurrentHand)) {
+        throw 'Splitting is only allowed with two equal cards!';
+    }
+
     const handLastCard = playerCurrentHand.cards.splice(-1)[0];
 
     const newHand = handService.create(playerCurrentHand.bet);
@@ -46,6 +53,8 @@ const splitPlayerCurrentHand = (player: Player) => {
 
     const index = player.hands.findIndex(hand => hand == playerCurrentHand);
     player.hands.splice(index + 1, 0, newHand);
+
+    handService.addCard(playerCurrentHand, cardSetService.getNextCard(cardSet));
 
     player.earningRate -= playerCurrentHand.bet;
 };
