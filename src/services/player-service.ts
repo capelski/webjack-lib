@@ -1,4 +1,3 @@
-import { Card } from '../models/card';
 import { Player } from '../models/player';
 import handService from './hand-service';
 const uuidV4 = require('uuid/v4');
@@ -32,23 +31,11 @@ const clearPlayerHands = (player: Player) => {
     player.hands = [];
 };
 
-// TODO DealCard shouldn't return handStatus. Get it from orchestration-service instead
-const dealCard = (player: Player, card: Card) => {
-    // TODO Deal the card to the hand, not to the player
-    const currentHand = getCurrentHand(player);
-    handService.addCard(currentHand, card);
-};
-
 const getCurrentHand = (player: Player) => player.hands.find(h => !h.played);
 
 const getCurrentHandBet = (player: Player) => {
     const currentHand = getCurrentHand(player);
     return currentHand.bet;
-}
-
-const getCurrentHandScore = (player: Player) => {
-    const currentHand = getCurrentHand(player);
-    return handService.getScore(currentHand);
 }
 
 const getPlayer = (playerId: string) => players.find(p => p.id == playerId);
@@ -89,10 +76,8 @@ export {
     createDealer,
     createPlayer,
     createVirtualPlayer,
-    dealCard,
     getCurrentHand,
     getCurrentHandBet,
-    getCurrentHandScore,
     getPlayer,
     hasHands,
     hasUnplayedHands,
@@ -108,10 +93,8 @@ export default {
     createDealer,
     createPlayer,
     createVirtualPlayer,
-    dealCard,
     getCurrentHand,
     getCurrentHandBet,
-    getCurrentHandScore,
     getPlayer,
     hasHands,
     hasUnplayedHands,

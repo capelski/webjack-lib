@@ -98,7 +98,6 @@ const setHandStatus = (hand: Hand, handMetrics: HandMetrics) => {
     }
 }
 
-
 export {
     addCard,
     canDouble,

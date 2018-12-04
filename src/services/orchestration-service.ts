@@ -27,8 +27,9 @@ const playDealerTurn = (table: Table) => {
         throw 'Can\'t play dealer round yet!';
     }
 
-    playerService.dealCard(table.dealer, tableService.getNextCard(table));
-    let dealerScore = playerService.getCurrentHandScore(table.dealer);
+    const dealerHand = playerService.getCurrentHand(table.dealer);
+    handService.addCard(dealerHand, tableService.getNextCard(table));
+    let dealerScore = handService.getScore(dealerHand);
     const dealerInterval = setInterval(() => {
         if (dealerScore >= 17) {
             clearInterval(dealerInterval);
@@ -39,8 +40,8 @@ const playDealerTurn = (table: Table) => {
             endRoundTrigger(table);
         }
         else {
-            playerService.dealCard(table.dealer, tableService.getNextCard(table));
-            dealerScore = playerService.getCurrentHandScore(table.dealer);
+            handService.addCard(dealerHand, tableService.getNextCard(table));
+            dealerScore = handService.getScore(dealerHand);
         }
     }, 1000);
 };
@@ -59,21 +60,23 @@ const ensurePlayer = (table: Table, playerId: string) => {
 };
 
 const double = (table: Table, player: Player) => {
-    var playerHand = playerService.getCurrentHand(player);
+    const playerHand = playerService.getCurrentHand(player);
+
     if (!handService.canDouble(playerHand)) {
         throw 'Doubling is only allowed with 9, 10 or 11 points';
     }
 
     const bet = playerService.getCurrentHandBet(player);
     playerService.setCurrentHandBet(player, bet * 2);
-    playerService.dealCard(player, tableService.getNextCard(table));
+    handService.addCard(playerHand, tableService.getNextCard(table));
     handService.markAsPlayed(playerHand);
     startNextHand(table, player);
 };
 
 const hit = (table: Table, player: Player) => {
-    var playerHand = playerService.getCurrentHand(player);
-    playerService.dealCard(player, tableService.getNextCard(table));
+    const playerHand = playerService.getCurrentHand(player);
+    handService.addCard(playerHand, tableService.getNextCard(table));
+console.log(playerHand)
     // TODO Code repetition
     const handMetrics = handService.getHandMetrics(playerHand);
     if (handMetrics.isBlackJack || handMetrics.isMaxScore || handMetrics.isBurned) {
@@ -86,13 +89,15 @@ const hit = (table: Table, player: Player) => {
 };
 
 const split = (table: Table, player: Player) => {
-    var playerHand = playerService.getCurrentHand(player);
+    const playerHand = playerService.getCurrentHand(player);
+
     if (!handService.canSplit(playerHand)) {
         throw 'Splitting is only allowed with two equal cards!';
     }
      
     blackJackService.splitPlayerCurrentHand(player);
-    playerService.dealCard(player, tableService.getNextCard(table));
+    handService.addCard(playerHand, tableService.getNextCard(table));
+    
     const handMetrics = handService.getHandMetrics(playerHand);
     if (handMetrics.isBlackJack || handMetrics.isMaxScore || handMetrics.isBurned) {
         handService.setHandStatus(playerHand, handMetrics);
@@ -104,7 +109,7 @@ const split = (table: Table, player: Player) => {
 };
 
 const stand = (table: Table, player: Player) => {
-    var playerHand = playerService.getCurrentHand(player);
+    const playerHand = playerService.getCurrentHand(player);
     handService.markAsPlayed(playerHand);
     startNextHand(table, player);
 };
@@ -181,7 +186,7 @@ const updateActivePlayer = (table: Table) => {
 const startNextHand = (table: Table, player: Player) => {
     const nextHand = playerService.getCurrentHand(player);
     if (nextHand) {
-        playerService.dealCard(player, tableService.getNextCard(table));
+        handService.addCard(nextHand, tableService.getNextCard(table));
         const handMetrics = handService.getHandMetrics(nextHand);
         if (handMetrics.isBlackJack || handMetrics.isMaxScore || handMetrics.isBurned) {
             handService.setHandStatus(nextHand, handMetrics);
@@ -197,8 +202,8 @@ const startNextHand = (table: Table, player: Player) => {
 const startRound = (table: Table) => {
     tableService.clearTrigger(table);
 
-    var activePlayers = table.players.filter(playerService.hasHands);
-    var inactivePlayers = table.players.filter(p => !playerService.hasHands(p));
+    const activePlayers = table.players.filter(playerService.hasHands);
+    const inactivePlayers = table.players.filter(p => !playerService.hasHands(p));
 
     if (activePlayers.length == 0) {
         throw 'No one has placed a bet yet!';
@@ -214,10 +219,13 @@ const startRound = (table: Table) => {
 
     tableService.setRoundBeingPlayed(table, true);
 
-    activePlayers.forEach(p => playerService.dealCard(p, tableService.getNextCard(table)));
+    const playersHand = activePlayers.map(playerService.getCurrentHand);
     playerService.initializeHand(table.dealer);
-    playerService.dealCard(table.dealer, tableService.getNextCard(table));
-    activePlayers.forEach(p => playerService.dealCard(p, tableService.getNextCard(table)));
+    const dealerHand =  playerService.getCurrentHand(table.dealer);
+    
+    playersHand.forEach(hand => handService.addCard(hand, tableService.getNextCard(table)));
+    handService.addCard(dealerHand, tableService.getNextCard(table));
+    playersHand.forEach(hand => handService.addCard(hand, tableService.getNextCard(table)));
 
     updateActivePlayer(table);
 };
