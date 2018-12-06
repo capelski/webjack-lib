@@ -1,9 +1,8 @@
 import { Card } from '../models/card';
 import { CardSet } from '../models/card-set';
 import cardService from '../services/card-service';
+import gameParametersService from '../services/game-parameters-service';
 import js from '../utils/js-generics';
-
-const gameParameters = require('../../game-parameters');
 
 let developmentCards: Card[];
 
@@ -11,14 +10,16 @@ const collectPlayedCards = (cardSet: CardSet) => {
     cardSet.discardPile = cardSet.discardPile.concat(cardSet.beingPlayed);
     cardSet.beingPlayed = [];
 
-    if (cardSet.discardPile.length > gameParameters.maxDiscardedCards) {
+    const { maxDiscardedCards } = gameParametersService.getParameters();
+    if (cardSet.discardPile.length > maxDiscardedCards) {
         js.shuffleArray(cardSet.discardPile);
         cardSet.unusedCards = cardSet.unusedCards.concat(cardSet.discardPile);
         cardSet.discardPile = [];
     }
 };
 
-const createCardSet = (decksNumber: number) => {
+const createCardSet = () => {
+    const { decksNumber } = gameParametersService.getParameters();
     const cards = ' '.repeat(decksNumber)
         .split('')
         .map(_ => cardService.createDeck())

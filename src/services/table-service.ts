@@ -1,10 +1,10 @@
 import { Player } from '../models/player';
 import { Table } from '../models/table';
 import cardSetService from './card-set-service';
+import gameParametersService from '../services/game-parameters-service';
 import playerService from './player-service';
 
 const uuidV4 = require('uuid/v4');
-const gameParameters = require('../../game-parameters');
 
 let tables: Table[] = [];
 let virtualTables: Table[] = [];
@@ -38,7 +38,8 @@ const deleteVirtualTable = (virtualTableId: string) => {
 };
 
 const getAvailableTable = () => {
-    let table = tables.find(t => t.players.length < gameParameters.maxPlayers);
+    const { maxPlayers } = gameParametersService.getParameters();
+    let table = tables.find(t => t.players.length < maxPlayers);
     if (!table) {
         table = createTable();
     }
@@ -108,7 +109,7 @@ const setTrigger = (table: Table, seconds: number, callback: Function) => {
 const tableCreator = () => {
     const tableId = uuidV4();
     const dealer = playerService.createDealer();
-    const cardSet = cardSetService.createCardSet(gameParameters.decksNumber);
+    const cardSet = cardSetService.createCardSet();
 
     return new Table(tableId, dealer, cardSet);
 };

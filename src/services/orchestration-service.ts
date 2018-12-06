@@ -4,11 +4,10 @@ import { Player } from '../models/player';
 import { Table } from '../models/table';
 import blackJackService from './black-jack-service';
 import cardSetService from './card-set-service';
+import gameParametersService from '../services/game-parameters-service';
 import handService from './hand-service';
 import playerService from './player-service';
 import tableService from './table-service';
-
-const gameParameters = require('../../game-parameters');
 
 // TODO Access to models properties should be done in the model service
 // e.g. table.players.forEach(whatever) => tableService.whatever
@@ -231,9 +230,10 @@ const updatePlayersInactivity = (table: Table) => {
     const inactivePlayers = players.filter(p => !playerService.hasHands(p));
 
     activePlayers.forEach(p => p.inactiveRounds = 0);
+    const { maxInactiveRounds } = gameParametersService.getParameters();
     inactivePlayers.forEach(p => {
         playerService.increaseInactiveRounds(p);
-        if (p.inactiveRounds > gameParameters.maxInactiveRounds) {
+        if (p.inactiveRounds > maxInactiveRounds) {
             tableService.removePlayer(table.id, p.id);
         }
     });
