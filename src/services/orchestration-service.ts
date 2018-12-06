@@ -26,7 +26,7 @@ tableService.setTrigger(table, 5, () => tableService.endRound(table));
 const double = (table: Table, player: Player) => {
     const playerHand = playerService.getCurrentHand(player);
 
-    if (!handService.canDouble(playerHand)) {
+    if (!blackJackService.canDouble(playerHand)) {
         throw 'Doubling is only allowed with 9, 10 or 11 points';
     }
 
@@ -134,7 +134,7 @@ const placeBet = (table: Table, playerId: string, bet: number) => {
 
     const hand = handService.create(bet);
     playerService.setHand(player, hand);
-    playerService.increaseEarningRate(player, bet);
+    playerService.increaseEarningRate(player, -bet);
 
     if (!tableService.hasTrigger(table)) {
         startRoundTrigger(table);
@@ -168,7 +168,24 @@ const playDealerTurn = (table: Table) => {
 };
 
 const split = (table: Table, player: Player) => {
-    blackJackService.splitPlayerCurrentHand(player, table.cardSet);
+    const playerHand = playerService.getCurrentHand(player);
+
+    if (!blackJackService.canSplit(playerHand)) {
+        throw 'Splitting is only allowed with two equal cards!';
+    }
+
+    const handLastCard = playerHand.cards.splice(-1)[0];
+
+    const newHand = handService.create(playerHand.bet);
+    handService.addCard(newHand, handLastCard);
+
+    const index = player.hands.findIndex(hand => hand == playerHand);
+    player.hands.splice(index + 1, 0, newHand);
+
+    // TODO Extract
+    handService.addCard(playerHand, cardSetService.getNextCard(tableService.getCardSet(table)));
+
+    playerService.increaseEarningRate(player, -playerHand.bet);
     moveRoundForward(table);
 };
 

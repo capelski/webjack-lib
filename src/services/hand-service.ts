@@ -7,13 +7,7 @@ import { HandStatus } from '../models/hand-status';
 const addCard = (hand: Hand, card: Card) => {
     hand.cards.push(card);
     updateValues(hand);
-    hand.canDouble = canDouble(hand);
-    hand.canSplit = canSplit(hand);
 };
-
-const canDouble = (hand: Hand) => getValue(hand) > 8 && getValue(hand) < 12;
-
-const canSplit = (hand: Hand) => hand.cards.length === 2 && cardService.getValue(hand.cards[0])[0] === cardService.getValue(hand.cards[1])[0];
 
 const create = (bet: number) => new Hand(bet);
 
@@ -58,8 +52,6 @@ const updateValues = (hand: Hand) => {
 
 export {
     addCard,
-    canDouble,
-    canSplit,
     create,
     getBet,
     getCards,
@@ -71,8 +63,6 @@ export {
 
 export default {
     addCard,
-    canDouble,
-    canSplit,
     create,
     getBet,
     getCards,
