@@ -151,6 +151,8 @@ const playDealerTurn = (table: Table) => {
         if (dealerHandValue >= 17) {
             clearInterval(dealerInterval);
 
+            handService.markAsPlayed(dealerHand);
+            
             table.players.forEach(player => {
                 const playerHands = playerService.getHands(player);
                 const handsEarnings = playerHands.map(hand => {
@@ -264,13 +266,11 @@ const updateHandStatus = (playerHand: Hand) => {
 export {
     makeDecision,
     makeVirtualDecision,
-    placeBet,
-    startRound
+    placeBet
 };
 
 export default {
     makeDecision,
     makeVirtualDecision,
-    placeBet,
-    startRound
+    placeBet
 };
