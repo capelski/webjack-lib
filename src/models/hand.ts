@@ -1,14 +1,17 @@
 import { Card } from './card';
 import { HandStatus } from './hand-status';
 
-export class Hand{
+export interface Hand {
+    bet: number;
     canDouble: boolean;
     canSplit: boolean;
     cards: Card[];
     played: boolean;
     values: number[];
     status: HandStatus;
+}
 
+export class Hand implements Hand {
     constructor (public bet: number) {
         this.canDouble = false;
         this.canSplit = false;
