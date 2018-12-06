@@ -154,7 +154,10 @@ const setStartRoundTrigger = (table: Table) => {
 };
 
 const setMakeDecisionTrigger = (table: Table, player: Player) =>
-    tableService.setTrigger(table, 20, () => blackJackService.standPlayerHand(player));
+    tableService.setTrigger(table, 20, () => {
+        blackJackService.standPlayerHand(player);
+        moveRoundForward(table);
+    });
 
 const setPlayDealerTurnTrigger = (table: Table) =>
     tableService.setTrigger(table, 3, () => playDealerTurn(table));
