@@ -153,8 +153,12 @@ const playDealerTurn = (table: Table) => {
 
             table.players.forEach(player => {
                 const playerHands = playerService.getHands(player);
-                const earningRates = playerHands.map(hand => blackJackService.resolveHand(hand, dealerHandValue));
-                const earningRate = earningRates.reduce((x, y) => x + y, 0);
+                const handsEarnings = playerHands.map(hand => {
+                    const handEarnings = blackJackService.getHandEarnings(hand, dealerHand);
+                    hand.bet = 0;
+                    return handEarnings;
+                });
+                const earningRate = handsEarnings.reduce((x, y) => x + y, 0);
                 playerService.updateEarningRate(player, earningRate);
             });
         

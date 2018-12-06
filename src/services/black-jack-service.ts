@@ -7,59 +7,71 @@ const canDouble = (hand: Hand) => handService.getValue(hand) > 8 && handService.
 
 const canSplit = (hand: Hand) => hand.cards.length === 2 && cardService.getValue(hand.cards[0])[0] === cardService.getValue(hand.cards[1])[0];
 
+const getHandEarnings = (hand: Hand, dealerHand: Hand) => {
+    let earnings = 0;
+
+    if (isBurned(hand)) {
+        handService.setStatus(hand, HandStatus.Burned);
+        earnings = 0;
+    }
+    else if (isBlackJack(hand)) {
+        handService.setStatus(hand, HandStatus.BlackJack);
+        earnings = isBlackJack(dealerHand) ? 1 : 2.5;
+    }
+    else if (isBurned(dealerHand)) {
+        handService.setStatus(hand, HandStatus.PlayerWins);
+        earnings = 2;
+    }
+    else if (isBlackJack(dealerHand)) {
+        handService.setStatus(hand, HandStatus.DealerWins);
+        earnings = 0;
+    }
+    else {
+        const handValue = handService.getValue(hand);
+        const dealerHandValue = handService.getValue(dealerHand);
+
+        if (handValue === dealerHandValue) {
+            handService.setStatus(hand, HandStatus.Push);
+            earnings = 1;
+        }
+        else if (handValue > dealerHandValue) {
+            handService.setStatus(hand, HandStatus.PlayerWins);
+            earnings = 2;
+        }
+        else {
+            handService.setStatus(hand, HandStatus.DealerWins);
+            earnings = 0;
+        }
+    }
+
+    const total = hand.bet * earnings;
+    return total;
+};
+
 const isBlackJack = (hand: Hand) => isMaxValue(hand) && hand.cards.length === 2;
 
 const isBurned = (hand: Hand) => handService.getValue(hand) > 21;
 
 const isMaxValue = (hand: Hand) => handService.getValue(hand) === 21;
 
-const resolveHand = (hand: Hand, dealerHandValue: number) => {
-    const handValue = handService.getValue(hand);
-    if (handValue > 21) {
-        handService.setStatus(hand, HandStatus.Burned);
-    }
-    else if (handValue === 21 && hand.cards.length === 2) {
-        handService.setStatus(hand, HandStatus.BlackJack);
-        // TODO Check if dealer has blackjack too!
-    }
-    else if (dealerHandValue > 21) {
-        handService.setStatus(hand, HandStatus.PlayerWins);
-        // TODO Check if dealer has blackjack!
-    }
-    else if (handValue === dealerHandValue) {
-        handService.setStatus(hand, HandStatus.Push);
-    }
-    else {
-        handService.setStatus(hand, handValue > dealerHandValue ? HandStatus.PlayerWins : HandStatus.DealerWins);
-    }
-
-    const bet = hand.bet;
-    hand.bet = 0;
-
-    return bet * (
-        2.5 * +(hand.status === 'BlackJack!') +
-        2 * +(hand.status === 'Player wins') +
-        1 * +(hand.status === 'Push'));
-};
-
 const wasHandSplit = (hand: Hand) => hand.cards.length === 1;
 
 export {
     canDouble,
     canSplit,
+    getHandEarnings,
     isBlackJack,
     isBurned,
     isMaxValue,
-    resolveHand,
     wasHandSplit
 };
 
 export default {
     canDouble,
     canSplit,
+    getHandEarnings,
     isBlackJack,
     isBurned,
     isMaxValue,
-    resolveHand,
     wasHandSplit
 };
