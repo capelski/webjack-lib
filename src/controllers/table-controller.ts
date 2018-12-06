@@ -1,4 +1,4 @@
-import playerService from '../services/player-service';
+import orchestrationService from '../services/orchestration-service';
 import tableService from '../services/table-service';
 import { noTableJoined, serializeTable } from './shared';
 
@@ -52,14 +52,7 @@ const getVirtualTableStatus = (req: any, res: any, next: any) => {
 
 const joinTable = (req: any, res: any, next: any) => {
     const playerId = req.session.playerId;
-    const player = playerService.getPlayerById(playerId);
-    if (!player) {
-        throw 'No player identified by ' + playerId + ' was found';
-    }
-    playerService.setInactiveRounds(player, 0);
-
-    const table = tableService.getAvailableTable();
-    tableService.addPlayer(table, player);
+    const table = orchestrationService.joinTable(playerId);
     req.session.tableId = table.id;
     return res.send(JSON.stringify({ tableId: table.id }));
 };

@@ -13,15 +13,6 @@ const gameParameters = require('../../game-parameters');
 // TODO Access to models properties should be done in the model service
 // e.g. table.players.forEach(whatever) => tableService.whatever
 
-const endRound = (table: Table) => {
-    tableService.clearTrigger(table);
-    cardSetService.collectPlayedCards(table.cardSet);
-    const players = tableService.getPlayers(table);
-    players.forEach(player => playerService.setHands(player, []));
-    playerService.setHands(table.dealer, []);
-    tableService.setIsRoundBeingPlayed(table, false);
-};
-
 const _makeDecision = (table: Table, player: Player, decision: string) => {
     tableService.clearTrigger(table);
     try {
@@ -53,6 +44,27 @@ const _makeDecision = (table: Table, player: Player, decision: string) => {
         throw error;
     }
 };
+
+const endRound = (table: Table) => {
+    tableService.clearTrigger(table);
+    cardSetService.collectPlayedCards(table.cardSet);
+    const players = tableService.getPlayers(table);
+    players.forEach(player => playerService.setHands(player, []));
+    playerService.setHands(table.dealer, []);
+    tableService.setIsRoundBeingPlayed(table, false);
+};
+
+const joinTable = (playerId: string) => {
+    const player = playerService.getPlayerById(playerId);
+    if (!player) {
+        throw 'No player identified by ' + playerId + ' was found';
+    }
+    playerService.setInactiveRounds(player, 0);
+
+    const table = tableService.getAvailableTable();
+    tableService.addPlayer(table, player);
+    return table;
+}
 
 const makeDecision = (table: Table, playerId: string, decision: string) => {
     const currentPlayer = tableService.getCurrentPlayer(table);
@@ -228,12 +240,14 @@ const updatePlayersInactivity = (table: Table) => {
 };
 
 export {
+    joinTable,
     makeDecision,
     makeVirtualDecision,
     placeBet
 };
 
 export default {
+    joinTable,
     makeDecision,
     makeVirtualDecision,
     placeBet
