@@ -6,7 +6,7 @@ import { HandStatus } from '../models/hand-status';
 
 const addCard = (hand: Hand, card: Card) => {
     hand.cards.push(card);
-    updateValues(hand);
+    hand.values = hand.cards.reduce(handValuesReducer, [0]);
 };
 
 const create = (bet: number) => new Hand(bet);
@@ -16,6 +16,22 @@ const getBet = (hand: Hand) => hand.bet;
 const getCards = (hand: Hand) => hand.cards;
 
 const getValue = (hand: Hand) => hand.values[hand.values.length - 1];
+
+const handValuesReducer = (reducedValues: number[], card: Card) => {
+    const cardValues = cardService.getValue(card);
+    const nextValuesCandidates = js.cartesianProduct(reducedValues, cardValues, (x, y) => x + y);
+    let nextValues = js.removeDuplicates(nextValuesCandidates);
+
+    if (nextValues.indexOf(21) > -1) {
+        nextValues = [21];
+    }
+
+    if (nextValues.length > 1) {
+       nextValues = nextValues.filter(x => x < 22);
+    }
+
+    return nextValues;
+};
 
 const markAsPlayed = (hand: Hand) => {
     hand.played = true;
@@ -27,27 +43,6 @@ const setBet = (hand: Hand, bet: number) => {
 
 const setStatus = (hand: Hand, status: HandStatus) => {
     hand.status = status;
-};
-
-const updateValues = (hand: Hand) => {
-    const handReducer = (result: number[], card: Card) => {
-        const values: number[] = js.cartesianProduct(result, cardService.getValue(card), (x, y) => x + y);
-        const uniqueValuesDictionary: { [key: string]: number } =
-            values.reduce((uniques, next) => ({...uniques, [next]: next}), {});
-        const uniqueValuesArray = Object.keys(uniqueValuesDictionary).map(x => parseInt(x));
-        let filteredValuesArray = uniqueValuesArray;
-
-        if (uniqueValuesDictionary['21']) {
-            filteredValuesArray = [21];
-        }
-
-        if (uniqueValuesArray.length > 1) {
-           filteredValuesArray = filteredValuesArray.filter(x => x < 22);
-        }
-
-        return filteredValuesArray;
-    };
-    hand.values = hand.cards.reduce(handReducer, [0]);
 };
 
 export {

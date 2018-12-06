@@ -72,6 +72,12 @@ const percentizeValues = () => {
     return values;
 };
 
+const removeDuplicates = (numbers: number[]): number[] => {
+    const numbersDictionary: { [key: string]: number } =
+        numbers.reduce((dictionary, next) => ({...dictionary, [next]: next}), {});
+    return Object.keys(numbersDictionary).map(x => numbersDictionary[x]);
+};
+
 const repeat = (iterationsNumber: number, functionExpression: Function) => {
     for (var i = 1; i < (iterationsNumber + 1); ++i) {
         functionExpression(i);
@@ -91,6 +97,7 @@ export {
     cartesianProduct,
     iterate,
     clone,
+    removeDuplicates,
     repeat,
     createArray,
     iterateFor,
@@ -103,6 +110,7 @@ export default {
     cartesianProduct,
     iterate,
     clone,
+    removeDuplicates,
     repeat,
     createArray,
     iterateFor,
