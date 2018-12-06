@@ -214,22 +214,26 @@ const startRound = (table: Table) => {
     });
 
     tableService.setRoundBeingPlayed(table, true);
-
-    const playersHand = activePlayers.map(playerService.getCurrentHand);
-    const hand = handService.create(0);
-    playerService.setHand(table.dealer, hand);
-
-    const dealerHand =  playerService.getCurrentHand(table.dealer);
     
-    playersHand.forEach(hand =>
-        handService.addCard(hand, cardSetService.getNextCard(tableService.getCardSet(table))));
-    handService.addCard(dealerHand, cardSetService.getNextCard(tableService.getCardSet(table)));
+    const playersHand = activePlayers.map(playerService.getCurrentHand);
     playersHand.forEach(hand => {
-        handService.addCard(hand, cardSetService.getNextCard(tableService.getCardSet(table)))
-        // TODO Check for black jack!
+        handService.addCard(hand, cardSetService.getNextCard(tableService.getCardSet(table)));
     });
 
-    makeDecisionTrigger(table, activePlayers[0]);
+    const dealerHand = handService.create(0);
+    playerService.setHand(table.dealer, dealerHand);
+    handService.addCard(dealerHand, cardSetService.getNextCard(tableService.getCardSet(table)));
+
+    playersHand.forEach(hand => {
+        handService.addCard(hand, cardSetService.getNextCard(tableService.getCardSet(table)));
+        const isBlackJack = blackJackService.isBlackJack(hand);
+        if (isBlackJack) {
+            handService.setStatus(hand, HandStatus.BlackJack);
+            handService.markAsPlayed(hand);
+        }
+    });
+
+    moveRoundForward(table);
 };
 
 const updateHandStatus = (playerHand: Hand) => {
