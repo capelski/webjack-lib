@@ -1,39 +1,48 @@
-import modena from 'modena';
-import { join } from 'path';
-import playerController from './controllers/player-controller';
-import tableController from './controllers/table-controller';
-import gameController from './controllers/game-controller';
+import { Card } from './models/card';
+import { CardSet } from './models/card-set';
+import { HandStatus } from './models/hand-status';
+import { Hand } from './models/hand';
+import { Player } from './models/player';
+import { Table } from './models/table';
 
-const corsMiddleware = (req: any, res: any, next: any) => {
-	res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
-	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-	res.header('Access-Control-Allow-Credentials', 'true');
-	next();
+import blackJackService from './services/black-jack-service';
+import cardService from './services/card-service';
+import cardSetService from './services/card-set-service';
+import handService from './services/hand-service';
+import orchestrationService from './services/orchestration-service';
+import playerService from './services/player-service';
+import tableService from './services/table-service';
+
+export {
+	Card,
+	CardSet,
+	HandStatus,
+	Hand,
+	Player,
+	Table,
+	blackJackService,
+	cardService,
+	cardSetService,
+	handService,
+	orchestrationService,
+	playerService,
+	tableService
 };
 
-module.exports = modena.configureEndpoints((router: any, config: any, middleware: any) => {
+const exportedMembers = module.exports = {
+	Card,
+	CardSet,
+	HandStatus,
+	Hand,
+	Player,
+	Table,
+	blackJackService,
+	cardService,
+	cardSetService,
+	handService,
+	orchestrationService,
+	playerService,
+	tableService
+};
 
-	const appMiddleware = [ middleware.session, corsMiddleware ];
-
-	if (config.ENABLE_DEVELOPMENT_MODE && config.developmentCardsSet) {
-		const cardSetService = require('./services/card-set-service');
-		cardSetService.useDevelopmentCards(config.developmentCardsSet);
-	}
-
-	router.get('/', (req: any, res: any, next: any) =>	
-		res.sendFile(join(__dirname, 'webjack-ui', 'dist', 'index.html')));
-		
-	router.get('/is-player-registered', appMiddleware, playerController.isPlayerRegistered);
-	router.get('/register-player', appMiddleware, playerController.registerPlayer);
-	router.get('/join-table', appMiddleware, tableController.joinTable);
-	router.get('/table-status', appMiddleware, tableController.getTableStatus);
-	router.get('/place-bet', appMiddleware, gameController.placeBet);
-	router.get('/make-decision', appMiddleware, gameController.makeDecision);
-	router.get('/exit-table', appMiddleware, tableController.exitTable);
-
-	router.get('/join-virtual-table', appMiddleware, tableController.createVirtualTable);
-	router.get('/virtual-table-status', appMiddleware, tableController.getVirtualTableStatus);
-	router.get('/start-virtual-round', appMiddleware, gameController.startVirtualRound);
-	router.get('/make-virtual-decision', appMiddleware, gameController.makeVirtualDecision);
-	router.get('/exit-virtual-table', appMiddleware, tableController.exitVirtualTable);
-});
+export default exportedMembers;
