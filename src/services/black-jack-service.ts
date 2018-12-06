@@ -12,7 +12,6 @@ const isBurned = (hand: Hand) => handService.getValue(hand) > 21;
 
 const isMaxValue = (hand: Hand) => handService.getValue(hand) === 21;
 
-// TODO Set the bet to 0 after updating player earningRate
 const resolveHand = (hand: Hand, dealerHandValue: number) => {
     const handValue = handService.getValue(hand);
     if (handValue > 21) {
@@ -33,7 +32,10 @@ const resolveHand = (hand: Hand, dealerHandValue: number) => {
         handService.setStatus(hand, handValue > dealerHandValue ? HandStatus.PlayerWins : HandStatus.DealerWins);
     }
 
-    return hand.bet * (
+    const bet = hand.bet;
+    hand.bet = 0;
+
+    return bet * (
         2.5 * +(hand.status === 'BlackJack!') +
         2 * +(hand.status === 'Player wins') +
         1 * +(hand.status === 'Push'));
