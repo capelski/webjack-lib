@@ -6,6 +6,7 @@ import handService from './hand-service';
 import tableService from './table-service';
 import { Hand } from '../models/hand';
 import { HandStatus } from '../models/hand-status';
+import cardSetService from './card-set-service';
 const gameParameters = require('../../game-parameters');
 
 const startRoundTrigger = (table: Table) => {
@@ -31,7 +32,7 @@ const double = (table: Table, player: Player) => {
 
     const bet = playerService.getCurrentHandBet(player);
     playerService.setCurrentHandBet(player, bet * 2);
-    handService.addCard(playerHand, tableService.getNextCard(table));
+    handService.addCard(playerHand, cardSetService.getNextCard(tableService.getCardSet(table)));
     handService.markAsPlayed(playerHand);
     moveRoundForward(table);
 };
@@ -51,7 +52,7 @@ const ensurePlayer = (table: Table, playerId: string) => {
 
 const hit = (table: Table, player: Player) => {
     const playerHand = playerService.getCurrentHand(player);
-    handService.addCard(playerHand, tableService.getNextCard(table));
+    handService.addCard(playerHand, cardSetService.getNextCard(tableService.getCardSet(table)));
     moveRoundForward(table);
 };
 
@@ -109,7 +110,7 @@ const moveRoundForward = (table: Table) => {
         const playerHand = playerService.getCurrentHand(player);
 
         if (blackJackService.wasHandSplit(playerHand)) {
-            handService.addCard(playerHand, tableService.getNextCard(table));
+            handService.addCard(playerHand, cardSetService.getNextCard(tableService.getCardSet(table)));
         }
 
         const isHandFinished = updateHandStatus(playerHand);
@@ -146,7 +147,7 @@ const playDealerTurn = (table: Table) => {
     }
 
     const dealerHand = playerService.getCurrentHand(table.dealer);
-    handService.addCard(dealerHand, tableService.getNextCard(table));
+    handService.addCard(dealerHand, cardSetService.getNextCard(tableService.getCardSet(table)));
     let dealerHandValue = handService.getValue(dealerHand);
     const dealerInterval = setInterval(() => {
         if (dealerHandValue >= 17) {
@@ -163,7 +164,7 @@ const playDealerTurn = (table: Table) => {
             endRoundTrigger(table);
         }
         else {
-            handService.addCard(dealerHand, tableService.getNextCard(table));
+            handService.addCard(dealerHand, cardSetService.getNextCard(tableService.getCardSet(table)));
             dealerHandValue = handService.getValue(dealerHand);
         }
     }, 1000);
@@ -194,7 +195,7 @@ const startRound = (table: Table) => {
     inactivePlayers.forEach(p => {
         playerService.increaseInactiveRounds(p);
         if (p.inactiveRounds > gameParameters.maxInactiveRounds) {
-            tableService.exitTable(table.id, p.id);
+            tableService.removePlayer(table.id, p.id);
         }
     });
 
@@ -204,10 +205,11 @@ const startRound = (table: Table) => {
     playerService.initializeHand(table.dealer);
     const dealerHand =  playerService.getCurrentHand(table.dealer);
     
-    playersHand.forEach(hand => handService.addCard(hand, tableService.getNextCard(table)));
-    handService.addCard(dealerHand, tableService.getNextCard(table));
+    playersHand.forEach(hand =>
+        handService.addCard(hand, cardSetService.getNextCard(tableService.getCardSet(table))));
+    handService.addCard(dealerHand, cardSetService.getNextCard(tableService.getCardSet(table)));
     playersHand.forEach(hand => {
-        handService.addCard(hand, tableService.getNextCard(table))
+        handService.addCard(hand, cardSetService.getNextCard(tableService.getCardSet(table)))
         // TODO Check for black jack!
     });
 

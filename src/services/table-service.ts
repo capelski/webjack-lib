@@ -44,8 +44,8 @@ const exitVirtualTable = (tableId: string) => {
     virtualTables = virtualTables.filter(t => t.id !== tableId);
 };
 
-const exitTable = (tableId: string, playerId: string) => {
-    const table = tables.find(t => t.id == tableId);
+const removePlayer = (tableId: string, playerId: string) => {
+    const table = getTable(tableId);
     if (!table) {
         throw 'No table identified by ' + tableId + ' was found';
     }
@@ -64,7 +64,7 @@ const exitTable = (tableId: string, playerId: string) => {
 
 const getActivePlayer = (table: Table) => table.players.find(p => p.id === table.activePlayerId);
 
-const getNextCard = (table: Table) => cardSetService.getNextCard(table.cardSet);
+const getCardSet = (table: Table) => table.cardSet;
 
 const getTable = (tableId: string) => tables.find(t => t.id == tableId);
 
@@ -114,9 +114,9 @@ export const exportedMethods = {
     createVirtualTable,
     endRound,
     exitVirtualTable,
-    exitTable,
+    removePlayer,
     getActivePlayer,
-    getNextCard,
+    getCardSet,
     getTable,
     getVirtualTable,
     hasTrigger,
@@ -132,9 +132,9 @@ export default {
     createVirtualTable,
     endRound,
     exitVirtualTable,
-    exitTable,
+    removePlayer,
     getActivePlayer,
-    getNextCard,
+    getCardSet,
     getTable,
     getVirtualTable,
     hasTrigger,

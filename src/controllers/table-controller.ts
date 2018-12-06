@@ -9,7 +9,7 @@ const createVirtualTable = (req: any, res: any, next: any) => {
 const exitTable = (req: any, res: any, next: any) => {
     const playerId = req.session.playerId;
     const tableId = req.session.tableId;
-    tableService.exitTable(tableId, playerId);
+    tableService.removePlayer(tableId, playerId);
     delete req.session.tableId;
     return res.status(200).send(JSON.stringify({ message: 'Successfully exited table' }));
 };
