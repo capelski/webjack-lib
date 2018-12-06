@@ -43,7 +43,7 @@ const ensurePlayer = (table: Table, playerId: string) => {
         throw 'No one is playing now';
     }
 
-    if (table.activePlayerId !== playerId) {
+    if (currentPlayer.id !== playerId) {
         throw 'Not allowed to play now. It is ' + currentPlayer.name + '\'s turn';
     }
 
@@ -102,11 +102,9 @@ const moveRoundForward = (table: Table) => {
     const player = table.players.find(playerService.hasUnplayedHands);
     if (!player) {
         // All players have completed their hands; time to play dealer's turn
-        tableService.setActivePlayer(table, table.dealer.id);
         playDealerTurnTrigger(table);
     }
     else {
-        tableService.setActivePlayer(table, player.id);
         const playerHand = playerService.getCurrentHand(player);
 
         if (blackJackService.wasHandSplit(playerHand)) {
@@ -142,10 +140,6 @@ const placeBet = (table: Table, playerId: string, bet: number) => {
 const playDealerTurn = (table: Table) => {
     tableService.clearTrigger(table);
 
-    if (table.activePlayerId !== table.dealer.id) {
-        throw 'Can\'t play dealer round yet!';
-    }
-
     const dealerHand = playerService.getCurrentHand(table.dealer);
     handService.addCard(dealerHand, cardSetService.getNextCard(tableService.getCardSet(table)));
     let dealerHandValue = handService.getValue(dealerHand);
@@ -159,7 +153,6 @@ const playDealerTurn = (table: Table) => {
                 const earningRate = earningRates.reduce((x, y) => x + y, 0);
                 playerService.updateEarningRate(player, earningRate);
             });
-            table.activePlayerId = null;
         
             endRoundTrigger(table);
         }
@@ -213,7 +206,6 @@ const startRound = (table: Table) => {
         // TODO Check for black jack!
     });
 
-    tableService.setActivePlayer(table, activePlayers[0].id);
     makeDecisionTrigger(table, activePlayers[0]);
 };
 
@@ -239,7 +231,6 @@ const updateHandStatus = (playerHand: Hand) => {
 };
 
 export {
-    playDealerTurn,
     makeDecision,
     makeVirtualDecision,
     placeBet,
@@ -247,7 +238,6 @@ export {
 };
 
 export default {
-    playDealerTurn,
     makeDecision,
     makeVirtualDecision,
     placeBet,

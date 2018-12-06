@@ -1,3 +1,5 @@
+import tableService from '../services/table-service';
+
 const getSecondsLeft = (date: Date) => {
 	let seconds = -1;
 	if (date) {
@@ -13,7 +15,7 @@ const serializeTable = (res: any, table: any) => res.send(JSON.stringify({
 	players: table.players,
 	dealer: table.dealer,
 	isVirtualTable: table.isVirtual,
-	activePlayerId: table.activePlayerId,
+	activePlayerId: (tableService.getActivePlayer(table) || { id: undefined}).id,
 	secondsLeft: getSecondsLeft(table.nextAction)
 }));
 

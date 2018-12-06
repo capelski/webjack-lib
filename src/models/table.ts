@@ -2,7 +2,6 @@ import { CardSet } from './card-set';
 import { Player } from './player';
 
 export class Table {
-    activePlayerId: string;
     cardSet: CardSet;
     isRoundBeingPlayed: boolean;
     isVirtual: boolean;
@@ -10,8 +9,7 @@ export class Table {
     nextTrigger: number;
     players: Player[];
 
-    constructor (public id: string, cardSet: CardSet, public dealer: Player) {
-        this.activePlayerId = null;
+    constructor (public id: string, public dealer: Player, cardSet: CardSet) {
         this.cardSet = cardSet;
         this.isRoundBeingPlayed = false;
         this.isVirtual = false;

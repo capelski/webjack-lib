@@ -62,7 +62,16 @@ const removePlayer = (tableId: string, playerId: string) => {
     table.players = table.players.filter(p => p.id != playerId);
 };
 
-const getActivePlayer = (table: Table) => table.players.find(p => p.id === table.activePlayerId);
+const getActivePlayer = (table: Table) => {
+    let activePlayer = null;
+    if (table.isRoundBeingPlayed) {
+        activePlayer = table.players.find(playerService.hasUnplayedHands);
+        if (!activePlayer && playerService.hasUnplayedHands(table.dealer)) {
+            activePlayer = table.dealer;
+        }
+    }
+    return activePlayer;
+}
 
 const getCardSet = (table: Table) => table.cardSet;
 
@@ -87,10 +96,6 @@ const joinTable = (playerId: string) => {
     return table.id;
 };
 
-const setActivePlayer = (table: Table, playerId: string) => {
-    table.activePlayerId = playerId;
-}
-
 const setRoundBeingPlayed = (table: Table, isRoundBeingPlayed: boolean) => {
     table.isRoundBeingPlayed = isRoundBeingPlayed;
 }
@@ -106,7 +111,7 @@ const tableCreator = () => {
     const dealer = playerService.createDealer();
     const cardSet = cardSetService.createCardSet(gameParameters.decksNumber);
 
-    return new Table(tableId, cardSet, dealer);
+    return new Table(tableId, dealer, cardSet);
 };
 
 export const exportedMethods = {
@@ -122,7 +127,6 @@ export const exportedMethods = {
     hasTrigger,
     isRoundBeingPlayed,
     joinTable,
-    setActivePlayer,
     setRoundBeingPlayed,
     setTrigger
 };
@@ -140,7 +144,6 @@ export default {
     hasTrigger,
     isRoundBeingPlayed,
     joinTable,
-    setActivePlayer,
     setRoundBeingPlayed,
     setTrigger
 };
