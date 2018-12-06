@@ -24,7 +24,7 @@ const serializeTable = (res: any, table: Table) => res.send(JSON.stringify({
 	})),
 	dealer: table.dealer,
 	isVirtualTable: table.isVirtual,
-	activePlayerId: (tableService.getActivePlayer(table) || { id: undefined}).id,
+	activePlayerId: (tableService.getCurrentPlayer(table) || { id: undefined}).id,
 	secondsLeft: getSecondsLeft(table.nextAction)
 }));
 

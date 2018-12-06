@@ -1,3 +1,4 @@
+import playerService from '../services/player-service';
 import tableService from '../services/table-service';
 import { noTableJoined, serializeTable } from './shared';
 
@@ -16,13 +17,13 @@ const exitTable = (req: any, res: any, next: any) => {
 
 const exitVirtualTable = (req: any, res: any, next: any) => {
     const tableId = req.session.tableId;
-    tableService.exitVirtualTable(tableId);
+    tableService.deleteVirtualTable(tableId);
     delete req.session.tableId;
     return res.status(200).send(JSON.stringify({ message: 'Successfully exited virtual table' }));
 };
 
 const getTableStatus = (req: any, res: any, next: any) => {
-    const table = tableService.getTable(req.session.tableId);
+    const table = tableService.getTableById(req.session.tableId);
     if (!table) {
         return noTableJoined(res);
     }
@@ -40,7 +41,7 @@ const getTableStatus = (req: any, res: any, next: any) => {
 };
 
 const getVirtualTableStatus = (req: any, res: any, next: any) => {
-    const table = tableService.getVirtualTable(req.session.tableId);
+    const table = tableService.getVirtualTableById(req.session.tableId);
     if (!table) {
         return noTableJoined(res);
     }
@@ -51,8 +52,16 @@ const getVirtualTableStatus = (req: any, res: any, next: any) => {
 
 const joinTable = (req: any, res: any, next: any) => {
     const playerId = req.session.playerId;
-    const tableId = req.session.tableId = tableService.joinTable(playerId);
-    return res.send(JSON.stringify({ tableId }));
+    const player = playerService.getPlayerById(playerId);
+    if (!player) {
+        throw 'No player identified by ' + playerId + ' was found';
+    }
+    playerService.setInactiveRounds(player, 0);
+
+    const table = tableService.getAvailableTable();
+    tableService.addPlayer(table, player);
+    req.session.tableId = table.id;
+    return res.send(JSON.stringify({ tableId: table.id }));
 };
 
 export {

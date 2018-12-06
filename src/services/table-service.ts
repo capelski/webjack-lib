@@ -33,21 +33,52 @@ const createVirtualTable = () => {
     return virtualTable.id;
 };
 
-// TODO Move to orchestration service
-const endRound = (table: Table) => {
-    clearTrigger(table);
-    cardSetService.collectPlayedCards(table.cardSet);
-    table.players.forEach(player => playerService.setHands(player, []));
-    playerService.setHands(table.dealer, []);
-    setRoundBeingPlayed(table, false);
+const deleteVirtualTable = (virtualTableId: string) => {
+    virtualTables = virtualTables.filter(virtualTable => virtualTable.id !== virtualTableId);
 };
 
-const exitVirtualTable = (tableId: string) => {
-    virtualTables = virtualTables.filter(t => t.id !== tableId);
+const getAvailableTable = () => {
+    let table = tables.find(t => t.players.length < gameParameters.maxPlayers);
+    if (!table) {
+        table = createTable();
+    }
+    return table;
 };
+
+const getCardSet = (table: Table) => table.cardSet;
+
+const getCurrentPlayer = (table: Table) => {
+    let currentPlayer = null;
+    if (table.isRoundBeingPlayed) {
+        currentPlayer = table.players.find(playerService.hasUnplayedHands);
+        if (!currentPlayer && playerService.hasUnplayedHands(table.dealer)) {
+            currentPlayer = table.dealer;
+        }
+    }
+    return currentPlayer;
+};
+
+const getDealer = (table: Table) => table.dealer;
+
+const getPlayers = (table: Table) => table.players;
+
+const getTableById = (tableId: string) => tables.find(t => t.id == tableId);
+
+const getVirtualTableById = (tableId: string) => virtualTables.find(t => t.id == tableId);
+
+const hasTrigger = (table: Table) => table.nextTrigger != null;
+
+const isDealer = (table: Table, player: Player) =>
+    playerService.getId(table.dealer) === playerService.getId(player);
+
+const isRoundBeingPlayed = (table: Table) => table.isRoundBeingPlayed;
+
+const addPlayer = (table: Table, player: Player) => {
+    table.players.push(player);
+}
 
 const removePlayer = (tableId: string, playerId: string) => {
-    const table = getTable(tableId);
+    const table = getTableById(tableId);
     if (!table) {
         throw 'No table identified by ' + tableId + ' was found';
     }
@@ -64,48 +95,7 @@ const removePlayer = (tableId: string, playerId: string) => {
     table.players = table.players.filter(player => player.id != playerId);
 };
 
-const getActivePlayer = (table: Table) => {
-    let activePlayer = null;
-    if (table.isRoundBeingPlayed) {
-        activePlayer = table.players.find(playerService.hasUnplayedHands);
-        if (!activePlayer && playerService.hasUnplayedHands(table.dealer)) {
-            activePlayer = table.dealer;
-        }
-    }
-    return activePlayer;
-}
-
-const getCardSet = (table: Table) => table.cardSet;
-
-const getDealer = (table: Table) => table.dealer;
-
-const getTable = (tableId: string) => tables.find(t => t.id == tableId);
-
-const getVirtualTable = (tableId: string) => virtualTables.find(t => t.id == tableId);
-
-const hasTrigger = (table: Table) => table.nextTrigger != null;
-
-// TODO Define id getter
-const isDealer = (table: Table, player: Player) => table.dealer.id == player.id;
-
-const isRoundBeingPlayed = (table: Table) => table.isRoundBeingPlayed;
-
-// TODO Simplify + move logic to orchestration service
-const joinTable = (playerId: string) => {
-    var table = tables.find(t => t.players.length < gameParameters.maxPlayers);
-    if (!table) {
-        table = createTable();
-    }
-
-    const player = playerService.getPlayer(playerId);
-    // TODO Check player exists
-    playerService.setInactiveRounds(player, 0);
-    table.players.push(player);
-
-    return table.id;
-};
-
-const setRoundBeingPlayed = (table: Table, isRoundBeingPlayed: boolean) => {
+const setIsRoundBeingPlayed = (table: Table, isRoundBeingPlayed: boolean) => {
     table.isRoundBeingPlayed = isRoundBeingPlayed;
 }
 
@@ -124,39 +114,41 @@ const tableCreator = () => {
 };
 
 export const exportedMethods = {
+    addPlayer,
     clearTrigger,
     createVirtualTable,
-    endRound,
-    exitVirtualTable,
+    deleteVirtualTable,
     removePlayer,
-    getActivePlayer,
+    getAvailableTable,
     getCardSet,
+    getCurrentPlayer,
     getDealer,
-    getTable,
-    getVirtualTable,
+    getPlayers,
+    getTableById,
+    getVirtualTableById,
     hasTrigger,
     isDealer,
     isRoundBeingPlayed,
-    joinTable,
-    setRoundBeingPlayed,
+    setIsRoundBeingPlayed,
     setTrigger
 };
 
 export default {
+    addPlayer,
     clearTrigger,
     createVirtualTable,
-    endRound,
-    exitVirtualTable,
+    deleteVirtualTable,
     removePlayer,
-    getActivePlayer,
+    getAvailableTable,
     getCardSet,
+    getCurrentPlayer,
     getDealer,
-    getTable,
-    getVirtualTable,
+    getPlayers,
+    getTableById,
+    getVirtualTableById,
     hasTrigger,
     isDealer,
     isRoundBeingPlayed,
-    joinTable,
-    setRoundBeingPlayed,
+    setIsRoundBeingPlayed,
     setTrigger
 };

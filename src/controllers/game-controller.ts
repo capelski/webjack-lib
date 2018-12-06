@@ -5,7 +5,7 @@ import { noTableJoined, serializeTable } from './shared';
 const makeDecision = (req: any, res: any, next: any) => {
     const playerId = req.session.playerId;
     const decision = req.query.decision;
-    const table = tableService.getTable(req.session.tableId);
+    const table = tableService.getTableById(req.session.tableId);
     if (!table) {
         return noTableJoined(res);
     }
@@ -22,7 +22,7 @@ const makeDecision = (req: any, res: any, next: any) => {
 
 const makeVirtualDecision = (req: any, res: any, next: any) => {
     const decision = req.query.decision;
-    const table = tableService.getVirtualTable(req.session.tableId);
+    const table = tableService.getVirtualTableById(req.session.tableId);
     if (!table) {
         return noTableJoined(res);
     }
@@ -38,7 +38,7 @@ const makeVirtualDecision = (req: any, res: any, next: any) => {
 };
 
 const placeBet = (req: any, res: any, next: any) => {
-    const table = tableService.getTable(req.session.tableId);
+    const table = tableService.getTableById(req.session.tableId);
     const bet = parseInt(req.query.bet);
     if (!table) {
         return noTableJoined(res);
@@ -51,7 +51,7 @@ const placeBet = (req: any, res: any, next: any) => {
 
 const startVirtualRound = (req: any, res: any, next: any) => {
     const bet = parseInt(req.query.bet);
-    const table = tableService.getVirtualTable(req.session.tableId);
+    const table = tableService.getVirtualTableById(req.session.tableId);
     if (!table) {
         return noTableJoined(res);
     }

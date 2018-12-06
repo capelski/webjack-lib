@@ -30,7 +30,9 @@ const getCurrentHand = (player: Player) => player.hands.find(hand => !handServic
 
 const getHands = (player: Player) => player.hands;
 
-const getPlayer = (playerId: string) => players.find(p => p.id == playerId);
+const getId = (player: Player) => player.id;
+
+const getPlayerById = (playerId: string) => players.find(p => p.id == playerId);
 
 const hasHands = (player: Player) => player.hands.length > 0;
 
@@ -63,7 +65,8 @@ export {
     createVirtualPlayer,
     getCurrentHand,
     getHands,
-    getPlayer,
+    getId,
+    getPlayerById,
     hasHands,
     hasUnplayedHands,
     increaseInactiveRounds,
@@ -79,7 +82,8 @@ export default {
     createVirtualPlayer,
     getCurrentHand,
     getHands,
-    getPlayer,
+    getId,
+    getPlayerById,
     hasHands,
     hasUnplayedHands,
     increaseInactiveRounds,

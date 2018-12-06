@@ -4,7 +4,7 @@ import tableService from '../services/table-service';
 const isPlayerRegistered = (req: any, res: any, next: any) => {
     const playerId = req.session.playerId;
     const tableId = req.session.tableId;
-    const isVirtualTable = !!tableService.getVirtualTable(tableId);
+    const isVirtualTable = !!tableService.getVirtualTableById(tableId);
     return res.send(JSON.stringify({ playerId, tableId, isVirtualTable }));
 };
 
