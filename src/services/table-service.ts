@@ -1,3 +1,4 @@
+import { Player } from '../models/player';
 import { Table } from '../models/table';
 import cardSetService from './card-set-service';
 import playerService from './player-service';
@@ -32,11 +33,12 @@ const createVirtualTable = () => {
     return virtualTable.id;
 };
 
+// TODO Move to orchestration service
 const endRound = (table: Table) => {
     clearTrigger(table);
     cardSetService.collectPlayedCards(table.cardSet);
-    table.players.forEach(playerService.clearPlayerHands);
-    playerService.clearPlayerHands(table.dealer);
+    table.players.forEach(player => playerService.setHands(player, []));
+    playerService.setHands(table.dealer, []);
     setRoundBeingPlayed(table, false);
 };
 
@@ -50,7 +52,7 @@ const removePlayer = (tableId: string, playerId: string) => {
         throw 'No table identified by ' + tableId + ' was found';
     }
 
-    const player = table.players.find(p => p.id == playerId);
+    const player = table.players.find(player => player.id == playerId);
     if (!player) {
         throw 'No player identified by ' + playerId + ' was found';
     }
@@ -59,7 +61,7 @@ const removePlayer = (tableId: string, playerId: string) => {
         throw 'The current round must be ended before leaving the table';
     }
 
-    table.players = table.players.filter(p => p.id != playerId);
+    table.players = table.players.filter(player => player.id != playerId);
 };
 
 const getActivePlayer = (table: Table) => {
@@ -75,14 +77,20 @@ const getActivePlayer = (table: Table) => {
 
 const getCardSet = (table: Table) => table.cardSet;
 
+const getDealer = (table: Table) => table.dealer;
+
 const getTable = (tableId: string) => tables.find(t => t.id == tableId);
 
 const getVirtualTable = (tableId: string) => virtualTables.find(t => t.id == tableId);
 
 const hasTrigger = (table: Table) => table.nextTrigger != null;
 
+// TODO Define id getter
+const isDealer = (table: Table, player: Player) => table.dealer.id == player.id;
+
 const isRoundBeingPlayed = (table: Table) => table.isRoundBeingPlayed;
 
+// TODO Simplify + move logic to orchestration service
 const joinTable = (playerId: string) => {
     var table = tables.find(t => t.players.length < gameParameters.maxPlayers);
     if (!table) {
@@ -90,6 +98,7 @@ const joinTable = (playerId: string) => {
     }
 
     const player = playerService.getPlayer(playerId);
+    // TODO Check player exists
     playerService.setInactiveRounds(player, 0);
     table.players.push(player);
 
@@ -122,9 +131,11 @@ export const exportedMethods = {
     removePlayer,
     getActivePlayer,
     getCardSet,
+    getDealer,
     getTable,
     getVirtualTable,
     hasTrigger,
+    isDealer,
     isRoundBeingPlayed,
     joinTable,
     setRoundBeingPlayed,
@@ -139,9 +150,11 @@ export default {
     removePlayer,
     getActivePlayer,
     getCardSet,
+    getDealer,
     getTable,
     getVirtualTable,
     hasTrigger,
+    isDealer,
     isRoundBeingPlayed,
     joinTable,
     setRoundBeingPlayed,

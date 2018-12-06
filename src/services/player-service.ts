@@ -26,10 +26,6 @@ const createPlayer = (playerName: string) => {
 
 const createVirtualPlayer = (playerName: string) => new Player(uuidV4(), playerName);
 
-const clearPlayerHands = (player: Player) => {
-    player.hands = [];
-};
-
 const getCurrentHand = (player: Player) => player.hands.find(hand => !handService.isAlreadyPlayed(hand));
 
 const getHands = (player: Player) => player.hands;
@@ -49,8 +45,8 @@ const increaseInactiveRounds = (player: Player) => {
     player.inactiveRounds++;
 };
 
-const setHand = (player: Player, hand: Hand) => {
-    player.hands = [hand];
+const setHands = (player: Player, hands: Hand[]) => {
+    player.hands = hands;
 };
 
 const setInactiveRounds = (player: Player, inactiveRounds: number) => {
@@ -62,7 +58,6 @@ const updateEarningRate = (player: Player, earningRate: number) => {
 };
 
 export {
-    clearPlayerHands,
     createDealer,
     createPlayer,
     createVirtualPlayer,
@@ -74,12 +69,11 @@ export {
     increaseInactiveRounds,
     increaseEarningRate,
     setInactiveRounds,
-    setHand,
+    setHands,
     updateEarningRate
 };
 
 export default {
-    clearPlayerHands,
     createDealer,
     createPlayer,
     createVirtualPlayer,
@@ -91,6 +85,6 @@ export default {
     increaseInactiveRounds,
     increaseEarningRate,
     setInactiveRounds,
-    setHand,
+    setHands,
     updateEarningRate
 };
