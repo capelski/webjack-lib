@@ -1,16 +1,6 @@
-interface GameParameters {
-	decksNumber: number;
-	maxDiscardedCards: number;
-	maxPlayers: number;
-	maxInactiveRounds: number;
-}
+import {GameParameters} from '../models/game-parameters';
 
-let gameParameters: GameParameters = {
-	decksNumber: 4,
-	maxDiscardedCards: 40,
-	maxPlayers: 7,
-	maxInactiveRounds: 4
-};
+let gameParameters: GameParameters = new GameParameters();
 
 const getParameters = () => gameParameters;
 
