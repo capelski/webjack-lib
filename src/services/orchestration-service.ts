@@ -30,8 +30,9 @@ const double = (table: Table, player: Player) => {
         throw 'Doubling is only allowed with 9, 10 or 11 points';
     }
 
-    const bet = playerService.getCurrentHandBet(player);
-    playerService.setCurrentHandBet(player, bet * 2);
+    const bet = handService.getBet(playerHand);
+    handService.setBet(playerHand, bet * 2);
+    playerService.increaseEarningRate(player, -bet);
     handService.addCard(playerHand, cardSetService.getNextCard(tableService.getCardSet(table)));
     handService.markAsPlayed(playerHand);
     moveRoundForward(table);
@@ -131,7 +132,10 @@ const placeBet = (table: Table, playerId: string, bet: number) => {
         throw 'Bets can only be placed before a round starts';
     }
 
-    playerService.initializeHand(player, bet);
+    const hand = handService.create(bet);
+    playerService.setHand(player, hand);
+    playerService.increaseEarningRate(player, bet);
+
     if (!tableService.hasTrigger(table)) {
         startRoundTrigger(table);
     }
@@ -195,7 +199,9 @@ const startRound = (table: Table) => {
     tableService.setRoundBeingPlayed(table, true);
 
     const playersHand = activePlayers.map(playerService.getCurrentHand);
-    playerService.initializeHand(table.dealer);
+    const hand = handService.create(0);
+    playerService.setHand(table.dealer, hand);
+
     const dealerHand =  playerService.getCurrentHand(table.dealer);
     
     playersHand.forEach(hand =>

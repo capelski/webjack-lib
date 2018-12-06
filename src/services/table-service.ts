@@ -90,7 +90,7 @@ const joinTable = (playerId: string) => {
     }
 
     const player = playerService.getPlayer(playerId);
-    playerService.resetInactiveRounds(player);
+    playerService.setInactiveRounds(player, 0);
     table.players.push(player);
 
     return table.id;

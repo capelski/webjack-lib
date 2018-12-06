@@ -4,7 +4,12 @@ import cardService from './card-service';
 import js from '../utils/js-generics';
 import { HandStatus } from '../models/hand-status';
 
-const getCards = (hand: Hand) => hand.cards;
+const addCard = (hand: Hand, card: Card) => {
+    hand.cards.push(card);
+    updateValues(hand);
+    hand.canDouble = canDouble(hand);
+    hand.canSplit = canSplit(hand);
+};
 
 const canDouble = (hand: Hand) => getValue(hand) > 8 && getValue(hand) < 12;
 
@@ -12,7 +17,23 @@ const canSplit = (hand: Hand) => hand.cards.length === 2 && cardService.getValue
 
 const create = (bet: number) => new Hand(bet);
 
+const getBet = (hand: Hand) => hand.bet;
+
+const getCards = (hand: Hand) => hand.cards;
+
 const getValue = (hand: Hand) => hand.values[hand.values.length - 1];
+
+const markAsPlayed = (hand: Hand) => {
+    hand.played = true;
+};
+
+const setBet = (hand: Hand, bet: number) => {
+    hand.bet = bet;
+};
+
+const setStatus = (hand: Hand, status: HandStatus) => {
+    hand.status = status;
+};
 
 const updateValues = (hand: Hand) => {
     const handReducer = (result: number[], card: Card) => {
@@ -35,29 +56,16 @@ const updateValues = (hand: Hand) => {
     hand.values = hand.cards.reduce(handReducer, [0]);
 };
 
-const markAsPlayed = (hand: Hand) => {
-    hand.played = true;
-};
-
-const addCard = (hand: Hand, card: Card) => {
-    hand.cards.push(card);
-    updateValues(hand);
-    hand.canDouble = canDouble(hand);
-    hand.canSplit = canSplit(hand);
-};
-
-const setStatus = (hand: Hand, status: HandStatus) => {
-    hand.status = status;
-}
-
 export {
     addCard,
     canDouble,
     canSplit,
     create,
+    getBet,
     getCards,
     getValue,
     markAsPlayed,
+    setBet,
     setStatus
 };
 
@@ -66,8 +74,10 @@ export default {
     canDouble,
     canSplit,
     create,
+    getBet,
     getCards,
     getValue,
     markAsPlayed,
+    setBet,
     setStatus
 };
