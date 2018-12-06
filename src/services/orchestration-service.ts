@@ -99,7 +99,6 @@ const makeVirtualDecision = (table: Table, decision: string) => {
 };
 
 const moveRoundForward = (table: Table) => {
-    // TODO Base the active player in the unplayed hands
     const player = table.players.find(playerService.hasUnplayedHands);
     if (!player) {
         // All players have completed their hands; time to play dealer's turn
@@ -152,7 +151,7 @@ const playDealerTurn = (table: Table) => {
             clearInterval(dealerInterval);
 
             handService.markAsPlayed(dealerHand);
-            
+
             table.players.forEach(player => {
                 const playerHands = playerService.getHands(player);
                 const handsEarnings = playerHands.map(hand => {

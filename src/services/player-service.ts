@@ -1,5 +1,7 @@
 import { Player } from '../models/player';
 import { Hand } from '../models/hand';
+import handService from './hand-service';
+
 const uuidV4 = require('uuid/v4');
 
 let players: Player[] = [];
@@ -24,14 +26,11 @@ const createPlayer = (playerName: string) => {
 
 const createVirtualPlayer = (playerName: string) => new Player(uuidV4(), playerName);
 
-// TODO Access to models properties should be done in the model service
-// e.g. player.hands.reduce(whatever) => handService.whatever
-
 const clearPlayerHands = (player: Player) => {
     player.hands = [];
 };
 
-const getCurrentHand = (player: Player) => player.hands.find(h => !h.played);
+const getCurrentHand = (player: Player) => player.hands.find(hand => !handService.isAlreadyPlayed(hand));
 
 const getHands = (player: Player) => player.hands;
 
@@ -40,7 +39,7 @@ const getPlayer = (playerId: string) => players.find(p => p.id == playerId);
 const hasHands = (player: Player) => player.hands.length > 0;
 
 const hasUnplayedHands = (player: Player) =>
-    player.hands.reduce((unplayedHand, hand) => unplayedHand || !hand.played, false);
+    player.hands.reduce((unplayedHand, hand) => unplayedHand || !handService.isAlreadyPlayed(hand), false);
 
 const increaseEarningRate = (player: Player, earningRateVariation: number) => {
     player.earningRate += earningRateVariation;

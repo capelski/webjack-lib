@@ -33,6 +33,8 @@ const handValuesReducer = (reducedValues: number[], card: Card) => {
     return nextValues;
 };
 
+const isAlreadyPlayed = (hand: Hand) => hand.played;
+
 const markAsPlayed = (hand: Hand) => {
     hand.played = true;
 };
@@ -51,6 +53,7 @@ export {
     getBet,
     getCards,
     getValue,
+    isAlreadyPlayed,
     markAsPlayed,
     setBet,
     setStatus
@@ -62,6 +65,7 @@ export default {
     getBet,
     getCards,
     getValue,
+    isAlreadyPlayed,
     markAsPlayed,
     setBet,
     setStatus
