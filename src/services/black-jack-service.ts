@@ -61,12 +61,15 @@ const splitPlayerCurrentHand = (player: Player, cardSet: CardSet) => {
     player.earningRate -= playerCurrentHand.bet;
 };
 
+const wasHandSplit = (hand: Hand) => hand.cards.length === 1;
+
 export {
     isBlackJack,
     isBurned,
     isMaxValue,
     resolveHand,
-    splitPlayerCurrentHand
+    splitPlayerCurrentHand,
+    wasHandSplit
 };
 
 export default {
@@ -74,5 +77,6 @@ export default {
     isBurned,
     isMaxValue,
     resolveHand,
-    splitPlayerCurrentHand
+    splitPlayerCurrentHand,
+    wasHandSplit
 };
