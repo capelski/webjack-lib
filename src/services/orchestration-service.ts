@@ -52,7 +52,13 @@ const ensurePlayer = (table: Table, playerId: string) => {
 const hit = (table: Table, player: Player) => {
     const playerHand = playerService.getCurrentHand(player);
     handService.addCard(playerHand, tableService.getNextCard(table));
-    updateHandStatus(table, player, playerHand);
+    const isHandFinished = updateHandStatus(playerHand);
+    if (isHandFinished) {
+        moveRoundForward(table);
+    }
+    else {
+        makeDecisionTrigger(table, player);
+    }
 };
 
 const _makeDecision = (table: Table, player: Player, decision: string) => {
@@ -109,7 +115,13 @@ const moveRoundForward = (table: Table) => {
         // he split a hand at some point. A new card must be added to the current hand
         const playerHand = playerService.getCurrentHand(player);
         handService.addCard(playerHand, tableService.getNextCard(table));
-        updateHandStatus(table, player, playerHand);
+        const isHandFinished = updateHandStatus(playerHand);
+        if (isHandFinished) {
+            moveRoundForward(table);
+        }
+        else {
+            makeDecisionTrigger(table, player);
+        }
     }
     else {
         tableService.setActivePlayer(table, player.id);
@@ -167,7 +179,13 @@ const playDealerTurn = (table: Table) => {
 const split = (table: Table, player: Player) => {
     blackJackService.splitPlayerCurrentHand(player, table.cardSet);
     const playerHand = playerService.getCurrentHand(player);
-    updateHandStatus(table, player, playerHand);
+    const isHandFinished = updateHandStatus(playerHand);
+    if (isHandFinished) {
+        moveRoundForward(table);
+    }
+    else {
+        makeDecisionTrigger(table, player);
+    }
 };
 
 const stand = (table: Table, player: Player) => {
@@ -210,7 +228,7 @@ const startRound = (table: Table) => {
     tableService.setActivePlayer(table, activePlayers[0].id);
 };
 
-const updateHandStatus = (table: Table, player: Player, playerHand: Hand) => {
+const updateHandStatus = (playerHand: Hand) => {
     const isBlackJack = blackJackService.isBlackJack(playerHand);
     const isBurned = blackJackService.isBurned(playerHand);
     const isMaxValue = blackJackService.isMaxValue(playerHand);
@@ -226,11 +244,9 @@ const updateHandStatus = (table: Table, player: Player, playerHand: Hand) => {
     
     if (isHandFinished) {
         handService.markAsPlayed(playerHand);
-        moveRoundForward(table);
     }
-    else {
-        makeDecisionTrigger(table, player);
-    }
+
+    return isHandFinished;
 };
 
 export {
