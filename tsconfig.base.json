@@ -1,16 +1,10 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
         "esModuleInterop": true,
         "target": "es2017",
         "noImplicitAny": true,
         "moduleResolution": "node",
-        "outDir": "./build",
         "baseUrl": ".",
         "skipLibCheck": true
-    },
-    "include": [
-        "src/index.ts"
-    ],
-    "exclude": []
+    }
 }

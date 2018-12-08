@@ -37,7 +37,7 @@ const getNextCard = (cardSet: CardSet) => {
 
 const useDevelopmentCards = (cards: Card[]) => developmentCards = cards;
 
-export const exportedMethods = module.exports = {
+export {
     collectPlayedCards,
     createCardSet,
     getNextCard,

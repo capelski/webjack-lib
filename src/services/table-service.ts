@@ -114,7 +114,7 @@ const tableCreator = () => {
     return new Table(tableId, dealer, cardSet);
 };
 
-export const exportedMethods = {
+export {
     addPlayer,
     clearTrigger,
     createVirtualTable,

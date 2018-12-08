@@ -5,7 +5,6 @@ import { HandStatus } from './models/hand-status';
 import { Hand } from './models/hand';
 import { Player } from './models/player';
 import { Table } from './models/table';
-
 import blackJackService from './services/black-jack-service';
 import cardService from './services/card-service';
 import cardSetService from './services/card-set-service';
@@ -33,7 +32,7 @@ export {
 	tableService
 };
 
-const exportedMembers = module.exports = {
+export default {
 	Card,
 	CardSet,
 	HandStatus,
@@ -50,5 +49,3 @@ const exportedMembers = module.exports = {
 	playerService,
 	tableService
 };
-
-export default exportedMembers;
