@@ -7,7 +7,6 @@ import playerService from './player-service';
 const uuidV4 = require('uuid/v4');
 
 let tables: Table[] = [];
-let virtualTables: Table[] = [];
 
 const clearTrigger = (table: Table) => {
     clearTimeout(table.nextTrigger);
@@ -16,25 +15,17 @@ const clearTrigger = (table: Table) => {
 };
 
 const createTable = () => {
-    const table = tableCreator();
+    const tableId = uuidV4();
+    const dealer = playerService.createDealer();
+    const cardSet = cardSetService.createCardSet();
+
+    const table = new Table(tableId, dealer, cardSet);
     tables.push(table);
     return table;
 };
 
-const createVirtualTable = () => {
-    const virtualTable = tableCreator();
-
-    virtualTable.isVirtual = true;
-    virtualTable.players = ' '.repeat(7).split('')
-        .map((_, index) => playerService.createVirtualPlayer(`Robot ${index + 1}`));
-    
-    virtualTables.push(virtualTable);
-
-    return virtualTable.id;
-};
-
-const deleteVirtualTable = (virtualTableId: string) => {
-    virtualTables = virtualTables.filter(virtualTable => virtualTable.id !== virtualTableId);
+const deleteTable = (tableId: string) => {
+    tables = tables.filter(table => table.id !== tableId);
 };
 
 const getAvailableTable = () => {
@@ -64,8 +55,6 @@ const getDealer = (table: Table) => table.dealer;
 const getPlayers = (table: Table) => table.players;
 
 const getTableById = (tableId: string) => tables.find(t => t.id == tableId);
-
-const getVirtualTableById = (tableId: string) => virtualTables.find(t => t.id == tableId);
 
 const hasTrigger = (table: Table) => table.nextTrigger != null;
 
@@ -106,19 +95,11 @@ const setTrigger = (table: Table, seconds: number, callback: Function) => {
     table.nextAction.setSeconds(table.nextAction.getSeconds() + seconds);
 };
 
-const tableCreator = () => {
-    const tableId = uuidV4();
-    const dealer = playerService.createDealer();
-    const cardSet = cardSetService.createCardSet();
-
-    return new Table(tableId, dealer, cardSet);
-};
-
 export {
     addPlayer,
     clearTrigger,
-    createVirtualTable,
-    deleteVirtualTable,
+    createTable,
+    deleteTable,
     removePlayer,
     getAvailableTable,
     getCardSet,
@@ -126,7 +107,6 @@ export {
     getDealer,
     getPlayers,
     getTableById,
-    getVirtualTableById,
     hasTrigger,
     isDealer,
     isRoundBeingPlayed,
@@ -137,8 +117,8 @@ export {
 export default {
     addPlayer,
     clearTrigger,
-    createVirtualTable,
-    deleteVirtualTable,
+    createTable,
+    deleteTable,
     removePlayer,
     getAvailableTable,
     getCardSet,
@@ -146,7 +126,6 @@ export default {
     getDealer,
     getPlayers,
     getTableById,
-    getVirtualTableById,
     hasTrigger,
     isDealer,
     isRoundBeingPlayed,

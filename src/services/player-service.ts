@@ -24,7 +24,7 @@ const createPlayer = (playerName: string) => {
     return player;
 }
 
-const createVirtualPlayer = (playerName: string) => new Player(uuidV4(), playerName);
+const createRobot = (playerName: string) => new Player(uuidV4(), playerName);
 
 const getCurrentHand = (player: Player) => player.hands.find(hand => !handService.isAlreadyPlayed(hand));
 
@@ -62,7 +62,7 @@ const updateEarningRate = (player: Player, earningRate: number) => {
 export {
     createDealer,
     createPlayer,
-    createVirtualPlayer,
+    createRobot,
     getCurrentHand,
     getHands,
     getId,
@@ -79,7 +79,7 @@ export {
 export default {
     createDealer,
     createPlayer,
-    createVirtualPlayer,
+    createRobot,
     getCurrentHand,
     getHands,
     getId,

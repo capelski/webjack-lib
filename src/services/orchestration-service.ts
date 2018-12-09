@@ -78,11 +78,6 @@ const makeDecision = (table: Table, playerId: string, decision: string) => {
     _makeDecision(table, currentPlayer, decision);
 };
 
-const makeVirtualDecision = (table: Table, decision: string) => {
-    const currentPlayer = tableService.getCurrentPlayer(table);
-    _makeDecision(table, currentPlayer, decision);
-};
-
 const moveRoundForward = (table: Table) => {
     const currentPlayer = tableService.getCurrentPlayer(table);
     if (tableService.isDealer(table, currentPlayer)) {
@@ -245,13 +240,11 @@ const updatePlayersInactivity = (table: Table) => {
 export {
     joinTable,
     makeDecision,
-    makeVirtualDecision,
     placeBet
 };
 
 export default {
     joinTable,
     makeDecision,
-    makeVirtualDecision,
     placeBet
 };
