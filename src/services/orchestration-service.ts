@@ -2,6 +2,7 @@ import { Hand } from '../models/hand';
 import { HandStatus } from '../models/hand-status';
 import { Player } from '../models/player';
 import { Table } from '../models/table';
+import { delay } from '../utils/js-generics';
 import blackJackService from './black-jack-service';
 import cardSetService from './card-set-service';
 import gameParametersService from '../services/game-parameters-service';
@@ -169,14 +170,19 @@ const startRound = (table: Table) => {
     tableService.setIsRoundBeingPlayed(table, true);
     
     const playersHand = activePlayers.map(playerService.getCurrentHand);
-    playersHand.forEach(hand => blackJackService.dealCard(hand, tableService.getCardSet(table)));
 
     const dealer = tableService.getDealer(table);
     const dealerHand = handService.create(0);
     playerService.setHands(dealer, [dealerHand]);
-    blackJackService.dealCard(dealerHand, tableService.getCardSet(table));
 
-    playersHand.forEach(hand => {
+    const dealFirstCards = playersHand.map(hand => () => {
+        blackJackService.dealCard(hand, tableService.getCardSet(table));
+    })
+    .concat([() => {
+        blackJackService.dealCard(dealerHand, tableService.getCardSet(table));
+    }]);
+
+    const dealSecondCards = playersHand.map(hand => () => {
         blackJackService.dealCard(hand, tableService.getCardSet(table));
         const isBlackJack = blackJackService.isBlackJack(hand);
         if (isBlackJack) {
@@ -185,7 +191,9 @@ const startRound = (table: Table) => {
         }
     });
 
-    moveRoundForward(table);
+    const dealCards = dealFirstCards.concat(dealSecondCards);
+    dealCards.reduce((reduced, next) => reduced.then(next).then(() => delay(400)), Promise.resolve(undefined))
+        .then(() => moveRoundForward(table));
 };
 
 const updateHandStatus = (playerHand: Hand) => {

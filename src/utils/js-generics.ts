@@ -6,6 +6,10 @@ const cartesianProduct = <T, U>(firstArray: T[], secondArray: U[], elementBuilde
     }));
 };
 
+const delay = (minimumTime = 500) => {
+    return new Promise(resolve => setTimeout(resolve, minimumTime));
+};
+
 const removeDuplicates = (numbers: number[]): number[] => {
     const numbersDictionary: { [key: string]: number } =
         numbers.reduce((dictionary, next) => ({...dictionary, [next]: next}), {});
@@ -23,12 +27,14 @@ const shuffleArray = (array: any[]) => {
 
 export {
     cartesianProduct,
+    delay,
     removeDuplicates,
     shuffleArray
 };
 
 export default {
     cartesianProduct,
+    delay,
     removeDuplicates,
     shuffleArray
 };
