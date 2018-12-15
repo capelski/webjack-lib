@@ -190,17 +190,17 @@ const startRound = (table: Table) => {
 
 const updateHandStatus = (playerHand: Hand) => {
     const isBlackJack = blackJackService.isBlackJack(playerHand);
-    const isBurned = blackJackService.isBurned(playerHand);
+    const isBust = blackJackService.isBust(playerHand);
     const isMaxValue = blackJackService.isMaxValue(playerHand);
 
-    if (isBurned) {
-        handService.setStatus(playerHand, HandStatus.Burned);
+    if (isBust) {
+        handService.setStatus(playerHand, HandStatus.Bust);
     }
     else if (isBlackJack) {
         handService.setStatus(playerHand, HandStatus.BlackJack);
     }
     
-    const isHandFinished = isBlackJack || isBurned || isMaxValue;
+    const isHandFinished = isBlackJack || isBust || isMaxValue;
     
     if (isHandFinished) {
         handService.markAsPlayed(playerHand);

@@ -32,15 +32,15 @@ const doublePlayerHand = (player: Player, cardSet: CardSet) => {
 const getHandEarnings = (hand: Hand, dealerHand: Hand) => {
     let earnings = 0;
 
-    if (isBurned(hand)) {
-        handService.setStatus(hand, HandStatus.Burned);
+    if (isBust(hand)) {
+        handService.setStatus(hand, HandStatus.Bust);
         earnings = 0;
     }
     else if (isBlackJack(hand)) {
         handService.setStatus(hand, HandStatus.BlackJack);
         earnings = isBlackJack(dealerHand) ? 1 : 2.5;
     }
-    else if (isBurned(dealerHand)) {
+    else if (isBust(dealerHand)) {
         handService.setStatus(hand, HandStatus.PlayerWins);
         earnings = 2;
     }
@@ -77,7 +77,7 @@ const hitPlayerHand = (player: Player, cardSet: CardSet) => {
 
 const isBlackJack = (hand: Hand) => isMaxValue(hand) && hand.cards.length === 2;
 
-const isBurned = (hand: Hand) => handService.getValue(hand) > 21;
+const isBust = (hand: Hand) => handService.getValue(hand) > 21;
 
 const isMaxValue = (hand: Hand) => handService.getValue(hand) === 21;
 
@@ -116,7 +116,7 @@ export {
     getHandEarnings,
     hitPlayerHand,
     isBlackJack,
-    isBurned,
+    isBust,
     isMaxValue,
     splitPlayerHand,
     standPlayerHand,
@@ -131,7 +131,7 @@ export default {
     getHandEarnings,
     hitPlayerHand,
     isBlackJack,
-    isBurned,
+    isBust,
     isMaxValue,
     splitPlayerHand,
     standPlayerHand,
