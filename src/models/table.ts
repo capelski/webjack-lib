@@ -6,7 +6,7 @@ export interface Table {
     dealer: Player
     id: string;
     isRoundBeingPlayed: boolean;
-    nextAction: number;
+    nextActionTimestamp: number;
     nextTrigger: number;
     players: Player[];
 }
@@ -14,7 +14,7 @@ export interface Table {
 export class Table implements Table {
     constructor (public id: string, public dealer: Player, public cardSet: CardSet) {
         this.isRoundBeingPlayed = false;
-        this.nextAction = null;
+        this.nextActionTimestamp = null;
         this.nextTrigger = null;
         this.players = [];
     }

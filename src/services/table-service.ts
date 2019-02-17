@@ -11,7 +11,7 @@ let tables: Table[] = [];
 const clearTrigger = (table: Table) => {
     clearTimeout(table.nextTrigger);
     table.nextTrigger = null;
-    table.nextAction = null;
+    table.nextActionTimestamp = null;
 };
 
 const createTable = () => {
@@ -91,7 +91,7 @@ const setIsRoundBeingPlayed = (table: Table, isRoundBeingPlayed: boolean) => {
 
 const setTrigger = (table: Table, seconds: number, callback: Function) => {
     table.nextTrigger = setTimeout(callback, seconds * 1000);
-    table.nextAction = Date.now() + seconds * 1000;
+    table.nextActionTimestamp = Date.now() + seconds * 1000;
 };
 
 export {
