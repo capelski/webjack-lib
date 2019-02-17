@@ -6,7 +6,7 @@ export interface Table {
     dealer: Player
     id: string;
     isRoundBeingPlayed: boolean;
-    nextAction: Date;
+    nextAction: number;
     nextTrigger: number;
     players: Player[];
 }

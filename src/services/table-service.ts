@@ -91,8 +91,7 @@ const setIsRoundBeingPlayed = (table: Table, isRoundBeingPlayed: boolean) => {
 
 const setTrigger = (table: Table, seconds: number, callback: Function) => {
     table.nextTrigger = setTimeout(callback, seconds * 1000);
-    table.nextAction = new Date();
-    table.nextAction.setSeconds(table.nextAction.getSeconds() + seconds);
+    table.nextAction = Date.now() + seconds * 1000;
 };
 
 export {
