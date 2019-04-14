@@ -248,11 +248,13 @@ const updatePlayersInactivity = (table: Table) => {
 export {
     joinTable,
     makeDecision,
+    moveRoundForward,
     placeBet
 };
 
 export default {
     joinTable,
     makeDecision,
+    moveRoundForward,
     placeBet
 };
