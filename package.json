@@ -4,12 +4,12 @@
   "description": "Blackjack library",
   "main": "build/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rm -rf dist && tsc -d -p tsconfig.browser.json && tsc -d -p tsconfig.node.json"
   },
   "author": "Carles Capellas <capellas.carles@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^10.12.12"
+    "@types/node": "^10.12.12",
+    "typescript": "^3.4.3"
   }
 }
