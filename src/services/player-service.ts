@@ -1,12 +1,11 @@
 import { Player } from '../models/player';
 import { Hand } from '../models/hand';
 import handService from './hand-service';
-
-const uuidV4 = require('uuid/v4');
+import { v4 as uuid } from 'uuid';
 
 let players: Player[] = [];
 
-const createDealer = () => new Player(uuidV4(), 'Dealer');
+const createDealer = () => new Player(uuid(), 'Dealer');
 
 const createPlayer = (playerName: string) => {
     if (!playerName || !playerName.trim()) throw 'No player name was provided';
@@ -19,12 +18,12 @@ const createPlayer = (playerName: string) => {
         throw playerName + ' is already taken. Please choose another name';
     }
 
-    const player = new Player(uuidV4(), playerName);
+    const player = new Player(uuid(), playerName);
     players.push(player);
     return player;
 }
 
-const createRobot = (playerName: string) => new Player(uuidV4(), playerName);
+const createRobot = (playerName: string) => new Player(uuid(), playerName);
 
 const getCurrentHand = (player: Player) => player.hands.find(hand => !handService.isAlreadyPlayed(hand));
 

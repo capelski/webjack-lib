@@ -1,4 +1,4 @@
-import {GameParameters} from '../models/game-parameters';
+import { GameParameters } from '../models/game-parameters';
 
 let gameParameters: GameParameters = new GameParameters();
 

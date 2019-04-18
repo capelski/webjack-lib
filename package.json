@@ -8,6 +8,9 @@
   },
   "author": "Carles Capellas <capellas.carles@gmail.com>",
   "license": "MIT",
+  "dependencies": {
+    "uuid": "^3.2.1"
+  },
   "devDependencies": {
     "@types/node": "^10.12.12",
     "typescript": "^3.4.3"

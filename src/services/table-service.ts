@@ -3,8 +3,7 @@ import { Table } from '../models/table';
 import cardSetService from './card-set-service';
 import gameParametersService from '../services/game-parameters-service';
 import playerService from './player-service';
-
-const uuidV4 = require('uuid/v4');
+import { v4 as uuid } from 'uuid';
 
 let tables: Table[] = [];
 
@@ -16,7 +15,7 @@ const clearTrigger = (table: Table) => {
 };
 
 const createTable = () => {
-    const tableId = uuidV4();
+    const tableId = uuid();
     const dealer = playerService.createDealer();
     const cardSet = cardSetService.createCardSet();
 
