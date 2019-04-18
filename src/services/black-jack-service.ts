@@ -16,7 +16,7 @@ const dealCard = (hand: Hand, cardSet: CardSet) => {
 };
 
 const doublePlayerHand = (player: Player, cardSet: CardSet) => {
-    const currentHand = playerService.getCurrentHand(player);
+    const currentHand = playerService.getCurrentHand(player)!;
 
     if (!canDouble(currentHand)) {
         throw 'Doubling is only allowed with 9, 10 or 11 points';
@@ -71,7 +71,7 @@ const getHandEarnings = (hand: Hand, dealerHand: Hand) => {
 };
 
 const hitPlayerHand = (player: Player, cardSet: CardSet) => {
-    const currentHand = playerService.getCurrentHand(player);
+    const currentHand = playerService.getCurrentHand(player)!;
     dealCard(currentHand, cardSet);
 };
 
@@ -82,7 +82,7 @@ const isBust = (hand: Hand) => handService.getValue(hand) > 21;
 const isMaxValue = (hand: Hand) => handService.getValue(hand) === 21;
 
 const splitPlayerHand = (player: Player, cardSet: CardSet) => {
-    const currentHand = playerService.getCurrentHand(player);
+    const currentHand = playerService.getCurrentHand(player)!;
 
     if (!canSplit(currentHand)) {
         throw 'Splitting is only allowed with two equal cards!';
@@ -102,7 +102,7 @@ const splitPlayerHand = (player: Player, cardSet: CardSet) => {
 };
 
 const standPlayerHand = (player: Player) => {
-    const playerHand = playerService.getCurrentHand(player);
+    const playerHand = playerService.getCurrentHand(player)!;
     handService.markAsPlayed(playerHand);
 };
 

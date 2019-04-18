@@ -1,10 +1,13 @@
 {
     "compilerOptions": {
-        "esModuleInterop": true,
-        "target": "es2017",
-        "noImplicitAny": true,
-        "moduleResolution": "node",
         "baseUrl": ".",
-        "skipLibCheck": true
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "target": "es2017",
+        "strict": true,
+        "lib": [
+            "es6"
+        ]
     }
 }

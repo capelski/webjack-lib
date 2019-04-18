@@ -9,7 +9,9 @@ const uuidV4 = require('uuid/v4');
 let tables: Table[] = [];
 
 const clearTrigger = (table: Table) => {
-    clearTimeout(table.nextTrigger);
+    if (table.nextTrigger) {
+        clearTimeout(table.nextTrigger as any)
+    };
      table.nextTrigger = table.nextActionTimestamp = table.baseTimestamp = undefined;
 };
 
@@ -38,8 +40,8 @@ const getAvailableTable = () => {
 
 const getCardSet = (table: Table) => table.cardSet;
 
-const getCurrentPlayer = (table: Table) => {
-    let currentPlayer = null;
+const getCurrentPlayer = (table: Table): Player | undefined => {
+    let currentPlayer: Player | undefined = undefined;
     if (table.isRoundBeingPlayed) {
         currentPlayer = table.players.find(playerService.hasUnplayedHands);
         if (!currentPlayer && playerService.hasUnplayedHands(table.dealer)) {
@@ -88,8 +90,8 @@ const setIsRoundBeingPlayed = (table: Table, isRoundBeingPlayed: boolean) => {
     table.isRoundBeingPlayed = isRoundBeingPlayed;
 }
 
-const setTrigger = (table: Table, seconds: number, callback: Function) => {
-    table.nextTrigger = setTimeout(callback, seconds * 1000);
+const setTrigger = (table: Table, seconds: number, callback: (...args: any[]) => void) => {
+    table.nextTrigger = setTimeout(callback, seconds * 1000) as any;
     table.baseTimestamp = Date.now();
     table.nextActionTimestamp = table.baseTimestamp + seconds * 1000;
 };

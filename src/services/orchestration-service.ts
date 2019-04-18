@@ -80,13 +80,13 @@ const makeDecision = (table: Table, playerId: string, decision: string) => {
 };
 
 const moveRoundForward = (table: Table) => {
-    const currentPlayer = tableService.getCurrentPlayer(table);
+    const currentPlayer = tableService.getCurrentPlayer(table)!;
     if (tableService.isDealer(table, currentPlayer)) {
         // All players have completed their hands; time to play dealer's turn
         setPlayDealerTurnTrigger(table);
     }
     else {
-        const currentHand = playerService.getCurrentHand(currentPlayer);
+        const currentHand = playerService.getCurrentHand(currentPlayer)!;
 
         if (blackJackService.wasHandSplit(currentHand)) {
             blackJackService.dealCard(currentHand, tableService.getCardSet(table));
@@ -125,7 +125,7 @@ const playDealerTurn = (table: Table) => {
     tableService.clearTrigger(table);
 
     const dealer = tableService.getDealer(table);
-    const dealerHand = playerService.getCurrentHand(dealer);
+    const dealerHand = playerService.getCurrentHand(dealer)!;
     let dealerHandValue = 0; // DRY optimization to get the second card inside the interval
 
     const dealerInterval = setInterval(() => {
@@ -169,7 +169,7 @@ const startRound = (table: Table) => {
     
     tableService.setIsRoundBeingPlayed(table, true);
     
-    const playersHand = activePlayers.map(playerService.getCurrentHand);
+    const playersHand = activePlayers.map(player => playerService.getCurrentHand(player)!);
 
     const dealer = tableService.getDealer(table);
     const dealerHand = handService.create(0);
@@ -192,7 +192,7 @@ const startRound = (table: Table) => {
     });
 
     const dealCards = dealFirstCards.concat(dealSecondCards);
-    dealCards.reduce((reduced, next) => reduced.then(next).then(() => delay(400)), Promise.resolve(undefined))
+    dealCards.reduce((reduced, next) => reduced.then(next).then(() => delay(400)), Promise.resolve({}))
         .then(() => moveRoundForward(table));
 };
 

@@ -1,9 +1,7 @@
-const cartesianProduct = <T, U>(firstArray: T[], secondArray: U[], elementBuilder: (t: T, u: U) => any) => {
-    return [].concat.apply([], firstArray.map(function (x) {
-        return [].concat.apply([], secondArray.map(function (y) {
-            return [elementBuilder(x, y)];
-        }));
-    }));
+const cartesianProduct = <T, U, R>(firstArray: T[], secondArray: U[], elementBuilder: (t: T, u: U) => R): R[] => {
+    return firstArray.reduce((product, x) => {
+        return product.concat(secondArray.map(y => elementBuilder(x, y)));
+    }, [] as R[]);
 };
 
 const delay = (minimumTime = 500) => {
