@@ -2,9 +2,9 @@ import * as playerController from './controllers/player-controller';
 import * as tableController from './controllers/table-controller';
 import * as gameController from './controllers/game-controller';
 import { GameParameters, gameParametersService, Card, cardSetService } from 'webjack-core';
+import { Router, RequestHandler } from 'express';
 
-// TODO Import express types
-export const exposeWebjackMethods = (router: any, appMiddleware: any[], gameParameters?: GameParameters, developmentCardSet?: Card[]) => {
+export const exposeWebApi = (router: Router, appMiddleware: RequestHandler[], gameParameters?: GameParameters, developmentCardSet?: Card[]) => {
 	if (gameParameters) {
 		gameParametersService.setParameters(gameParameters);
 	}
