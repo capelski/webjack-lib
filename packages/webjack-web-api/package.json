@@ -1,0 +1,34 @@
+{
+  "name": "webjack-web-api",
+  "version": "0.0.0",
+  "description": "Web api exposing black jack functionality over HTTP",
+  "keywords": [
+    "black",
+    "jack",
+    "web"
+  ],
+  "author": "Carles Capellas <capellas.carles@gmail.com>",
+  "homepage": "https://github.com/L3bowski/webjack/tree/master/packages/webjack-web-api#readme",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/L3bowski/webjack.git"
+  },
+  "bugs": {
+    "url": "https://github.com/L3bowski/webjack/issues"
+  },
+  "devDependencies": {
+    "@types/node": "^11.13.5",
+    "typescript": "^3.4.3"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc"
+  },
+  "dependencies": {
+    "webjack-core": "^1.0.0"
+  }
+}

@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "declaration": true,
+        "declarationMap": true,
+        "esModuleInterop": true,
+        "lib": [
+            "es6"
+        ],
+        "module": "ES6",
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "outDir": "./dist",
+        "strict": true,
+        "target": "es2017"
+    },
+    "include": [
+        "src/index.ts"
+    ]
+}

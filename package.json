@@ -19,5 +19,12 @@
   "homepage": "https://github.com/L3bowski/webjack#readme",
   "devDependencies": {
     "lerna": "^3.13.3"
+  },
+  "scripts": {
+    "build": "lerna run build",
+    "prepare": "lerna bootstrap && npm run build",
+    "publish": "lerna publish",
+    "clean:dist": "rm packages/**/dist -rf",
+    "reset": "lerna clean -y && rm -rf node_modules/"
   }
 }
