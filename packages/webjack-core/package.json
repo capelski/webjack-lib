@@ -1,0 +1,19 @@
+{
+  "name": "webjack-core",
+  "version": "1.0.0",
+  "description": "Blackjack library",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "rm -rf dist && tsc -d -p tsconfig.browser.json && tsc -d -p tsconfig.node.json"
+  },
+  "author": "Carles Capellas <capellas.carles@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "uuid": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.12",
+    "@types/uuid": "^3.4.4",
+    "typescript": "^3.4.3"
+  }
+}

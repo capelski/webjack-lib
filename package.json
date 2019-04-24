@@ -1,19 +1,23 @@
 {
-  "name": "webjack-shared",
+  "name": "webjack",
   "version": "1.0.0",
-  "description": "Blackjack library",
-  "main": "build/index.js",
-  "scripts": {
-    "build": "rm -rf dist && tsc -d -p tsconfig.browser.json && tsc -d -p tsconfig.node.json"
+  "description": "Webjack mono repository",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/L3bowski/webjack.git"
   },
+  "keywords": [
+    "black",
+    "jack"
+  ],
   "author": "Carles Capellas <capellas.carles@gmail.com>",
   "license": "MIT",
-  "dependencies": {
-    "uuid": "^3.2.1"
+  "bugs": {
+    "url": "https://github.com/L3bowski/webjack/issues"
   },
+  "homepage": "https://github.com/L3bowski/webjack#readme",
   "devDependencies": {
-    "@types/node": "^10.12.12",
-    "@types/uuid": "^3.4.4",
-    "typescript": "^3.4.3"
+    "lerna": "^3.13.3"
   }
 }

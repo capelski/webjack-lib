@@ -1,3 +1,3 @@
-# Webjack-shared
+# webjack-core
 
 Blackjack library
