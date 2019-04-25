@@ -1,6 +1,6 @@
 {
   "name": "webjack-web-api",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Web api exposing black jack functionality over HTTP",
   "keywords": [
     "black",
@@ -31,6 +31,6 @@
     "build": "rm -rf dist && tsc"
   },
   "dependencies": {
-    "webjack-core": "^1.0.0"
+    "webjack-core": "^0.0.1"
   }
 }
