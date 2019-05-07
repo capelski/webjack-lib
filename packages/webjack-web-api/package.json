@@ -18,17 +18,14 @@
     "type": "git",
     "url": "git+https://github.com/L3bowski/webjack.git"
   },
-  "bugs": {
-    "url": "https://github.com/L3bowski/webjack/issues"
+  "scripts": {
+    "build": "rm -rf dist && tsc"
   },
   "devDependencies": {
     "@types/express": "^4.16.1",
     "@types/express-session": "^1.15.12",
     "@types/node": "^11.13.5",
     "typescript": "^3.4.3"
-  },
-  "scripts": {
-    "build": "rm -rf dist && tsc"
   },
   "dependencies": {
     "webjack-core": "^0.0.2"
