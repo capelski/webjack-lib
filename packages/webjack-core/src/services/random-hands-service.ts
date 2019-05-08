@@ -1,18 +1,8 @@
-import { handService, Card, CardSet, Hand } from 'webjack-core';
-
-export interface BasicStrategyRandomState {
-    dealerAvailableHands: string[];
-    dealerCurrentHand: string;
-    playerAvailableHands: string[];
-    playerUsedHands: string[];
-    progress: number;
-}
-
-export interface BasicStrategyHandsSet {
-    dealerHand: Hand;
-    playersHand: Hand[];
-    progress: number;
-}
+import { BasicStrategyRandomState, BasicStrategyHandsSet } from '../models/random-hands-types';
+import { Card } from '../models/card';
+import { CardSet } from '../models/card-set';
+import { Hand } from '../models/hand';
+import handService from '../services/hand-service';
 
 const relevantDealerHands = [
     'A',
@@ -78,14 +68,6 @@ const relevantPlayerHands = [
     ...hardHands
 ];
 
-const _randomData: BasicStrategyRandomState = {
-    dealerAvailableHands: [...relevantDealerHands],
-    dealerCurrentHand: '',
-    playerAvailableHands: [...relevantPlayerHands],
-    playerUsedHands: [],
-    progress: 0,
-};
-
 const getFigureSymbol = (): string => {
     return ['10', 'J', 'Q', 'K'][Math.floor(Math.random() * 3)];
 }
@@ -127,13 +109,13 @@ const getCardFromCardSet = (symbol: string, cardSet: CardSet): Card => {
     return card!;
 }
 
-const getRandomHandSymbols = (randomData: BasicStrategyRandomState): string[] => {
-    let handsSet = randomData.playerAvailableHands.length > 0 ? randomData.playerAvailableHands : randomData.playerUsedHands;
+const getRandomHandSymbols = (randomState: BasicStrategyRandomState): string[] => {
+    let handsSet = randomState.playerAvailableHands.length > 0 ? randomState.playerAvailableHands : randomState.playerUsedHands;
 
     const randomIndex = Math.floor(Math.random() * (handsSet.length - 1));
     const randomHand = handsSet[randomIndex];
     handsSet.splice(randomIndex, 1);
-    randomData.playerUsedHands.push(randomHand);
+    randomState.playerUsedHands.push(randomHand);
 
     let symbols: string[] = [];
     const hardHandMatch = randomHand.match(/^\+(.*)$/);
@@ -156,51 +138,63 @@ const getHandFromCards = (cards: Card[]) => cards.reduce((hand, card) => {
         return hand;
     }, handService.create(1));
 
-const getPlayersRandomHand = (playersNumber: number, randomData: BasicStrategyRandomState, cardSet: CardSet): Hand[] => {
+const getPlayersRandomHand = (playersNumber: number, randomState: BasicStrategyRandomState, cardSet: CardSet): Hand[] => {
     return Array(playersNumber).fill(0).map(_ => {
-        const symbols = getRandomHandSymbols(randomData);
+        const symbols = getRandomHandSymbols(randomState);
         const cards = symbols.map(symbol => getCardFromCardSet(symbol, cardSet));
         return getHandFromCards(cards);
     });
 }
 
-const getDealerRandomHand = (randomData: BasicStrategyRandomState, cardSet: CardSet): Hand => {    
-    const randomDealerCard = getCardFromCardSet(randomData.dealerCurrentHand.replace(/Figure/, getFigureSymbol()), cardSet);
+const getDealerRandomHand = (randomState: BasicStrategyRandomState, cardSet: CardSet): Hand => {    
+    const randomDealerCard = getCardFromCardSet(randomState.dealerCurrentHand.replace(/Figure/, getFigureSymbol()), cardSet);
     return getHandFromCards([randomDealerCard]);
 }
 
-const updateDealerHand = (playersNumber: number, randomData: BasicStrategyRandomState) => {
-    let mustUpdateDealerHand = randomData.dealerCurrentHand === '';
+const updateDealerHand = (playersNumber: number, randomState: BasicStrategyRandomState) => {
+    let mustUpdateDealerHand = randomState.dealerCurrentHand === '';
 
-    if (randomData.playerAvailableHands.length === 0) {
-        randomData.playerAvailableHands = [...relevantPlayerHands];
-        randomData.playerUsedHands = [];
+    if (randomState.playerAvailableHands.length === 0) {
+        randomState.playerAvailableHands = [...relevantPlayerHands];
+        randomState.playerUsedHands = [];
         mustUpdateDealerHand = true;
     }
 
     if (mustUpdateDealerHand) {
-        if (randomData.dealerAvailableHands.length === 0) {
+        if (randomState.dealerAvailableHands.length === 0) {
             // TODO When tracking the progress, we should mark 100% in this point
-            randomData.dealerAvailableHands = [...relevantDealerHands];
+            randomState.dealerAvailableHands = [...relevantDealerHands];
         }
 
-        const dealerIndex = Math.floor(Math.random() * (randomData.dealerAvailableHands.length - 1));
-        randomData.dealerCurrentHand = randomData.dealerAvailableHands[dealerIndex];
-        randomData.dealerAvailableHands.splice(dealerIndex, 1);
+        const dealerIndex = Math.floor(Math.random() * (randomState.dealerAvailableHands.length - 1));
+        randomState.dealerCurrentHand = randomState.dealerAvailableHands[dealerIndex];
+        randomState.dealerAvailableHands.splice(dealerIndex, 1);
     }
 
-    const coveredDealerHands = (relevantDealerHands.length - 1) - randomData.dealerAvailableHands.length;
-    const coveredPlayerHands = relevantPlayerHands.length - randomData.playerAvailableHands.length + playersNumber;
+    const coveredDealerHands = (relevantDealerHands.length - 1) - randomState.dealerAvailableHands.length;
+    const coveredPlayerHands = relevantPlayerHands.length - randomState.playerAvailableHands.length + playersNumber;
     const coveredHands = coveredDealerHands * relevantPlayerHands.length + coveredPlayerHands;
     const totalHands = (relevantDealerHands.length - 1) * relevantPlayerHands.length;
-    randomData.progress = Math.min(100, Math.floor(coveredHands * 1000 / totalHands) / 10);
+    randomState.progress = Math.min(100, Math.floor(coveredHands * 1000 / totalHands) / 10);
 };
 
-export const getRandomHandsSet = (playersNumber: number, cardSet: CardSet): BasicStrategyHandsSet => {
-    updateDealerHand(playersNumber, _randomData);
+export const getRandomInitialState = (): BasicStrategyRandomState => ({
+    dealerAvailableHands: [...relevantDealerHands],
+    dealerCurrentHand: '',
+    playerAvailableHands: [...relevantPlayerHands],
+    playerUsedHands: [],
+    progress: 0
+});
+
+export const getRandomHandsSet = (randomState: BasicStrategyRandomState, playersNumber: number, cardSet: CardSet): BasicStrategyHandsSet => {
+    updateDealerHand(playersNumber, randomState);
     return {
-        playersHand: getPlayersRandomHand(playersNumber, _randomData, cardSet),
-        dealerHand: getDealerRandomHand(_randomData, cardSet),
-        progress: _randomData.progress
+        playersHand: getPlayersRandomHand(playersNumber, randomState, cardSet),
+        dealerHand: getDealerRandomHand(randomState, cardSet)
     };
+};
+
+export default {
+    getRandomInitialState,
+    getRandomHandsSet
 };

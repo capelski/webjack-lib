@@ -3,7 +3,7 @@
         :table="table"
         :actionsHandlers="actionsHandlers"
         :userPlayer="userPlayer"
-        :basicStrategyProgress="basicStrategyProgress"
+        :basicStrategyProgress="randomState.progress"
         :isUserPlayerHandler="() => true"
         :evaluteDecisions="true"
         :displayDecisionHelp="false"
@@ -13,9 +13,8 @@
 
 <script lang="ts">
     import Table from './Table.vue';
-    import { Player, Table as TableModel, tableService, orchestrationService, playerService, handService } from 'webjack-core';
+    import { Player, Table as TableModel, tableService, orchestrationService, playerService, handService, randomHandsService } from 'webjack-core';
     import { ActionsBarHandlers } from '../utils/handlers-types';
-    import { getRandomHandsSet } from '../utils/random-hands';
 
     declare const toastr: any;
 
@@ -31,7 +30,7 @@
 
             return {
                 table: table,
-                basicStrategyProgress: -1
+                randomState: randomHandsService.getRandomInitialState()
             };
         },
         computed: {
@@ -82,8 +81,7 @@
                 const bet = 1;
                 tableService.setIsRoundBeingPlayed(this.table, true);
 
-                const randomHandsSet = getRandomHandsSet(this.table.players.length, this.table.cardSet);
-                this.basicStrategyProgress = randomHandsSet.progress;
+                const randomHandsSet = randomHandsService.getRandomHandsSet(this.randomState, this.table.players.length, this.table.cardSet);
 
                 this.table.players.forEach((player, index) => {
                     const randomHand = randomHandsSet.playersHand[index];

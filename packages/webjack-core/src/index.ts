@@ -13,6 +13,7 @@ import gameParametersService from './services/game-parameters-service';
 import handService from './services/hand-service';
 import orchestrationService from './services/orchestration-service';
 import playerService from './services/player-service';
+import randomHandsService from './services/random-hands-service';
 import tableService from './services/table-service';
 
 export {
@@ -31,5 +32,6 @@ export {
 	handService,
 	orchestrationService,
 	playerService,
+	randomHandsService,
 	tableService
 };
