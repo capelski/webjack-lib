@@ -1,35 +1,5 @@
-import { Hand } from 'webjack-core';
-
-interface DecisionsSet {
-    [key: number]: string;
-    until: {
-        dealer: (limit: number) => {
-            then: {
-                double: DecisionsSet;
-                hit: DecisionsSet;
-                split: DecisionsSet;
-                stand: DecisionsSet;
-            };
-        };
-    };
-}
-
-interface HandDecisionsData {
-    symbols: string;
-    value: number;
-    values: number[];
-}
-
-type DecisionsSetGetter = (decisionsData: HandDecisionsData) => undefined | DecisionsSet;
-
-interface NumberDictionary<T> {
-    [key: number]: T;
-}
-
-interface OptimalDecision {
-    action: string;
-    description: string;
-}
+import { Hand } from '../models/hand';
+import { DecisionsSet, HandDecisionsData, DecisionsSetGetter, NumberDictionary, OptimalDecision } from '../models/basic-strategy-types';
 
 const nNumbers = (n: number) => ' '.repeat(n).split('').map((_, index) => index + 1);
 
@@ -149,4 +119,8 @@ export const getOptimalDecision = (hand: Hand, dealerHandValue: number): Optimal
         action,
         description: `The optimal decision for ${handDecisionsData.symbols} (${handDecisionsData.value}) against a dealer ${dealerHandValue} is to ${action}`
     };
+};
+
+export default {
+    getOptimalDecision
 };
