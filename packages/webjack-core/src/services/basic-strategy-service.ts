@@ -1,5 +1,6 @@
 import { Hand } from '../models/hand';
-import { DecisionsSet, HandDecisionsData, DecisionsSetGetter, NumberDictionary, OptimalDecision } from '../models/basic-strategy-types';
+import { DecisionsSet, HandDecisionsData, DecisionsSetGetter, NumberDictionary, OptimalDecision } from '../types/basic-strategy';
+import { PlayerActions } from '../types/player-actions';
 
 const nNumbers = (n: number) => ' '.repeat(n).split('').map((_, index) => index + 1);
 
@@ -19,10 +20,10 @@ const createDecisionsSet = (action: string, startScore?: number, previousDecisio
             dealer: (limitScore) => {
                 return {
                     then: {
-                        double: createDecisionsSet('Double', limitScore + 1, currentDecisionsSet),
-                        hit: createDecisionsSet('Hit', limitScore + 1, currentDecisionsSet),
-                        split: createDecisionsSet('Split', limitScore + 1, currentDecisionsSet),
-                        stand: createDecisionsSet('Stand', limitScore + 1, currentDecisionsSet),
+                        double: createDecisionsSet(PlayerActions.Double, limitScore + 1, currentDecisionsSet),
+                        hit: createDecisionsSet(PlayerActions.Hit, limitScore + 1, currentDecisionsSet),
+                        split: createDecisionsSet(PlayerActions.Split, limitScore + 1, currentDecisionsSet),
+                        stand: createDecisionsSet(PlayerActions.Stand, limitScore + 1, currentDecisionsSet),
                     }
                 };
             }
@@ -31,10 +32,10 @@ const createDecisionsSet = (action: string, startScore?: number, previousDecisio
     return currentDecisionsSet;
 };
 
-const double = createDecisionsSet('Double');
-const hit = createDecisionsSet('Hit');
-const split = createDecisionsSet('Split');
-const stand = createDecisionsSet('Stand');
+const double = createDecisionsSet(PlayerActions.Double);
+const hit = createDecisionsSet(PlayerActions.Hit);
+const split = createDecisionsSet(PlayerActions.Split);
+const stand = createDecisionsSet(PlayerActions.Stand);
 
 const softHandsMap: NumberDictionary<DecisionsSet> = {
     13: hit,

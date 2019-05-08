@@ -43,7 +43,7 @@
 
 <script lang="ts">
     import { PlayerActionsHandlers } from '../utils/handlers-types';
-    import { blackJackService, Player, playerService, handService, basicStrategyService } from 'webjack-core';
+    import { blackJackService, Player, playerService, handService, basicStrategyService, PlayerActions } from 'webjack-core';
     import ShakyElement from './ShakyElement.vue';
 
     declare const toastr: any;
@@ -119,7 +119,7 @@
             double() {
                 if (this.canDouble) {
                     if (this.evaluteDecisions) {
-                        this.evaluatePlayerDecision('Double');
+                        this.evaluatePlayerDecision(PlayerActions.Double);
                     }
                     this.actionsHandlers.double();
                 }
@@ -127,7 +127,7 @@
                     toastr.error('Doubling is only allowed with 9, 10 or 11 points', 'Action not allowed');
                 }
             },
-            evaluatePlayerDecision(userDecision: string) {
+            evaluatePlayerDecision(userDecision: PlayerActions) {
                 const hand = playerService.getCurrentHand(this.userPlayer!);
                 const optimalDecision = basicStrategyService.getOptimalDecision(hand!, this.dealerScore!);
                 this.basicStrategyAttempts++;
@@ -140,14 +140,14 @@
             },
             hit() {
                 if (this.evaluteDecisions) {
-                    this.evaluatePlayerDecision('Hit');
+                    this.evaluatePlayerDecision(PlayerActions.Hit);
                 }
                 this.actionsHandlers.hit();
             },
             split() {
                 if (this.canSplit) {
                     if (this.evaluteDecisions) {
-                        this.evaluatePlayerDecision('Split');
+                        this.evaluatePlayerDecision(PlayerActions.Split);
                     }
                     this.actionsHandlers.split();
                 }
@@ -157,7 +157,7 @@
             },
             stand() {
                 if (this.evaluteDecisions) {
-                    this.evaluatePlayerDecision('Stand');
+                    this.evaluatePlayerDecision(PlayerActions.Stand);
                 }
                 this.actionsHandlers.stand();
             }

@@ -13,7 +13,7 @@
 
 <script lang="ts">
     import Table from './Table.vue';
-    import { Player, Table as TableModel, tableService, orchestrationService, playerService, handService, randomHandsService } from 'webjack-core';
+    import { Player, Table as TableModel, tableService, orchestrationService, playerService, handService, randomHandsService, PlayerActions } from 'webjack-core';
     import { ActionsBarHandlers } from '../utils/handlers-types';
 
     declare const toastr: any;
@@ -54,16 +54,16 @@
         },
         methods: {
             double() {
-                this.makeDecision('Double');
+                this.makeDecision(PlayerActions.Double);
             },
             exitTable() {
                 tableService.deleteTable(this.table.id);
                 this.$emit('TableExited');
             },
             hit() {
-                this.makeDecision('Hit');
+                this.makeDecision(PlayerActions.Hit);
             },
-            makeDecision(decision: string) {
+            makeDecision(decision: PlayerActions) {
                 try {
                     orchestrationService.makeDecision(this.table, this.userPlayer!.id, decision);
                 }
@@ -72,10 +72,10 @@
                 }
             },
             split() {
-                this.makeDecision('Split');
+                this.makeDecision(PlayerActions.Split);
             },
             stand() {
-                this.makeDecision('Stand');
+                this.makeDecision(PlayerActions.Stand);
             },
             startRound() {
                 const bet = 1;

@@ -1,16 +1,16 @@
 <template>
     <div>
-        <LocalTable />
+        <BasicStrategyTable />
     </div>
 </template>
 
 <script lang="ts">
-    import LocalTable from './components/LocalTable.vue';
+    import BasicStrategyTable from './components/BasicStrategyTable.vue';
 
     export default {
         name: 'App',
         components: {
-            LocalTable
+            BasicStrategyTable
         }
     };
 </script>

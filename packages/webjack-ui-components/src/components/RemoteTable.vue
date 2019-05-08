@@ -18,7 +18,7 @@
 <script lang="ts">
     import Table from './Table.vue';
     import Loader from './Loader.vue';
-    import { Player, Table as TableModel } from 'webjack-core';
+    import { Player, Table as TableModel, PlayerActions } from 'webjack-core';
     import { ActionsBarHandlers } from '../utils/handlers-types';
     import { get } from '../utils/http';
     import { stallPromise } from '../utils/shared';
@@ -99,7 +99,7 @@
         },
         methods: {
             double() {
-                get(this.serverUrl + '/make-decision', { decision: 'Double' }, null, 'Error on double');
+                get(this.serverUrl + '/make-decision', { decision: PlayerActions.Double }, null, 'Error on double');
             },
             exitTable() {
                 this.loading = true;
@@ -107,16 +107,16 @@
                 stallPromise(get(this.serverUrl + '/exit-table')).then(() => this.$emit('TableExited'));
             },
             hit() {
-                get(this.serverUrl + '/make-decision', { decision: 'Hit' }, null, 'Error on hit');
+                get(this.serverUrl + '/make-decision', { decision: PlayerActions.Hit }, null, 'Error on hit');
             },
             isUserPlayer(player: Player) {
                 return player && player.id === this.userId;
             },
             split() {
-                get(this.serverUrl + '/make-decision', { decision: 'Split' }, null, 'Error on split');
+                get(this.serverUrl + '/make-decision', { decision: PlayerActions.Split }, null, 'Error on split');
             },
             stand() {
-                get(this.serverUrl + '/make-decision', { decision: 'Stand' }, null, 'Error on stand');
+                get(this.serverUrl + '/make-decision', { decision: PlayerActions.Stand }, null, 'Error on stand');
             },
             startRound() {
                 const bet = 1;

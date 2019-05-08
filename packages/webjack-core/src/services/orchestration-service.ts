@@ -9,27 +9,28 @@ import gameParametersService from '../services/game-parameters-service';
 import handService from './hand-service';
 import playerService from './player-service';
 import tableService from './table-service';
+import { PlayerActions } from '../types/player-actions';
 
 // TODO Access to models properties should be done in the model service
 // e.g. table.players.forEach(whatever) => tableService.whatever
 
-const _makeDecision = (table: Table, player: Player, decision: string) => {
+const _makeDecision = (table: Table, player: Player, decision: PlayerActions) => {
     tableService.clearTrigger(table);
     try {
         switch (decision) {
-            case 'Double': {
+            case PlayerActions.Double: {
                 blackJackService.doublePlayerHand(player, tableService.getCardSet(table));
                 break;
             }
-            case 'Hit': {
+            case PlayerActions.Hit: {
                 blackJackService.hitPlayerHand(player, tableService.getCardSet(table));
                 break;
             }
-            case 'Split': {
+            case PlayerActions.Split: {
                 blackJackService.splitPlayerHand(player, tableService.getCardSet(table));
                 break;
             }
-            case 'Stand': {
+            case PlayerActions.Stand: {
                 blackJackService.standPlayerHand(player);
                 break;
             }
@@ -66,7 +67,7 @@ const joinTable = (playerId: string) => {
     return table;
 }
 
-const makeDecision = (table: Table, playerId: string, decision: string) => {
+const makeDecision = (table: Table, playerId: string, decision: PlayerActions) => {
     const currentPlayer = tableService.getCurrentPlayer(table);
     if (!currentPlayer) {
         throw 'No one is playing now';

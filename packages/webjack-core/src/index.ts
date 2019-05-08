@@ -15,6 +15,7 @@ import orchestrationService from './services/orchestration-service';
 import playerService from './services/player-service';
 import randomHandsService from './services/random-hands-service';
 import tableService from './services/table-service';
+import { PlayerActions } from './types/player-actions';
 
 export {
 	Card,
@@ -33,5 +34,6 @@ export {
 	orchestrationService,
 	playerService,
 	randomHandsService,
-	tableService
+	tableService,
+	PlayerActions
 };

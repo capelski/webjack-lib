@@ -1,4 +1,4 @@
-import { BasicStrategyRandomState, BasicStrategyHandsSet } from '../models/random-hands-types';
+import { BasicStrategyRandomState, BasicStrategyHandsSet } from '../types/random-hands';
 import { Card } from '../models/card';
 import { CardSet } from '../models/card-set';
 import { Hand } from '../models/hand';
