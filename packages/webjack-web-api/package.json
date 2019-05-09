@@ -11,6 +11,7 @@
   "homepage": "https://github.com/L3bowski/webjack/tree/master/packages/webjack-web-api#readme",
   "license": "MIT",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],

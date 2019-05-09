@@ -31,6 +31,6 @@ server.listen(8000, (error: any) => {
         console.log('An error ocurred while starting the server...', error);
     }
     else {
-        console.log('Server up and running!');
+        console.log('Server up and running in port 8000!');
     }
 });

@@ -1,7 +1,7 @@
 'use strict'
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const packageConfig = require('../package.json')
+const packageConfig = require('../../package.json')
 
 exports.cssLoaders = function (options) {
   options = options || {}
