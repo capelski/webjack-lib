@@ -30,7 +30,7 @@ export const get = (url: string, parameters?: any, defaultValue?: any, errorMess
     .then(response => {
         return response.json()
             .then(payload => ({ status: response.status, payload } as ParsedResponse))
-            .catch(parsingError => ({ status: response.status } as ParsedResponse));
+            .catch(parsingError => ({ status: response.status, payload: defaultValue } as ParsedResponse));
     })
     .then((parsedResponse: ParsedResponse) => {
         if (parsedResponse.status != 200) {
@@ -42,8 +42,8 @@ export const get = (url: string, parameters?: any, defaultValue?: any, errorMess
             return parsedResponse.payload;
         }
     })
-    .catch((erroraco) => {
-        console.log(erroraco)
+    .catch((error) => {
+        console.log(error)
         toastr.error(errorMessage, 'Network error');
         return defaultValue;
     });
