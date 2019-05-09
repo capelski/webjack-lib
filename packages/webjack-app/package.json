@@ -1,6 +1,6 @@
 {
   "name": "webjack-app",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "description": "Full online black jack application",
   "keywords": [
@@ -24,8 +24,8 @@
     "express": "^4.16.4",
     "express-session": "^1.16.1",
     "vue": "^2.5.2",
-    "webjack-ui-components": "0.0.3",
-    "webjack-web-api": "^0.0.3"
+    "webjack-ui-components": "^0.0.4",
+    "webjack-web-api": "^0.0.4"
   },
   "devDependencies": {
     "@types/express": "^4.16.1",

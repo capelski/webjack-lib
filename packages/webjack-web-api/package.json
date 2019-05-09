@@ -1,6 +1,6 @@
 {
   "name": "webjack-web-api",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Web api exposing black jack functionality over HTTP",
   "keywords": [
     "black",
@@ -29,6 +29,6 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "webjack-core": "^0.0.3"
+    "webjack-core": "^0.0.4"
   }
 }
