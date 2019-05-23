@@ -1,10 +1,7 @@
 import express, { RequestHandler, Request, Response, NextFunction } from 'express';
 import session from 'express-session';
-import { exposeWebApi } from 'webjack-web-api';
+import { exposeWebjackRoutes } from 'webjack-web-api';
 import { join } from 'path';
-
-const server: express.Application = express();
-const router = express.Router();
 
 const corsMiddleware: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
 	res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
@@ -13,18 +10,18 @@ const corsMiddleware: RequestHandler = (req: Request, res: Response, next: NextF
 	next();
 };
 
-const sessionMiddleware: RequestHandler = session({
+const server: express.Application = express();
+
+const assetsFolder = join(__dirname, '..', 'ui', 'dist');
+server.use(express.static(assetsFolder));
+server.use(session({
     secret: 'test-app',
     resave: false,
     saveUninitialized: true
-});
+}));
+server.use(corsMiddleware);
 
-exposeWebApi(router, [sessionMiddleware, corsMiddleware]);
-
-server.use('/api', router);
-
-const publicFolder = join(__dirname, '..', 'ui', 'dist');
-server.use(express.static(publicFolder));
+exposeWebjackRoutes(server, '/api');
 
 server.listen(8000, (error: any) => {
     if (error) {
