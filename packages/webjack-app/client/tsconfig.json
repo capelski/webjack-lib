@@ -1,19 +1,16 @@
 {
     "compilerOptions": {
-        "outDir": "./dist",
-        // this aligns with Vue's browser support
-        "target": "es5",
-        // if using webpack 2+ or rollup, to leverage tree shaking:
-        "module": "es2015",
-        "moduleResolution": "node",
         "experimentalDecorators": true,
         "lib": [
             "es6",
             "dom"
-        ]
+        ],
+        "module": "es2015",
+        "moduleResolution": "node",
+        "target": "es5"
     },
     "include": [
-        "./src/main.ts",
+        "./src/index.ts",
         "./src/module-types.d.ts"
     ]
 }
