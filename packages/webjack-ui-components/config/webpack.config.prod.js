@@ -20,7 +20,7 @@ const webpackConfig = merge(commonConfig, {
         publicPath: '/',
         filename: '[name].js',
         libraryTarget: 'umd',
-        library: 'MyLib',
+        library: 'WwebjackComponents',
         umdNamedDefine: true
     },
     optimization: {
