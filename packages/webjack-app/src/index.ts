@@ -12,7 +12,7 @@ const corsMiddleware: RequestHandler = (req: Request, res: Response, next: NextF
 
 const server: express.Application = express();
 
-const assetsFolder = join(__dirname, '..', 'ui', 'dist');
+const assetsFolder = join(__dirname, 'public');
 server.use(express.static(assetsFolder));
 server.use(session({
     secret: 'test-app',
