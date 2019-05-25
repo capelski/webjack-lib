@@ -21,7 +21,6 @@
     "lerna": "^3.13.3"
   },
   "scripts": {
-    "start": "cd packages/webjack-app && npm start",
     "build": "lerna run build",
     "prepare": "lerna bootstrap && npm run build",
     "publish": "lerna publish",
