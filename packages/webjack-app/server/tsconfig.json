@@ -2,7 +2,6 @@
     "compilerOptions": {
         "baseUrl": ".",
         "declaration": true,
-        "declarationMap": true,
         "esModuleInterop": true,
         "lib": [
             "es6"
@@ -10,7 +9,7 @@
         "module": "commonjs",
         "moduleResolution": "node",
         "noImplicitAny": true,
-        "outDir": "./dist",
+        "outDir": "../dist",
         "strict": true,
         "target": "es5"
     },

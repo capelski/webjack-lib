@@ -16,9 +16,10 @@
   },
   "scripts": {
     "start": "node dist/index.js",
-    "start-ui": "webpack-dev-server --inline --progress --config client/build/webpack.dev.conf.js",
-    "build": "tsc && npm run build-ui",
-    "build-ui": "node client/build/build.js"
+    "start:client": "webpack-dev-server --inline --progress --config client/build/webpack.dev.conf.js",
+    "build": "rm dist -rf && npm run build:server && npm run build:client",
+    "build:client": "node client/build/build.js",
+    "build:server": "tsc -p server/tsconfig.json"
   },
   "dependencies": {
     "express": "^4.16.4",
