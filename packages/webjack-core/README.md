@@ -1,3 +1,3 @@
 # webjack-core
 
-Blackjack library
+Core functions for a blackjack application

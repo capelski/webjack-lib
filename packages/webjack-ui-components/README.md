@@ -1,3 +1,3 @@
 # webjack-ui-components
 
-UI Components for the webjack library
+Vue UI components for a blackjack application

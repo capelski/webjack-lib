@@ -1,11 +1,11 @@
 {
-  "name": "webjack",
+  "name": "webjack-lib",
   "version": "1.0.0",
-  "description": "Webjack mono repository",
+  "description": "Webjack libraries mono repository",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/L3bowski/webjack.git"
+    "url": "git+https://github.com/L3bowski/webjack-lib.git"
   },
   "keywords": [
     "black",
@@ -14,9 +14,9 @@
   "author": "Carles Capellas <capellas.carles@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/L3bowski/webjack/issues"
+    "url": "https://github.com/L3bowski/webjack-lib/issues"
   },
-  "homepage": "https://github.com/L3bowski/webjack#readme",
+  "homepage": "https://github.com/L3bowski/webjack-lib#readme",
   "devDependencies": {
     "lerna": "^3.13.3"
   },

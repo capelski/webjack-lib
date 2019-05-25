@@ -1,14 +1,27 @@
 {
   "name": "webjack-core",
   "version": "0.0.5",
-  "description": "Blackjack library",
+  "description": "Core functions for a blackjack application",
+  "keywords": [
+    "blackjack",
+    "library",
+    "core"
+  ],
+  "author": "Carles Capellas <capellas.carles@gmail.com>",
+  "homepage": "https://github.com/L3bowski/webjack-lib/tree/master/packages/webjack-core#readme",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/L3bowski/webjack-lib.git"
+  },
   "scripts": {
     "build": "rm -rf dist && tsc"
   },
-  "author": "Carles Capellas <capellas.carles@gmail.com>",
-  "license": "MIT",
   "dependencies": {
     "uuid": "^3.2.1"
   },
@@ -16,8 +29,5 @@
     "@types/node": "^10.12.12",
     "@types/uuid": "^3.4.4",
     "typescript": "^3.4.3"
-  },
-  "files": [
-    "dist"
-  ]
+  }
 }
