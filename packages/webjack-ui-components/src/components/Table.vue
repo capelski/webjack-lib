@@ -95,6 +95,11 @@
 </script>
 
 <style>
+    .full-height {
+        background-color: #088446;
+        height: 100%;
+    }
+
     .black-jack-table {
         display: flex;
         flex-direction: column;

@@ -1,7 +1,43 @@
 <template>
-    <div class="container full-height">
+    <div class="full-height" v-if="renderCondition || loading">
+        <Loader v-if="loading"/>
+
+        <!-- TODO Extract registering into RemoteRegister component -->
+        <div
+            class="centered container full-height"
+            v-if="renderCondition && !loading && !isPlayerRegistered"
+        >
+            <div class="row">
+                <div class="col-xs-12 text-center">
+                    <span class="avatar">&#9815;</span>
+                </div>
+            </div>
+
+            <div class="row top-space-20">
+                <div class="col-sm-4 col-sm-offset-4">
+                    <input type="text" class="form-control" v-model="playerName" />
+                </div>
+            </div>
+
+            <div class="row top-space-20">
+                <div class="col-xs-12 text-center">
+                    <button type="button" class="btn btn-primary"
+                        v-on:click="registerPlayer"
+                        :disabled="!playerName"
+                    >
+                        Join table
+                    </button>
+                    <button type="button" class="btn btn-danger"
+                        v-on:click="cancelRegister"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>        
+        </div>
+
         <Table
-            v-if="!loading"
+            v-if="renderCondition && !loading && isPlayerRegistered"
             :table="table"
             :actionsHandlers="actionsHandlers"
             :userPlayer="userPlayer"
@@ -11,7 +47,6 @@
             :displayDecisionHelp="true"
             :startRoundButtonText="'Place bet'"
         />
-        <Loader v-if="loading"/>
     </div>
 </template>
 
@@ -20,73 +55,65 @@
     import Loader from './Loader.vue';
     import { Player, Table as TableModel, PlayerActions } from 'webjack-core';
     import { ActionsBarHandlers } from '../utils/handlers-types';
-    import { get } from '../utils/http';
+    import { get, getEndpointUrl } from '../utils/http';
     import { stallPromise } from '../utils/shared';
 
     declare const toastr: any;
 
-    const getEndpointUrl = (serverUrl: string, endpoint: string) => {
-        return serverUrl.indexOf('{endpoint}') > -1 ?
-            serverUrl.replace('{endpoint}', endpoint) : 
-            serverUrl + `/${endpoint}`;
-    };
-
     export default {
         name: 'RemoteTable',
         components: {
-            Table,
-            Loader
+            Loader,
+            Table
         },
         props: {
+            renderCondition: {
+                type: Boolean,
+                required: true
+            },
             serverUrl: {
-                type: String,
-                required: true
-            },
-            tableId: {
-                type: String,
-                required: true
-            },
-            userId: {
                 type: String,
                 required: true
             }
         },
         data() {
             return {
-                loading: true,
+                isPlayerRegistered: false,
+                loading: false,
+                playerName: undefined,
                 table: {} as TableModel,
                 tableInterval: undefined
             };
         },
         created() {
-            const updateTableInterval = () => get(
-                getEndpointUrl(this.serverUrl, 'table-status'),
-                null,
-                { message: true },
-                'Error getting the table status')
-            .then(responseData => {
-                if (responseData.message) {
-                    this.exitTable();
-                }
-                else {
-                    this.table = responseData;
-                    this.loading = false;
-                }
-            });
-            
-            let tablePromise = Promise.resolve(this.tableId);
-            if (!this.tableId) {
-                tablePromise = get(
-                    getEndpointUrl(this.serverUrl, 'join-table'),
-                    null,
-                    {},
-                    'Error trying to join a table. Please refresh the screen and try again')
-                .then(responseData => responseData.tableId);
-            }
-
-            tablePromise.then(_ => {
-                this.tableInterval = setInterval(updateTableInterval, 1000) as any;
-            });
+            this.loading = true;
+            this.$emit('LoadingStarted');
+            stallPromise(get(
+                getEndpointUrl(this.serverUrl, 'is-player-registered'),
+                undefined,
+                {},
+                'Error checking whether the player is already registered'))
+                .then(data => {
+                    this.playerId = data.playerId;
+                    if (this.playerId) {
+                        this.isPlayerRegistered = true;
+                        this.tableId = data.tableId;
+                        if (this.tableId) {
+                            this.setUpdateInterval();
+                        }
+                        else if (this.renderCondition) {
+                            this.joinTable();
+                        }
+                        else {
+                            this.loading = false;
+                            this.$emit('LoadingFinished');
+                        }
+                    }
+                    else {
+                        this.loading = false;
+                        this.$emit('LoadingFinished');
+                    }
+                });
         },
         computed: {
             actionsHandlers() {
@@ -100,53 +127,105 @@
                 } as ActionsBarHandlers;
             },
             userPlayer(): Player | undefined {
-                return this.table!.players.find(p => p.id === this.userId);
+                return this.table!.players.find(p => p.id === this.playerId);
+            }
+        },
+        watch: {
+            renderCondition(newVal, oldVal) {
+                if (newVal && !oldVal && this.playerId && !this.tableId) {
+                    this.joinTable();
+                }                
             }
         },
         methods: {
+            cancelRegister() {
+                this.$emit('TableExited');
+            },
             double() {
-                get(
-                    getEndpointUrl(this.serverUrl, 'make-decision'),
-                    { decision: PlayerActions.Double },
-                    null,
-                    'Error on double');
+                this.makeDecision(PlayerActions.Double);
             },
             exitTable() {
+                this.tableId = undefined;
                 this.loading = true;
+                this.$emit('LoadingStarted');
                 clearInterval(this.tableInterval!);
                 stallPromise(get(getEndpointUrl(this.serverUrl, 'exit-table')))
-                    .then(() => this.$emit('TableExited'));
+                    .then(() => {
+                        this.loading = false;
+                        this.$emit('LoadingFinished');
+                        this.$emit('TableExited');
+                    });
             },
             hit() {
-                get(
-                    getEndpointUrl(this.serverUrl, 'make-decision'),
-                    { decision: PlayerActions.Hit },
-                    null,
-                    'Error on hit');
+                this.makeDecision(PlayerActions.Hit);
             },
             isUserPlayer(player: Player) {
-                return player && player.id === this.userId;
+                return player && player.id === this.playerId;
+            },
+            joinTable() {
+                stallPromise(get(
+                    getEndpointUrl(this.serverUrl, 'join-table'),
+                    undefined,
+                    {},
+                    'Error trying to join a table. Please refresh the screen and try again'))
+                .then(data => {
+                    this.tableId = data.tableId;
+                    this.setUpdateInterval()
+                });
+            },
+            makeDecision(decision: PlayerActions) {
+                get(
+                    getEndpointUrl(this.serverUrl, 'make-decision'),
+                    { decision },
+                    undefined,
+                    `Error on ${decision}`)
+            },
+            registerPlayer() {
+                this.loading = true;
+                this.$emit('LoadingStarted');
+                return stallPromise(get(
+                    getEndpointUrl(this.serverUrl, 'register-player'),
+                    { name: this.playerName },
+                    {},
+                    'Error registering the player'))
+                .then(data => {
+                    this.isPlayerRegistered = true;
+                    this.playerId = data.playerId;
+                    this.joinTable();
+                });
             },
             split() {
-                get(
-                    getEndpointUrl(this.serverUrl, 'make-decision'),
-                    { decision: PlayerActions.Split },
-                    null,
-                    'Error on split');
+                this.makeDecision(PlayerActions.Split);
+            },
+            setUpdateInterval() {
+                const updateTableInterval = () => get(
+                    getEndpointUrl(this.serverUrl, 'table-status'),
+                    undefined,
+                    { message: true },
+                    'Error getting the table status')
+                .then(responseData => {
+                    if (responseData.message) {
+                        this.exitTable();
+                    }
+                    else {
+                        this.table = responseData;
+                    }
+                });
+                this.tableInterval = setInterval(updateTableInterval, 1000);
+                this.$emit('TableJoined');
+                return updateTableInterval().then(_ => {
+                    this.loading = false;
+                    this.$emit('LoadingFinished');
+                });
             },
             stand() {
-                get(
-                    getEndpointUrl(this.serverUrl, 'make-decision'),
-                    { decision: PlayerActions.Stand },
-                    null,
-                    'Error on stand');
+                this.makeDecision(PlayerActions.Stand);
             },
             startRound() {
-                const bet = 1;
                 get(
                     getEndpointUrl(this.serverUrl, 'place-bet'),
-                    { bet },
-                    null,
+                    { bet: 1 },
+                    undefined,
                     'Error placing the bet');
             }
         }
@@ -154,37 +233,21 @@
 </script>
 
 <style>
-.black-jack-table {
-  display: flex;
-  flex-direction: column;
-  height: calc(100% - 89px);
-  overflow: hidden;
-}
+    .full-height {
+        height: 100%;
+    }
 
-.table-dealer {
-  margin-top: 20px;
-}
-@media (min-width: 992px) {
-  .table-dealer {
-    width: 300px;
-    margin: 0 auto;
-    margin-top: 20px;
-    text-align: center;
-  }
-}
+    .centered {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    }
 
-.table-players {
-  display: flex;
-  flex-direction: column;
-  margin-top: 20px;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
+    .top-space-20 {
+        margin-top: 20px;
+    }
 
-@media (min-width: 992px) {
-  .table-players {
-    margin-top: 0;
-    flex-direction: row;
-  }
-}
+    .avatar {
+        font-size: 100px;
+    }
 </style>

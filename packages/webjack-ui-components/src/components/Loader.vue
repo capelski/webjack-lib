@@ -1,5 +1,5 @@
 <template>
-    <div class="centered">
+    <div class="full-height centered">
         <div class="container">
             <div>
                 <div class="spinner">
@@ -18,6 +18,16 @@
 </script>
 
 <style>
+    .full-height {
+        background-color: #088446;
+        height: 100%;
+    }
+
+    .centered {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    }
     /*-- CSS Spin Kit --*/
 
     .spinner {

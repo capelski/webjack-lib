@@ -1,5 +1,6 @@
 <template>
     <Table
+        v-if="renderCondition"
         :table="table"
         :actionsHandlers="actionsHandlers"
         :userPlayer="userPlayer"
@@ -22,6 +23,12 @@
         name: 'BasicStrategyTable',
         components: {
             Table
+        },
+        props: {
+            renderCondition: {
+                type: Boolean,
+                required: true
+            }
         },
         data() {
             const table = tableService.createTable();
@@ -98,39 +105,3 @@
         }
     };
 </script>
-
-<style>
-    .black-jack-table {
-        display: flex;
-        flex-direction: column;
-        height: calc(100% - 89px);
-        overflow: hidden;
-    }
-
-    .table-dealer {
-        margin-top: 20px;
-    }
-    @media(min-width: 992px) {
-        .table-dealer {
-            width: 300px;
-            margin: 0 auto;
-            margin-top: 20px;
-            text-align: center;
-        }
-    }
-
-    .table-players {
-        display: flex;
-        flex-direction: column;
-        margin-top: 20px;
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
-    
-    @media(min-width: 992px) {
-        .table-players {
-            margin-top: 0;
-            flex-direction: row;
-        }
-    }
-</style>

@@ -5,15 +5,18 @@ interface ParsedResponse {
     payload?: any;
 }
 
-export const get = (url: string, parameters?: any, defaultValue?: any, errorMessage?: string) => {        
+// TODO Remove the defaultValue parameter
+export const get = (
+    url: string,
+    parameters: any = {},
+    defaultValue?: any,
+    defaultErrorMessage = 'An unexpected error occurred') => {        
     const options: RequestInit = {
         method: 'GET',
         mode: 'cors',
         cache: 'default',
         credentials: 'include'
     };
-
-    parameters = parameters || {};
 
     if (Object.keys(parameters).length > 0) {
         if (url.indexOf('?') < 0) {
@@ -26,28 +29,32 @@ export const get = (url: string, parameters?: any, defaultValue?: any, errorMess
             .map(key => `${key}=${encodeURIComponent(parameters[key])}`)
             .join('&');
     }
-
-    errorMessage = errorMessage || 'An unexpected error occurred';
     
     return fetch(url, options)
-    .then(response => {
-        return response.json()
-            .then(payload => ({ status: response.status, payload } as ParsedResponse))
-            .catch(parsingError => ({ status: response.status } as ParsedResponse));
-    })
-    .then((parsedResponse: ParsedResponse) => {
-        if (parsedResponse.status != 200) {
-            errorMessage = parsedResponse.payload.message || errorMessage;
-            toastr.error(errorMessage, 'Network error');
+        .then(response => {
+            return response.json()
+                .then(payload => ({ status: response.status, payload } as ParsedResponse))
+                .catch(parsingError => ({ status: response.status } as ParsedResponse));
+        })
+        .then(parsedResponse => {
+            if (parsedResponse.status != 200) {
+                toastr.error(parsedResponse.payload.message || defaultErrorMessage, 'Network error');
+                return defaultValue;
+            }
+            else {
+                return parsedResponse.payload;
+            }
+        })
+        .catch(error => {
+            console.log(error)
+            toastr.error(defaultErrorMessage, 'Network error');
             return defaultValue;
-        }
-        else {
-            return parsedResponse.payload;
-        }
-    })
-    .catch((erroraco) => {
-        console.log(erroraco)
-        toastr.error(errorMessage, 'Network error');
-        return defaultValue;
-    });
+        });
+};
+
+// TODO Wrap inside get function
+export const getEndpointUrl = (serverUrl: string, endpoint: string) => {
+    return serverUrl.indexOf('{endpoint}') > -1 ?
+        serverUrl.replace('{endpoint}', endpoint) : 
+        serverUrl + `/${endpoint}`;
 };
