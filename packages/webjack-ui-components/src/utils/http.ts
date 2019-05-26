@@ -15,14 +15,17 @@ export const get = (url: string, parameters?: any, defaultValue?: any, errorMess
 
     parameters = parameters || {};
 
-    url += '?';
-    for (var key in parameters) {
-        var parameter = parameters[key];
-        if (parameter) {
-            url += (key + '=' + encodeURIComponent(parameter) + '&');
+    if (Object.keys(parameters).length > 0) {
+        if (url.indexOf('?') < 0) {
+            url += '?';
         }
+        else if (!url.endsWith('&')) {
+            url += '&';
+        }
+        url += Object.keys(parameters)
+            .map(key => `${key}=${encodeURIComponent(parameters[key])}`)
+            .join('&');
     }
-    url = url.substring(0, url.length - 1);
 
     errorMessage = errorMessage || 'An unexpected error occurred';
     
