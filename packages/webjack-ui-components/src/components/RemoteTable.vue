@@ -55,7 +55,7 @@
     import Loader from './Loader.vue';
     import { Player, Table as TableModel, PlayerActions } from 'webjack-core';
     import { ActionsBarHandlers } from '../utils/handlers-types';
-    import { get, getEndpointUrl } from '../utils/http';
+    import { get } from '../utils/http';
     import { stallPromise } from '../utils/shared';
 
     declare const toastr: any;
@@ -89,7 +89,8 @@
             this.loading = true;
             this.$emit('LoadingStarted');
             stallPromise(get(
-                getEndpointUrl(this.serverUrl, 'is-player-registered'),
+                this.serverUrl,
+                'is-player-registered',
                 undefined,
                 {},
                 'Error checking whether the player is already registered'))
@@ -149,7 +150,7 @@
                 this.loading = true;
                 this.$emit('LoadingStarted');
                 clearInterval(this.tableInterval!);
-                stallPromise(get(getEndpointUrl(this.serverUrl, 'exit-table')))
+                stallPromise(get(this.serverUrl, 'exit-table'))
                     .then(() => {
                         this.loading = false;
                         this.$emit('LoadingFinished');
@@ -164,7 +165,8 @@
             },
             joinTable() {
                 stallPromise(get(
-                    getEndpointUrl(this.serverUrl, 'join-table'),
+                    this.serverUrl,
+                    'join-table',
                     undefined,
                     {},
                     'Error trying to join a table. Please refresh the screen and try again'))
@@ -175,7 +177,8 @@
             },
             makeDecision(decision: PlayerActions) {
                 get(
-                    getEndpointUrl(this.serverUrl, 'make-decision'),
+                    this.serverUrl,
+                    'make-decision',
                     { decision },
                     undefined,
                     `Error on ${decision}`)
@@ -184,7 +187,8 @@
                 this.loading = true;
                 this.$emit('LoadingStarted');
                 return stallPromise(get(
-                    getEndpointUrl(this.serverUrl, 'register-player'),
+                    this.serverUrl,
+                    'register-player',
                     { name: this.playerName },
                     {},
                     'Error registering the player'))
@@ -199,7 +203,8 @@
             },
             setUpdateInterval() {
                 const updateTableInterval = () => get(
-                    getEndpointUrl(this.serverUrl, 'table-status'),
+                    this.serverUrl,
+                    'table-status',
                     undefined,
                     { message: true },
                     'Error getting the table status')
@@ -223,7 +228,8 @@
             },
             startRound() {
                 get(
-                    getEndpointUrl(this.serverUrl, 'place-bet'),
+                    this.serverUrl,
+                    'place-bet',
                     { bet: 1 },
                     undefined,
                     'Error placing the bet');

@@ -7,30 +7,22 @@ interface ParsedResponse {
 
 // TODO Remove the defaultValue parameter
 export const get = (
-    url: string,
+    serverUrl: string,
+    endpoint: string,
     parameters: any = {},
     defaultValue?: any,
-    defaultErrorMessage = 'An unexpected error occurred') => {        
+    defaultErrorMessage = 'An unexpected error occurred') => {
+
+    const endpointUrl = getEndpointUrl(serverUrl, endpoint);
+    const parameterizedUrl = getParameterizedUrl(endpointUrl, parameters);
     const options: RequestInit = {
         method: 'GET',
         mode: 'cors',
         cache: 'default',
         credentials: 'include'
     };
-
-    if (Object.keys(parameters).length > 0) {
-        if (url.indexOf('?') < 0) {
-            url += '?';
-        }
-        else if (!url.endsWith('&')) {
-            url += '&';
-        }
-        url += Object.keys(parameters)
-            .map(key => `${key}=${encodeURIComponent(parameters[key])}`)
-            .join('&');
-    }
     
-    return fetch(url, options)
+    return fetch(parameterizedUrl, options)
         .then(response => {
             return response.json()
                 .then(payload => ({ status: response.status, payload } as ParsedResponse))
@@ -52,9 +44,24 @@ export const get = (
         });
 };
 
-// TODO Wrap inside get function
-export const getEndpointUrl = (serverUrl: string, endpoint: string) => {
+const getEndpointUrl = (serverUrl: string, endpoint: string) => {
     return serverUrl.indexOf('{endpoint}') > -1 ?
         serverUrl.replace('{endpoint}', endpoint) : 
         serverUrl + `/${endpoint}`;
 };
+
+const getParameterizedUrl = (url: string, parameters: any = {}) => {
+    let parameterizedUrl = url;
+    if (Object.keys(parameters).length > 0) {
+        if (parameterizedUrl.indexOf('?') < 0) {
+            parameterizedUrl += '?';
+        }
+        else if (!parameterizedUrl.endsWith('&')) {
+            parameterizedUrl += '&';
+        }
+        parameterizedUrl += Object.keys(parameters)
+            .map(key => `${key}=${encodeURIComponent(parameters[key])}`)
+            .join('&');
+    }
+    return parameterizedUrl;
+}
