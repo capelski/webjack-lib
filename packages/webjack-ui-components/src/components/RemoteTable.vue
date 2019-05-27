@@ -69,7 +69,7 @@
         props: {
             renderCondition: {
                 type: Boolean,
-                required: true
+                default: true
             },
             serverUrl: {
                 type: String,
@@ -88,12 +88,7 @@
         created() {
             this.loading = true;
             this.$emit('LoadingStarted');
-            stallPromise(get(
-                this.serverUrl,
-                'is-player-registered',
-                undefined,
-                {},
-                'Error checking whether the player is already registered'))
+            stallPromise(get(this.serverUrl, 'is-player-registered', 'Error checking whether the player is already registered'))
                 .then(data => {
                     this.playerId = data.playerId;
                     if (this.playerId) {
@@ -114,6 +109,10 @@
                         this.loading = false;
                         this.$emit('LoadingFinished');
                     }
+                })
+                .catch(_ => {
+                    this.loading = false;
+                    this.$emit('LoadingFinished');
                 });
         },
         computed: {
@@ -155,6 +154,11 @@
                         this.loading = false;
                         this.$emit('LoadingFinished');
                         this.$emit('TableExited');
+                    })
+                    .catch(_ => {
+                        this.loading = false;
+                        this.$emit('LoadingFinished');
+                        this.$emit('TableExited');
                     });
             },
             hit() {
@@ -164,58 +168,46 @@
                 return player && player.id === this.playerId;
             },
             joinTable() {
-                stallPromise(get(
-                    this.serverUrl,
-                    'join-table',
-                    undefined,
-                    {},
-                    'Error trying to join a table. Please refresh the screen and try again'))
-                .then(data => {
-                    this.tableId = data.tableId;
-                    this.setUpdateInterval()
-                });
+                stallPromise(get(this.serverUrl, 'join-table', 'Error trying to join a table'))
+                    .then(data => {
+                        this.tableId = data.tableId;
+                        this.setUpdateInterval()
+                    })
+                    .catch(_ => {
+                        this.loading = false;
+                        this.$emit('LoadingFinished');
+                        this.$emit('TableExited');
+                    });
             },
             makeDecision(decision: PlayerActions) {
-                get(
-                    this.serverUrl,
-                    'make-decision',
-                    { decision },
-                    undefined,
-                    `Error on ${decision}`)
+                get(this.serverUrl, 'make-decision', `Error on ${decision}`, { decision })
             },
             registerPlayer() {
                 this.loading = true;
                 this.$emit('LoadingStarted');
-                return stallPromise(get(
-                    this.serverUrl,
-                    'register-player',
-                    { name: this.playerName },
-                    {},
-                    'Error registering the player'))
-                .then(data => {
-                    this.isPlayerRegistered = true;
-                    this.playerId = data.playerId;
-                    this.joinTable();
-                });
+                return stallPromise(get(this.serverUrl, 'register-player','Error registering the player', { name: this.playerName }))
+                    .then(data => {
+                        this.isPlayerRegistered = true;
+                        this.playerId = data.playerId;
+                        this.joinTable();
+                    })
+                    .catch(_ => {
+                        this.loading = false;
+                        this.$emit('LoadingFinished');
+                    });
             },
             split() {
                 this.makeDecision(PlayerActions.Split);
             },
             setUpdateInterval() {
-                const updateTableInterval = () => get(
-                    this.serverUrl,
-                    'table-status',
-                    undefined,
-                    { message: true },
-                    'Error getting the table status')
-                .then(responseData => {
-                    if (responseData.message) {
-                        this.exitTable();
-                    }
-                    else {
-                        this.table = responseData;
-                    }
-                });
+                const updateTableInterval = () =>
+                    get(this.serverUrl, 'table-status', 'Error getting the table status')
+                        .then(responseData => this.table = responseData)
+                        .catch(_ => {
+                            this.tableId = undefined;
+                            clearInterval(this.tableInterval!);
+                            this.$emit('TableExited');
+                        });
                 this.tableInterval = setInterval(updateTableInterval, 1000);
                 this.$emit('TableJoined');
                 return updateTableInterval().then(_ => {
@@ -227,12 +219,7 @@
                 this.makeDecision(PlayerActions.Stand);
             },
             startRound() {
-                get(
-                    this.serverUrl,
-                    'place-bet',
-                    { bet: 1 },
-                    undefined,
-                    'Error placing the bet');
+                get(this.serverUrl, 'place-bet', 'Error placing the bet', { bet: 1 });
             }
         }
     };

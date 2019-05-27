@@ -12,7 +12,7 @@ export const makeDecision = (req: Request, res: Response) => {
     else {
         try {
             orchestrationService.makeDecision(table, playerId, decision);
-            return res.status(200).send();
+            return res.status(200).send(JSON.stringify({}));
         }
         catch(exception) {
             return res.status(400).send(JSON.stringify({ message: exception }))
@@ -28,6 +28,6 @@ export const placeBet = (req: Request, res: Response) => {
     }
     else {
         orchestrationService.placeBet(table, req.session!.playerId, bet);
-        return res.status(200).send();
+        return res.status(200).send(JSON.stringify({}));
     }
 };

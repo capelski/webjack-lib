@@ -5,13 +5,11 @@ interface ParsedResponse {
     payload?: any;
 }
 
-// TODO Remove the defaultValue parameter
 export const get = (
     serverUrl: string,
     endpoint: string,
-    parameters: any = {},
-    defaultValue?: any,
-    defaultErrorMessage = 'An unexpected error occurred') => {
+    defaultErrorMessage = 'An unexpected error occurred',
+    parameters: any = {}) => {
 
     const endpointUrl = getEndpointUrl(serverUrl, endpoint);
     const parameterizedUrl = getParameterizedUrl(endpointUrl, parameters);
@@ -23,24 +21,24 @@ export const get = (
     };
     
     return fetch(parameterizedUrl, options)
-        .then(response => {
-            return response.json()
-                .then(payload => ({ status: response.status, payload } as ParsedResponse))
-                .catch(parsingError => ({ status: response.status } as ParsedResponse));
+        .catch(error => {
+            toastr.error(defaultErrorMessage, 'Network error');
+            throw error;
         })
+        .then(response => response.json()
+            .then(payload => ({ status: response.status, payload } as ParsedResponse))
+            .catch(parsingError => {
+                toastr.error(defaultErrorMessage, 'Response content error');
+                throw parsingError;
+            })
+        )
         .then(parsedResponse => {
             if (parsedResponse.status != 200) {
-                toastr.error(parsedResponse.payload.message || defaultErrorMessage, 'Network error');
-                return defaultValue;
+                const errorMessage = parsedResponse.payload.message || defaultErrorMessage;
+                toastr.error(errorMessage, 'Network error');
+                throw errorMessage;
             }
-            else {
-                return parsedResponse.payload;
-            }
-        })
-        .catch(error => {
-            console.log(error)
-            toastr.error(defaultErrorMessage, 'Network error');
-            return defaultValue;
+            return parsedResponse.payload;
         });
 };
 

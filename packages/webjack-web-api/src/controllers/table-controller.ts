@@ -7,7 +7,7 @@ export const exitTable = (req: Request, res: Response) => {
     const tableId = req.session!.tableId;
     tableService.removePlayer(tableId, playerId);
     delete req.session!.tableId;
-    return res.status(200).send();
+    return res.status(200).send(JSON.stringify({}));
 };
 
 export const getTableStatus = (req: Request, res: Response) => {
