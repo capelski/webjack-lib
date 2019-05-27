@@ -1,41 +1,11 @@
 <template>
     <div class="full-height" v-if="renderCondition || loading">
         <Loader v-if="loading"/>
-
-        <!-- TODO Extract registering into RemoteRegister component -->
-        <div
-            class="centered container full-height"
+        <RemoteRegister 
             v-if="renderCondition && !loading && !isPlayerRegistered"
-        >
-            <div class="row">
-                <div class="col-xs-12 text-center">
-                    <span class="avatar">&#9815;</span>
-                </div>
-            </div>
-
-            <div class="row top-space-20">
-                <div class="col-sm-4 col-sm-offset-4">
-                    <input type="text" class="form-control" v-model="playerName" />
-                </div>
-            </div>
-
-            <div class="row top-space-20">
-                <div class="col-xs-12 text-center">
-                    <button type="button" class="btn btn-primary"
-                        v-on:click="registerPlayer"
-                        :disabled="!playerName"
-                    >
-                        Join table
-                    </button>
-                    <button type="button" class="btn btn-danger"
-                        v-on:click="cancelRegister"
-                    >
-                        Cancel
-                    </button>
-                </div>
-            </div>        
-        </div>
-
+            v-on:RegisterCanceled="cancelRegister"
+            v-on:RegisterRequested="registerPlayer"
+        />
         <Table
             v-if="renderCondition && !loading && isPlayerRegistered"
             :table="table"
@@ -51,19 +21,19 @@
 </template>
 
 <script lang="ts">
-    import Table from './Table.vue';
-    import Loader from './Loader.vue';
     import { Player, Table as TableModel, PlayerActions } from 'webjack-core';
     import { ActionsBarHandlers } from '../utils/handlers-types';
     import { get } from '../utils/http';
     import { stallPromise } from '../utils/shared';
-
-    declare const toastr: any;
+    import Loader from './Loader.vue';
+    import RemoteRegister from './RemoteRegister.vue';
+    import Table from './Table.vue';
 
     export default {
         name: 'RemoteTable',
         components: {
             Loader,
+            RemoteRegister,
             Table
         },
         props: {
@@ -80,7 +50,6 @@
             return {
                 isPlayerRegistered: false,
                 loading: false,
-                playerName: undefined,
                 table: {} as TableModel,
                 tableInterval: undefined
             };
@@ -176,9 +145,9 @@
             makeDecision(decision: PlayerActions) {
                 get(this.serverUrl, 'make-decision', `Error on ${decision}`, { decision })
             },
-            registerPlayer() {
+            registerPlayer(name: string) {
                 this.setLoading(true);
-                return stallPromise(get(this.serverUrl, 'register-player','Error registering the player', { name: this.playerName }))
+                return stallPromise(get(this.serverUrl, 'register-player','Error registering the player', { name }))
                     .then(data => {
                         this.isPlayerRegistered = true;
                         this.playerId = data.playerId;
@@ -217,17 +186,7 @@
         height: 100%;
     }
 
-    .centered {
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-    }
-
     .top-space-20 {
         margin-top: 20px;
-    }
-
-    .avatar {
-        font-size: 100px;
     }
 </style>
