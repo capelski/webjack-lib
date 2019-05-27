@@ -1,11 +1,8 @@
 <template>
-    <div>
-        <BasicStrategyTable />
-    </div>
+    <BasicStrategyTable />
 </template>
 
 <script lang="ts">
-    import 'toastr/build/toastr.min.css';
     import BasicStrategyTable from './components/BasicStrategyTable.vue';
 
     export default {
@@ -15,3 +12,11 @@
         }
     };
 </script>
+
+<style>
+    html, body {
+        height: 100%;
+        background-color: #088446;
+        color: #EEDC82;
+    }
+</style>

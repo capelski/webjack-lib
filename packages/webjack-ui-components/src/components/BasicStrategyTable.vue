@@ -35,7 +35,7 @@
         props: {
             renderCondition: {
                 type: Boolean,
-                required: true
+                default: true
             }
         },
         data() {
