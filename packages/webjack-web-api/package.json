@@ -29,6 +29,6 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "webjack-core": "^0.0.6"
+    "webjack-core": "0.0.6"
   }
 }
