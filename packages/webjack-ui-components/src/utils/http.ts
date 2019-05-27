@@ -1,4 +1,4 @@
-declare const toastr: any;
+import toastr from 'toastr';
 
 interface ParsedResponse {
     status: number;

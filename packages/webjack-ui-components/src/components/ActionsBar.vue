@@ -39,12 +39,11 @@
 </template>
 
 <script lang="ts">
+    import toastr from 'toastr';
+    import { Player, playerService, Table } from 'webjack-core';
+    import { ActionsBarHandlers } from '../utils/handlers-types';
     import Countdown from './Countdown.vue';
     import PlayerActions from './PlayerActions.vue';
-    import { ActionsBarHandlers } from '../utils/handlers-types';
-    import { Player, playerService, Table } from 'webjack-core';
-
-    declare const toastr: any;
 
     export default {
         name: 'ActionsBar',

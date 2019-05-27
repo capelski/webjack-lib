@@ -51,14 +51,12 @@
 </template>
 
 <script lang="ts">
-    import Table from './Table.vue';
-    import Loader from './Loader.vue';
     import { Player, Table as TableModel, PlayerActions } from 'webjack-core';
     import { ActionsBarHandlers } from '../utils/handlers-types';
     import { get } from '../utils/http';
     import { stallPromise } from '../utils/shared';
-
-    declare const toastr: any;
+    import Loader from './Loader.vue';
+    import Table from './Table.vue';
 
     export default {
         name: 'RemoteTable',

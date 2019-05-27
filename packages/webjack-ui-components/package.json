@@ -24,6 +24,7 @@
     "build": "cross-env NODE_ENV=production webpack"
   },
   "dependencies": {
+    "toastr": "^2.1.4",
     "vue": "^2.6.10",
     "webjack-core": "^0.0.6"
   },
