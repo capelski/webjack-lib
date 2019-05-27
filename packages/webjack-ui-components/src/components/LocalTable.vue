@@ -36,6 +36,7 @@
             table.players = [player];
 
             return {
+                playerId: player.id,
                 table
             };
         },
@@ -51,8 +52,7 @@
                 } as ActionsBarHandlers;
             },
             userPlayer(): Player | undefined {
-                // TODO Define a offlineUserId in the state and use tableService.getById
-                return this.table.players.find(p => p.name === 'You');
+                return this.table.players.find(p => p.name === this.playerId);
             }
         },
         methods: {
@@ -67,7 +67,6 @@
                 this.makeDecision(PlayerActions.Hit);
             },
             isUserPlayer(player: Player) {
-                // TODO Only one player for now. We should be able to add robots
                 return true;
             },
             makeDecision(decision: PlayerActions) {
