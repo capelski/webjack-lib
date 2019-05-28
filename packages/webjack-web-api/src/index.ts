@@ -4,7 +4,11 @@ import { GameParameters, gameParametersService, Card, cardSetService } from 'web
 import { Router, Application } from 'express';
 
 export const exposeWebjackRoutes = (app: Application | Router, routesPrefix = '') => {
-	app.get(`${routesPrefix}/is-player-registered`, playerController.isPlayerRegistered);
+	app.get(`${routesPrefix}/session-data`, (req, res) =>
+		res.send(JSON.stringify({
+			playerId: req.session!.playerId,
+			tableId: req.session!.tableId
+		})));
 	app.get(`${routesPrefix}/register-player`, playerController.registerPlayer);
 	app.get(`${routesPrefix}/join-table`, tableController.joinTable);
 	app.get(`${routesPrefix}/table-status`, tableController.getTableStatus);

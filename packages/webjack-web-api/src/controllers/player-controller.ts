@@ -1,12 +1,6 @@
 import { playerService } from 'webjack-core';
 import { Request, Response } from 'express';
 
-export const isPlayerRegistered = (req: Request, res: Response) => {
-    const playerId = req.session!.playerId;
-    const tableId = req.session!.tableId;
-    return res.send(JSON.stringify({ playerId, tableId }));
-};
-
 export const registerPlayer = (req: Request, res: Response) => {
     if (!req.session!.playerId) {
         try {

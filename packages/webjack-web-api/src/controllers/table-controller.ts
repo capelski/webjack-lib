@@ -1,5 +1,4 @@
 import { tableService } from 'webjack-core';
-import { noTableJoined } from './shared';
 import { Request, Response } from 'express';
 
 export const exitTable = (req: Request, res: Response) => {
@@ -60,6 +59,9 @@ export const makeDecision = (req: Request, res: Response) => {
         }
     }
 };
+
+const noTableJoined = (res: Response) =>
+    res.status(400).send(JSON.stringify({ message: 'No table has been joined' }));
 
 export const placeBet = (req: Request, res: Response) => {
     const table = tableService.getTableById(req.session!.tableId);

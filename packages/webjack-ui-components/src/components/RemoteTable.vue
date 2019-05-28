@@ -56,7 +56,7 @@
         },
         created() {
             this.setLoading(true);
-            stallPromise(get(this.serverUrl, 'is-player-registered', 'Error checking whether the player is already registered'))
+            stallPromise(get(this.serverUrl, 'session-data', 'Error checking whether the player is already registered'))
                 .then(data => {
                     this.playerId = data.playerId;
                     if (this.playerId) {
