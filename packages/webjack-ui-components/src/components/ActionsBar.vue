@@ -3,8 +3,7 @@
         <div class="actions-bar">
             <Countdown
                 :table="table"
-                :userPlayer="userPlayer"
-                :currentPlayerId="currentPlayerId"
+                :isPlayerTurn="isPlayerTurn"
             />
             <div class="actions-area">
                 <div class="row">
@@ -16,7 +15,7 @@
                                 {{ startRoundButtonText }}
                             </button>
                             <button type="button" class="btn btn-danger"
-                                :class="{'disabled-action': doesPlayerHaveHands }"
+                                :class="{'disabled-action': isRoundInProgress }"
                                 v-on:click="exitTable">
                                 Exit table
                             </button>
@@ -24,7 +23,6 @@
                         <PlayerActions 
                             :dealer="table.dealer"
                             :userPlayer="userPlayer"
-                            :currentPlayerId="currentPlayerId"
                             :isPlayerTurn="isPlayerTurn"
                             :basicStrategyProgress="basicStrategyProgress"
                             :actionsHandlers="actionsHandlers"
@@ -59,9 +57,6 @@
             basicStrategyProgress: {
                 type: Number
             },
-            currentPlayerId: {
-                type: String
-            },
             displayDecisionHelp: {
                 type: Boolean
             },
@@ -85,16 +80,12 @@
         },
         computed: {
             isRoundInProgress() {
-                return this.currentPlayerId || this.doesPlayerHaveHands;
-            },
-            doesPlayerHaveHands() {
-                const userPlayer = this.userPlayer;
-                return userPlayer && playerService.hasHands(userPlayer);
+                return this.userPlayer && playerService.hasHands(this.userPlayer);
             }
         },
         methods: {
             exitTable() {
-                if (this.doesPlayerHaveHands) {
+                if (this.isRoundInProgress) {
                     toastr.error('You cannot leave the table while playing a round', 'Round in progress');
                 }
                 else {

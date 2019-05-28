@@ -41,19 +41,17 @@ const getAvailableTable = () => {
 };
 
 const getCurrentPlayer = (table: Table): Player | undefined => {
-    let currentPlayer: Player | undefined = undefined;
+    let currentPlayer: Player | undefined;
     if (table.isRoundBeingPlayed) {
         currentPlayer = table.players.find(playerService.hasUnplayedHands);
-        if (!currentPlayer && playerService.hasUnplayedHands(table.dealer)) {
-            currentPlayer = table.dealer;
-        }
     }
     return currentPlayer;
 };
 
 const getTableById = (tableId: string) => tables.find(t => t.id == tableId);
 
-const isDealer = (table: Table, player: Player) => table.dealer.id === player.id;
+const isDealerTurn = (table: Table): boolean =>
+    table.isRoundBeingPlayed && !getCurrentPlayer(table) && playerService.hasUnplayedHands(table.dealer);
 
 const isRoundBeingPlayed = (table: Table) => table.isRoundBeingPlayed;
 
@@ -72,7 +70,7 @@ const joinTable = (playerId: string) => {
 const makeDecision = (table: Table, playerId: string, decision: PlayerActions) => {
     const currentPlayer = getCurrentPlayer(table);
     if (!currentPlayer) {
-        throw 'No one is playing now';
+        throw 'No player is playing now';
     }
 
     if (currentPlayer.id !== playerId) {
@@ -136,7 +134,7 @@ export {
     deleteTable,
     getCurrentPlayer,
     getTableById,
-    isDealer,
+    isDealerTurn,
     isRoundBeingPlayed,
     joinTable,
     makeDecision,
@@ -153,7 +151,7 @@ export default {
     deleteTable,
     getCurrentPlayer,
     getTableById,
-    isDealer,
+    isDealerTurn,
     isRoundBeingPlayed,
     joinTable,
     makeDecision,

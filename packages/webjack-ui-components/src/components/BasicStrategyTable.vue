@@ -3,7 +3,7 @@
         v-if="renderCondition"
         :table="table"
         :actionsHandlers="actionsHandlers"
-        :userPlayer="userPlayer"
+        :userPlayerId="userPlayerId"
         :basicStrategyProgress="randomState.progress"
         :isUserPlayerHandler="() => true"
         :evaluteDecisions="true"
@@ -58,12 +58,8 @@
                     stand: this.stand
                 } as ActionsBarHandlers;
             },
-            currentPlayerId() {
-                const currentPlayer = tableService.getCurrentPlayer(this.table);
-                return currentPlayer ? currentPlayer.id : undefined;
-            },
-            userPlayer(): Player | undefined {
-                return this.table.players.find(p => p.id === this.currentPlayerId);
+            userPlayerId(): Player | undefined {
+                return (tableService.getCurrentPlayer(this.table) || this.table.players[0]).id;
             }
         },
         methods: {
@@ -79,7 +75,7 @@
             },
             makeDecision(decision: PlayerActions) {
                 try {
-                    tableService.makeDecision(this.table, this.userPlayer!.id, decision);
+                    tableService.makeDecision(this.table, this.userPlayerId, decision);
                 }
                 catch(exception) {
                     toastr.error(exception);

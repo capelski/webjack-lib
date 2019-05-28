@@ -3,7 +3,7 @@
         <div class="black-jack-table">
             <div class="table-dealer">
                 <Player
-                    :currentPlayerId="currentPlayerId"
+                    :isPlayerTurn="isDealerTurn"
                     :isDealer="true"
                     :isUserPlayer="false"
                     :player="table.dealer"
@@ -13,7 +13,7 @@
                 <Player
                     v-for="playerIndex in [0,1,2,3,4,5,6]"
                     :key="playerIndex"
-                    :currentPlayerId="currentPlayerId"
+                    :isPlayerTurn="table.players[playerIndex] && (table.players[playerIndex].id === currentPlayerId)"
                     :isUserPlayer="isUserPlayer(table.players[playerIndex])"
                     :player="table.players[playerIndex]"
                 />
@@ -23,8 +23,7 @@
             :actionsHandlers="actionsHandlers"
             :table="table"
             :userPlayer="userPlayer"
-            :currentPlayerId="currentPlayerId"
-            :isPlayerTurn="isPlayerTurn"
+            :isPlayerTurn="userPlayerId === currentPlayerId"
             :basicStrategyProgress="basicStrategyProgress"
             :evaluteDecisions="evaluteDecisions"
             :displayDecisionHelp="displayDecisionHelp"
@@ -71,9 +70,9 @@
                 type: Table,
                 required: true
             },
-            // TODO Replace by userId. If is null, all players are user players
-            userPlayer: {
-                type: PlayerModel
+            userPlayerId: {
+                type: String,
+                required: true
             }
         },
         computed: {
@@ -81,9 +80,11 @@
                 const currentPlayer = tableService.getCurrentPlayer(this.table);
                 return currentPlayer ? currentPlayer.id : undefined;
             },
-            isPlayerTurn() {
-                // TODO Simplify once the currentPlayerId doesn't return the dealer
-                return this.currentPlayerId && this.userPlayer && this.userPlayer.id === this.currentPlayerId;
+            isDealerTurn() {
+                return tableService.isDealerTurn(this.table);
+            },
+            userPlayer() {
+                return this.table.players.find(player => player.id === this.userPlayerId);
             }
         },
         methods: {

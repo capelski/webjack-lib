@@ -10,7 +10,7 @@
             v-if="renderCondition && !loading && isPlayerRegistered"
             :table="table"
             :actionsHandlers="actionsHandlers"
-            :userPlayer="userPlayer"
+            :userPlayerId="playerId"
             :basicStrategyProgress="-1"
             :isUserPlayerHandler="isUserPlayer"
             :evaluteDecisions="false"
@@ -88,9 +88,6 @@
                     split: this.split,
                     stand: this.stand
                 } as ActionsBarHandlers;
-            },
-            userPlayer(): Player | undefined {
-                return this.table && this.table.players.find(p => p.id === this.playerId);
             }
         },
         watch: {

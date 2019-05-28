@@ -7,6 +7,7 @@ import cardSetService from './card-set-service';
 import handService from './hand-service';
 import playerService from './player-service';
 
+// TODO Split between HandService and OrchestrationService
 const canDouble = (hand: Hand) => handService.getValue(hand) > 8 && handService.getValue(hand) < 12;
 
 const canSplit = (hand: Hand) => hand.cards.length === 2 && cardService.getValue(hand.cards[0])[0] === cardService.getValue(hand.cards[1])[0];

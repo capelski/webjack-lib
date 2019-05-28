@@ -2,7 +2,7 @@
     <div :class="isDealer ? 'dealer-card': 'player-card'">
         <div
             v-if="player"
-            :class="{ 'player-wrapper': true, 'user': isUserPlayer, 'active': currentPlayerId === player.id }"
+            :class="{ 'player-wrapper': true, 'user': isUserPlayer, 'active': isPlayerTurn }"
         >
             <div class="player-name text-center">{{ player.name }}</div>
             
@@ -56,8 +56,8 @@
             ShakyElement
         },
         props: {
-            currentPlayerId: {
-                type: String
+            isPlayerTurn: {
+                type: Boolean
             },
             isDealer: {
                 type: Boolean,

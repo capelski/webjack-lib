@@ -127,7 +127,7 @@
                 }
             },
             evaluatePlayerDecision(userDecision: PlayerActions) {
-                const hand = playerService.getCurrentHand(this.userPlayer!);
+                const hand = playerService.getCurrentHand(this.userPlayer);
                 const optimalDecision = basicStrategyService.getOptimalDecision(hand!, this.dealerScore!);
                 this.basicStrategyAttempts++;
                 if (optimalDecision.action == userDecision) {

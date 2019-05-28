@@ -2,7 +2,7 @@
     <div class="progress count-down">
         <div
             role="progressbar"
-            :class="{'progress-bar': true, 'animate': countdownAnimation, 'active-player': userPlayer && userPlayer.id === currentPlayerId}"
+            :class="{'progress-bar': true, 'animate': countdownAnimation, 'active-player': isPlayerTurn}"
             :style="{width: (countdownStart ? Math.floor(((secondsLeft - 1) / (countdownStart - 1)) * 100) : 0) + '%'}">
         </div>
     </div>
@@ -26,11 +26,8 @@
                 type: Table,
                 required: true
             },
-            userPlayer: {
-                type: Player
-            },
-            currentPlayerId: {
-                type: String
+            isPlayerTurn: {
+                type: Boolean
             }
         },
         data() {

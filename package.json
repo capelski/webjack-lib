@@ -26,6 +26,6 @@
     "prepare": "lerna bootstrap && npm run build",
     "publish": "lerna publish",
     "reset": "lerna clean -y && rm -rf node_modules/",
-    "symlinks": "cd packages/webjack-web-api && npm link && cd ../webjack-ui-components && npm link"
+    "symlinks": "cd packages/webjack-core && npm link && cd ../webjack-ui-components && npm link && cd ../webjack-web-api && npm link"
   }
 }

@@ -53,12 +53,8 @@ const makeDecision = (table: Table, player: Player, decision: PlayerActions) => 
 };
 
 const moveRoundForward = (table: Table) => {
-    const currentPlayer = tableService.getCurrentPlayer(table)!;
-    if (tableService.isDealer(table, currentPlayer)) {
-        // All players have completed their hands; time to play dealer's turn
-        setPlayDealerTurnTrigger(table);
-    }
-    else {
+    const currentPlayer = tableService.getCurrentPlayer(table);
+    if (currentPlayer) {
         const currentHand = playerService.getCurrentHand(currentPlayer)!;
 
         if (blackJackService.wasHandSplit(currentHand)) {
@@ -72,6 +68,9 @@ const moveRoundForward = (table: Table) => {
         else {
             setMakeDecisionTrigger(table, currentPlayer);
         }
+    }
+    else if (tableService.isDealerTurn(table)) {
+        setPlayDealerTurnTrigger(table);
     }
 };
 
