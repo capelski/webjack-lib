@@ -18,7 +18,6 @@
         Player,
         Table as TableModel,
         tableService,
-        orchestrationService,
         playerService,
         handService,
         randomHandsService,
@@ -80,7 +79,7 @@
             },
             makeDecision(decision: PlayerActions) {
                 try {
-                    orchestrationService.makeDecision(this.table, this.userPlayer!.id, decision);
+                    tableService.makeDecision(this.table, this.userPlayer!.id, decision);
                 }
                 catch(exception) {
                     toastr.error(exception);
@@ -108,7 +107,7 @@
                 const dealerHand = handService.create(0);
                 playerService.setHands(dealer, [randomHandsSet.dealerHand]);
 
-                orchestrationService.moveRoundForward(this.table);
+                tableService.moveRoundForward(this.table);
             }
         }
     };

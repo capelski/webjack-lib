@@ -1,9 +1,12 @@
 import { Player } from '../models/player';
 import { Table } from '../models/table';
 import cardSetService from './card-set-service';
-import gameParametersService from '../services/game-parameters-service';
+import gameParametersService from './game-parameters-service';
 import playerService from './player-service';
+import orchestrationService from './orchestration-service';
+import handService from './hand-service';
 import { v4 as uuid } from 'uuid';
+import { PlayerActions } from '../types/player-actions';
 
 let tables: Table[] = [];
 
@@ -63,9 +66,51 @@ const isDealer = (table: Table, player: Player) =>
 
 const isRoundBeingPlayed = (table: Table) => table.isRoundBeingPlayed;
 
-const addPlayer = (table: Table, player: Player) => {
+const joinTable = (playerId: string) => {
+    const player = playerService.getPlayerById(playerId);
+    if (!player) {
+        throw 'No player identified by ' + playerId + ' was found';
+    }
+    playerService.setInactiveRounds(player, 0);
+
+    const table = getAvailableTable();
     table.players.push(player);
-}
+    return table;
+};
+
+const makeDecision = (table: Table, playerId: string, decision: PlayerActions) => {
+    const currentPlayer = getCurrentPlayer(table);
+    if (!currentPlayer) {
+        throw 'No one is playing now';
+    }
+
+    if (currentPlayer.id !== playerId) {
+        throw 'Not allowed to play now. It is ' + currentPlayer.name + '\'s turn';
+    }
+
+    orchestrationService.makeDecision(table, currentPlayer, decision);
+};
+
+const moveRoundForward = (table: Table) => orchestrationService.moveRoundForward(table);
+
+const placeBet = (table: Table, playerId: string, bet: number) => {
+    const player = table.players.find(p => p.id == playerId);
+    if (!player) {
+        throw 'No player identified by ' + playerId + ' was found';
+    }
+
+    if (isRoundBeingPlayed(table)) {
+        throw 'Bets can only be placed before a round starts';
+    }
+
+    const hand = handService.create(bet);
+    playerService.setHands(player, [hand]);
+    playerService.increaseEarningRate(player, -bet);
+
+    if (!hasTrigger(table)) {
+        orchestrationService.setStartRoundTrigger(table);
+    }
+};
 
 const removePlayer = (tableId: string, playerId: string) => {
     const table = getTableById(tableId);
@@ -87,7 +132,7 @@ const removePlayer = (tableId: string, playerId: string) => {
 
 const setIsRoundBeingPlayed = (table: Table, isRoundBeingPlayed: boolean) => {
     table.isRoundBeingPlayed = isRoundBeingPlayed;
-}
+};
 
 const setTrigger = (table: Table, seconds: number, callback: (...args: any[]) => void) => {
     table.nextTrigger = setTimeout(callback, seconds * 1000) as any;
@@ -95,12 +140,9 @@ const setTrigger = (table: Table, seconds: number, callback: (...args: any[]) =>
 };
 
 export {
-    addPlayer,
     clearTrigger,
     createTable,
     deleteTable,
-    removePlayer,
-    getAvailableTable,
     getCardSet,
     getCurrentPlayer,
     getDealer,
@@ -109,17 +151,19 @@ export {
     hasTrigger,
     isDealer,
     isRoundBeingPlayed,
+    joinTable,
+    makeDecision,
+    moveRoundForward,
+    placeBet,
+    removePlayer,
     setIsRoundBeingPlayed,
     setTrigger
 };
 
 export default {
-    addPlayer,
     clearTrigger,
     createTable,
     deleteTable,
-    removePlayer,
-    getAvailableTable,
     getCardSet,
     getCurrentPlayer,
     getDealer,
@@ -128,6 +172,11 @@ export default {
     hasTrigger,
     isDealer,
     isRoundBeingPlayed,
+    joinTable,
+    makeDecision,
+    moveRoundForward,
+    placeBet,
+    removePlayer,
     setIsRoundBeingPlayed,
     setTrigger
 };

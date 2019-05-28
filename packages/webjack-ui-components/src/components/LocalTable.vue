@@ -19,7 +19,6 @@
         Table as TableModel,
         playerService,
         tableService,
-        orchestrationService,
         PlayerActions
     } from 'webjack-core';
     import Table from './Table.vue';
@@ -58,7 +57,7 @@
                 } as ActionsBarHandlers;
             },
             userPlayer(): Player | undefined {
-                return this.table.players.find(p => p.name === this.playerId);
+                return this.table.players.find(p => p.id === this.playerId);
             }
         },
         methods: {
@@ -77,7 +76,7 @@
             },
             makeDecision(decision: PlayerActions) {
                 try {
-                    orchestrationService.makeDecision(this.table, this.userPlayer!.id, decision);
+                    tableService.makeDecision(this.table, this.playerId, decision);
                 }
                 catch(exception) {
                     toastr.error(exception);
@@ -91,7 +90,7 @@
             },
             startRound() {
                 const bet = 1;
-                orchestrationService.placeBet(this.table, this.userPlayer!.id, bet);
+                tableService.placeBet(this.table, this.playerId, bet);
             }
         }
     };

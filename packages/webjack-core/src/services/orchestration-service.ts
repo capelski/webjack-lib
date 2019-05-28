@@ -11,10 +11,16 @@ import playerService from './player-service';
 import tableService from './table-service';
 import { PlayerActions } from '../types/player-actions';
 
-// TODO Access to models properties should be done in the model service
-// e.g. table.players.forEach(whatever) => tableService.whatever
+const endRound = (table: Table) => {
+    tableService.clearTrigger(table);
+    cardSetService.collectPlayedCards(table.cardSet);
+    const players = tableService.getPlayers(table);
+    players.forEach(player => playerService.setHands(player, []));
+    playerService.setHands(table.dealer, []);
+    tableService.setIsRoundBeingPlayed(table, false);
+};
 
-const _makeDecision = (table: Table, player: Player, decision: PlayerActions) => {
+const makeDecision = (table: Table, player: Player, decision: PlayerActions) => {
     tableService.clearTrigger(table);
     try {
         switch (decision) {
@@ -46,40 +52,6 @@ const _makeDecision = (table: Table, player: Player, decision: PlayerActions) =>
     }
 };
 
-const endRound = (table: Table) => {
-    tableService.clearTrigger(table);
-    cardSetService.collectPlayedCards(table.cardSet);
-    const players = tableService.getPlayers(table);
-    players.forEach(player => playerService.setHands(player, []));
-    playerService.setHands(table.dealer, []);
-    tableService.setIsRoundBeingPlayed(table, false);
-};
-
-const joinTable = (playerId: string) => {
-    const player = playerService.getPlayerById(playerId);
-    if (!player) {
-        throw 'No player identified by ' + playerId + ' was found';
-    }
-    playerService.setInactiveRounds(player, 0);
-
-    const table = tableService.getAvailableTable();
-    tableService.addPlayer(table, player);
-    return table;
-}
-
-const makeDecision = (table: Table, playerId: string, decision: PlayerActions) => {
-    const currentPlayer = tableService.getCurrentPlayer(table);
-    if (!currentPlayer) {
-        throw 'No one is playing now';
-    }
-
-    if (currentPlayer.id !== playerId) {
-        throw 'Not allowed to play now. It is ' + currentPlayer.name + '\'s turn';
-    }
-
-    _makeDecision(table, currentPlayer, decision);
-};
-
 const moveRoundForward = (table: Table) => {
     const currentPlayer = tableService.getCurrentPlayer(table)!;
     if (tableService.isDealer(table, currentPlayer)) {
@@ -100,25 +72,6 @@ const moveRoundForward = (table: Table) => {
         else {
             setMakeDecisionTrigger(table, currentPlayer);
         }
-    }
-};
-
-const placeBet = (table: Table, playerId: string, bet: number) => {
-    const player = table.players.find(p => p.id == playerId);
-    if (!player) {
-        throw 'No player identified by ' + playerId + ' was found';
-    }
-
-    if (tableService.isRoundBeingPlayed(table)) {
-        throw 'Bets can only be placed before a round starts';
-    }
-
-    const hand = handService.create(bet);
-    playerService.setHands(player, [hand]);
-    playerService.increaseEarningRate(player, -bet);
-
-    if (!tableService.hasTrigger(table)) {
-        setStartRoundTrigger(table);
     }
 };
 
@@ -247,15 +200,13 @@ const updatePlayersInactivity = (table: Table) => {
 };
 
 export {
-    joinTable,
     makeDecision,
     moveRoundForward,
-    placeBet
+    setStartRoundTrigger
 };
 
 export default {
-    joinTable,
     makeDecision,
     moveRoundForward,
-    placeBet
+    setStartRoundTrigger
 };
