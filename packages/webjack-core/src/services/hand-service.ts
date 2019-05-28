@@ -11,10 +11,6 @@ const addCard = (hand: Hand, card: Card) => {
 
 const create = (bet: number) => new Hand(bet);
 
-const getBet = (hand: Hand) => hand.bet;
-
-const getCards = (hand: Hand) => hand.cards;
-
 const getValue = (hand: Hand) => hand.values[hand.values.length - 1];
 
 const handValuesReducer = (reducedValues: number[], card: Card) => {
@@ -50,8 +46,6 @@ const setStatus = (hand: Hand, status: HandStatus) => {
 export {
     addCard,
     create,
-    getBet,
-    getCards,
     getValue,
     isAlreadyPlayed,
     markAsPlayed,
@@ -62,8 +56,6 @@ export {
 export default {
     addCard,
     create,
-    getBet,
-    getCards,
     getValue,
     isAlreadyPlayed,
     markAsPlayed,

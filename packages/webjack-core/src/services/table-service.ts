@@ -40,8 +40,6 @@ const getAvailableTable = () => {
     return table;
 };
 
-const getCardSet = (table: Table) => table.cardSet;
-
 const getCurrentPlayer = (table: Table): Player | undefined => {
     let currentPlayer: Player | undefined = undefined;
     if (table.isRoundBeingPlayed) {
@@ -53,16 +51,9 @@ const getCurrentPlayer = (table: Table): Player | undefined => {
     return currentPlayer;
 };
 
-const getDealer = (table: Table) => table.dealer;
-
-const getPlayers = (table: Table) => table.players;
-
 const getTableById = (tableId: string) => tables.find(t => t.id == tableId);
 
-const hasTrigger = (table: Table) => table.nextTrigger != null;
-
-const isDealer = (table: Table, player: Player) =>
-    playerService.getId(table.dealer) === playerService.getId(player);
+const isDealer = (table: Table, player: Player) => table.dealer.id === player.id;
 
 const isRoundBeingPlayed = (table: Table) => table.isRoundBeingPlayed;
 
@@ -107,7 +98,7 @@ const placeBet = (table: Table, playerId: string, bet: number) => {
     playerService.setHands(player, [hand]);
     playerService.increaseEarningRate(player, -bet);
 
-    if (!hasTrigger(table)) {
+    if (table.nextTrigger == null) {
         orchestrationService.setStartRoundTrigger(table);
     }
 };
@@ -143,12 +134,8 @@ export {
     clearTrigger,
     createTable,
     deleteTable,
-    getCardSet,
     getCurrentPlayer,
-    getDealer,
-    getPlayers,
     getTableById,
-    hasTrigger,
     isDealer,
     isRoundBeingPlayed,
     joinTable,
@@ -164,12 +151,8 @@ export default {
     clearTrigger,
     createTable,
     deleteTable,
-    getCardSet,
     getCurrentPlayer,
-    getDealer,
-    getPlayers,
     getTableById,
-    hasTrigger,
     isDealer,
     isRoundBeingPlayed,
     joinTable,

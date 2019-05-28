@@ -22,9 +22,8 @@ const doublePlayerHand = (player: Player, cardSet: CardSet) => {
         throw 'Doubling is only allowed with 9, 10 or 11 points';
     }
 
-    const bet = handService.getBet(currentHand);
-    handService.setBet(currentHand, bet * 2);
-    playerService.increaseEarningRate(player, -bet);
+    handService.setBet(currentHand, currentHand.bet * 2);
+    playerService.increaseEarningRate(player, -currentHand.bet);
     dealCard(currentHand, cardSet);
     handService.markAsPlayed(currentHand);
 };

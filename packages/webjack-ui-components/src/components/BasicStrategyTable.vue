@@ -92,7 +92,6 @@
                 this.makeDecision(PlayerActions.Stand);
             },
             startRound() {
-                const bet = 1;
                 tableService.setIsRoundBeingPlayed(this.table, true);
 
                 const randomHandsSet = randomHandsService.getRandomHandsSet(this.randomState, this.table.players.length, this.table.cardSet);
@@ -103,9 +102,8 @@
                     playerService.increaseEarningRate(player, -1);
                 });
 
-                const dealer = tableService.getDealer(this.table);
                 const dealerHand = handService.create(0);
-                playerService.setHands(dealer, [randomHandsSet.dealerHand]);
+                playerService.setHands(this.table.dealer, [randomHandsSet.dealerHand]);
 
                 tableService.moveRoundForward(this.table);
             }

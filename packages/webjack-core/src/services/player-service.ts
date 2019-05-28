@@ -27,10 +27,6 @@ const createRobot = (playerName: string) => new Player(uuid(), playerName);
 
 const getCurrentHand = (player: Player) => player.hands.find(hand => !handService.isAlreadyPlayed(hand));
 
-const getHands = (player: Player) => player.hands;
-
-const getId = (player: Player) => player.id;
-
 const getPlayerById = (playerId: string) => players.find(p => p.id == playerId);
 
 const hasHands = (player: Player) => player.hands.length > 0;
@@ -63,8 +59,6 @@ export {
     createPlayer,
     createRobot,
     getCurrentHand,
-    getHands,
-    getId,
     getPlayerById,
     hasHands,
     hasUnplayedHands,
@@ -80,8 +74,6 @@ export default {
     createPlayer,
     createRobot,
     getCurrentHand,
-    getHands,
-    getId,
     getPlayerById,
     hasHands,
     hasUnplayedHands,
