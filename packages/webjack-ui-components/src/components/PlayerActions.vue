@@ -42,11 +42,10 @@
 </template>
 
 <script lang="ts">
-    import { PlayerActionsHandlers } from '../utils/handlers-types';
+    import toastr from 'toastr';
     import { blackJackService, Player, playerService, handService, basicStrategyService, PlayerActions } from 'webjack-core';
+    import { PlayerActionsHandlers } from '../utils/handlers-types';
     import ShakyElement from './ShakyElement.vue';
-
-    declare const toastr: any;
 
     interface PlayerActionsData {
         basicStrategyAttempts: number;

@@ -1,7 +1,5 @@
 <template>
-    <div>
-        <BasicStrategyTable />
-    </div>
+    <BasicStrategyTable />
 </template>
 
 <script lang="ts">
@@ -14,3 +12,11 @@
         }
     };
 </script>
+
+<style>
+    html, body {
+        height: 100%;
+        background-color: #088446;
+        color: #EEDC82;
+    }
+</style>

@@ -13,11 +13,19 @@
 </template>
 
 <script lang="ts">
+    import toastr from 'toastr';
+    import {
+        Player,
+        Table as TableModel,
+        tableService,
+        orchestrationService,
+        playerService,
+        handService,
+        randomHandsService,
+        PlayerActions
+    } from 'webjack-core';
     import Table from './Table.vue';
-    import { Player, Table as TableModel, tableService, orchestrationService, playerService, handService, randomHandsService, PlayerActions } from 'webjack-core';
     import { ActionsBarHandlers } from '../utils/handlers-types';
-
-    declare const toastr: any;
 
     export default {
         name: 'BasicStrategyTable',
@@ -27,7 +35,7 @@
         props: {
             renderCondition: {
                 type: Boolean,
-                required: true
+                default: true
             }
         },
         data() {

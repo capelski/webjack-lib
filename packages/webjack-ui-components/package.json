@@ -1,6 +1,6 @@
 {
   "name": "webjack-ui-components",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Vue UI components for a blackjack application",
   "keywords": [
     "blackjack",
@@ -24,8 +24,11 @@
     "build": "cross-env NODE_ENV=production webpack"
   },
   "dependencies": {
+    "bootstrap": "^3.2.0",
+    "jquery": "^2.1.1",
+    "toastr": "^2.1.4",
     "vue": "^2.6.10",
-    "webjack-core": "^0.0.6"
+    "webjack-core": "^0.0.7"
   },
   "devDependencies": {
     "@babel/core": "~7.2",
@@ -39,6 +42,7 @@
     "compression-webpack-plugin": "~2.0",
     "cross-env": "~5.2",
     "css-loader": "~2.1",
+    "expose-loader": "^0.7.5",
     "friendly-errors-webpack-plugin": "~1.7",
     "html-webpack-plugin": "~3.2",
     "mini-css-extract-plugin": "~0.5",
@@ -48,6 +52,7 @@
     "ts-loader": "^5.4.5",
     "typescript": "^3.4.5",
     "uglifyjs-webpack-plugin": "~1.2",
+    "url-loader": "^1.1.2",
     "vue-loader": "~15.6",
     "vue-style-loader": "~4.1",
     "vue-template-compiler": "~2.6",

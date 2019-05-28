@@ -54,6 +54,17 @@ const webpackConfig = {
                     { loader: 'css-loader', options: { sourceMap: isDev } },
                     { loader: 'sass-loader', options: { sourceMap: isDev } }
                 ]
+            },
+            {
+                test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+                loader: 'url-loader',
+                options: {
+                    limit: 100000,
+                },
+            },
+            {
+                test: require.resolve('jquery'),
+                loader: 'expose-loader?jQuery!expose-loader?$'
             }
         ]
     },
