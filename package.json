@@ -22,9 +22,10 @@
   },
   "scripts": {
     "build": "lerna run build",
+    "clean:dist": "rm packages/**/dist -rf",
     "prepare": "lerna bootstrap && npm run build",
     "publish": "lerna publish",
-    "clean:dist": "rm packages/**/dist -rf",
-    "reset": "lerna clean -y && rm -rf node_modules/"
+    "reset": "lerna clean -y && rm -rf node_modules/",
+    "symlinks": "cd packages/webjack-web-api && npm link && cd ../webjack-ui-components && npm link"
   }
 }
