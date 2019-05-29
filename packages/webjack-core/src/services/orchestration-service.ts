@@ -3,23 +3,23 @@ import { HandStatus } from '../models/hand-status';
 import { Player } from '../models/player';
 import { Table } from '../models/table';
 import { delay } from '../utils/js-generics';
-import cardSetService from './card-set-service';
-import gameParametersService from '../services/game-parameters-service';
-import handService from './hand-service';
-import playerService from './player-service';
-import tableService from './table-service';
+import { collectPlayedCards, getNextCard } from './card-set-service';
+import { getParameters } from '../services/game-parameters-service';
+import * as handService from './hand-service';
+import * as playerService from './player-service';
+import * as tableService from './table-service';
 import { PlayerActions } from '../types/player-actions';
 
 const endRound = (table: Table) => {
     tableService.clearTrigger(table);
-    cardSetService.collectPlayedCards(table.cardSet);
+    collectPlayedCards(table.cardSet);
     const players = table.players;
     players.forEach(player => playerService.setHands(player, []));
     playerService.setHands(table.dealer, []);
     tableService.setIsRoundBeingPlayed(table, false);
 };
 
-const makeDecision = (table: Table, player: Player, decision: PlayerActions) => {
+export const makeDecision = (table: Table, player: Player, decision: PlayerActions) => {
     tableService.clearTrigger(table);
     try {
         const currentHand = playerService.getCurrentHand(player)!;
@@ -30,12 +30,12 @@ const makeDecision = (table: Table, player: Player, decision: PlayerActions) => 
                 }
                 handService.setBet(currentHand, currentHand.bet * 2);
                 playerService.increaseEarningRate(player, -currentHand.bet);
-                handService.addCard(currentHand, cardSetService.getNextCard(table.cardSet));
+                handService.addCard(currentHand, getNextCard(table.cardSet));
                 handService.markAsPlayed(currentHand);
                 break;
             }
             case PlayerActions.Hit: {
-                handService.addCard(currentHand, cardSetService.getNextCard(table.cardSet));
+                handService.addCard(currentHand, getNextCard(table.cardSet));
                 break;
             }
             case PlayerActions.Split: {
@@ -51,7 +51,7 @@ const makeDecision = (table: Table, player: Player, decision: PlayerActions) => 
                 const index = player.hands.findIndex(hand => hand == currentHand);
                 player.hands.splice(index + 1, 0, newHand);
             
-                handService.addCard(currentHand, cardSetService.getNextCard(table.cardSet));
+                handService.addCard(currentHand, getNextCard(table.cardSet));
             
                 playerService.increaseEarningRate(player, -currentHand.bet);
                 break;
@@ -72,13 +72,13 @@ const makeDecision = (table: Table, player: Player, decision: PlayerActions) => 
     }
 };
 
-const moveRoundForward = (table: Table) => {
+export const moveRoundForward = (table: Table) => {
     const currentPlayer = tableService.getCurrentPlayer(table);
     if (currentPlayer) {
         const currentHand = playerService.getCurrentHand(currentPlayer)!;
 
-        if (handService.wasHandSplit(currentHand)) {
-            handService.addCard(currentHand, cardSetService.getNextCard(table.cardSet));
+        if (handService.hasBeenSplit(currentHand)) {
+            handService.addCard(currentHand, getNextCard(table.cardSet));
         }
 
         const isHandFinished = handService.updateHandStatus(currentHand);
@@ -103,7 +103,7 @@ const playDealerTurn = (table: Table) => {
 
     const dealerInterval = setInterval(() => {
         if (dealerHandValue < 17) {
-            handService.addCard(dealerHand, cardSetService.getNextCard(table.cardSet));
+            handService.addCard(dealerHand, getNextCard(table.cardSet));
             dealerHandValue = handService.getValue(dealerHand);
         }
         else {
@@ -117,7 +117,7 @@ const playDealerTurn = (table: Table) => {
     }, 1000);
 };
 
-const setStartRoundTrigger = (table: Table) => {
+export const setStartRoundTrigger = (table: Table) => {
     tableService.clearTrigger(table);
     tableService.setTrigger(table, 7, () => startRound(table));
 };
@@ -150,14 +150,14 @@ const startRound = (table: Table) => {
     playerService.setHands(dealer, [dealerHand]);
 
     const dealFirstCards = playersHand.map(hand => () => {
-        handService.addCard(hand, cardSetService.getNextCard(table.cardSet));
+        handService.addCard(hand, getNextCard(table.cardSet));
     })
     .concat([() => {
-        handService.addCard(dealerHand, cardSetService.getNextCard(table.cardSet));
+        handService.addCard(dealerHand, getNextCard(table.cardSet));
     }]);
 
     const dealSecondCards = playersHand.map(hand => () => {
-        handService.addCard(hand, cardSetService.getNextCard(table.cardSet));
+        handService.addCard(hand, getNextCard(table.cardSet));
         const isBlackJack = handService.isBlackJack(hand);
         if (isBlackJack) {
             handService.setStatus(hand, HandStatus.BlackJack);
@@ -187,7 +187,7 @@ const updatePlayersInactivity = (table: Table) => {
     const players = table.players;
     const activePlayers = players.filter(playerService.hasHands);
     const inactivePlayers = players.filter(p => !playerService.hasHands(p));
-    const { maxInactiveRounds } = gameParametersService.getParameters();
+    const { maxInactiveRounds } = getParameters();
 
     activePlayers.forEach(p => p.inactiveRounds = 0);
     inactivePlayers.forEach(p => {
@@ -196,16 +196,4 @@ const updatePlayersInactivity = (table: Table) => {
             tableService.removePlayer(table.id, p.id);
         }
     });
-};
-
-export {
-    makeDecision,
-    moveRoundForward,
-    setStartRoundTrigger
-};
-
-export default {
-    makeDecision,
-    moveRoundForward,
-    setStartRoundTrigger
 };

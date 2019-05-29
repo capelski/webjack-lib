@@ -2,7 +2,7 @@ import { BasicStrategyRandomState, BasicStrategyHandsSet } from '../types/random
 import { Card } from '../models/card';
 import { CardSet } from '../models/card-set';
 import { Hand } from '../models/hand';
-import handService from '../services/hand-service';
+import { addCard, create } from '../services/hand-service';
 
 const relevantDealerHands = [
     'A',
@@ -134,9 +134,9 @@ const getRandomHandSymbols = (randomState: BasicStrategyRandomState): string[] =
 }
 
 const getHandFromCards = (cards: Card[]) => cards.reduce((hand, card) => {
-        handService.addCard(hand, card);
+        addCard(hand, card);
         return hand;
-    }, handService.create(1));
+    }, create(1));
 
 const getPlayersRandomHand = (playersNumber: number, randomState: BasicStrategyRandomState, cardSet: CardSet): Hand[] => {
     return Array(playersNumber).fill(0).map(_ => {
@@ -192,9 +192,4 @@ export const getRandomHandsSet = (randomState: BasicStrategyRandomState, players
         playersHand: getPlayersRandomHand(playersNumber, randomState, cardSet),
         dealerHand: getDealerRandomHand(randomState, cardSet)
     };
-};
-
-export default {
-    getRandomInitialState,
-    getRandomHandsSet
 };

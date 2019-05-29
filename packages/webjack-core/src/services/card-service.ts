@@ -19,17 +19,7 @@ const cardsValue: { [key: string]: number[] } = {
 const symbols = Object.keys(cardsValue);
 const suits = ['\u2663', '\u2666', '\u2665', '\u2660'];
 
-const createDeck = () =>
+export const createDeck = () =>
     js.cartesianProduct(suits, symbols, (suit, symbol) => new Card(suit, symbol));
 
-const getValue = (card: Card) => cardsValue[card.symbol];
-
-export {
-    createDeck,
-    getValue
-};
-
-export default {
-    createDeck,
-    getValue
-};
+export const getValue = (card: Card) => cardsValue[card.symbol];

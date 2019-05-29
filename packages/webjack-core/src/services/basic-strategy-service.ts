@@ -121,7 +121,3 @@ export const getOptimalDecision = (hand: Hand, dealerHandValue: number): Optimal
         description: `The optimal decision for ${handDecisionsData.values.join('/')} (${handDecisionsData.symbols}) against a dealer ${dealerHandValue} is to ${action}`
     };
 };
-
-export default {
-    getOptimalDecision
-};

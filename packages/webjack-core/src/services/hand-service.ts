@@ -1,22 +1,22 @@
 import { Card } from '../models/card';
 import { Hand } from '../models/hand';
-import cardService from './card-service';
+import * as cardService from './card-service';
 import js from '../utils/js-generics';
 import { HandStatus } from '../models/hand-status';
 
-const addCard = (hand: Hand, card: Card) => {
+export const addCard = (hand: Hand, card: Card) => {
     hand.cards.push(card);
     hand.values = hand.cards.reduce(handValuesReducer, [0]);
 };
 
-const canDouble = (hand: Hand) => getValue(hand) > 8 && getValue(hand) < 12;
+export const canDouble = (hand: Hand) => getValue(hand) > 8 && getValue(hand) < 12;
 
-const canSplit = (hand: Hand) => hand.cards.length === 2 && cardService.getValue(hand.cards[0])[0] === cardService.getValue(hand.cards[1])[0];
+export const canSplit = (hand: Hand) => hand.cards.length === 2 && cardService.getValue(hand.cards[0])[0] === cardService.getValue(hand.cards[1])[0];
 
-const create = (bet: number) => new Hand(bet);
+export const create = (bet: number) => new Hand(bet);
 
 // TODO Split into to functions => resolve + getEarnings
-const getHandEarnings = (hand: Hand, dealerHand: Hand) => {
+export const getHandEarnings = (hand: Hand, dealerHand: Hand) => {
     let earnings = 0;
 
     if (isBust(hand)) {
@@ -57,7 +57,7 @@ const getHandEarnings = (hand: Hand, dealerHand: Hand) => {
     return total;
 };
 
-const getValue = (hand: Hand) => hand.values[hand.values.length - 1];
+export const getValue = (hand: Hand) => hand.values[hand.values.length - 1];
 
 const handValuesReducer = (reducedValues: number[], card: Card) => {
     const cardValues = cardService.getValue(card);
@@ -75,27 +75,29 @@ const handValuesReducer = (reducedValues: number[], card: Card) => {
     return nextValues;
 };
 
-const isAlreadyPlayed = (hand: Hand) => hand.played;
+export const hasBeenSplit = (hand: Hand) => hand.cards.length === 1;
 
-const isBlackJack = (hand: Hand) => isMaxValue(hand) && hand.cards.length === 2;
+export const isAlreadyPlayed = (hand: Hand) => hand.played;
 
-const isBust = (hand: Hand) => getValue(hand) > 21;
+export const isBlackJack = (hand: Hand) => isMaxValue(hand) && hand.cards.length === 2;
 
-const isMaxValue = (hand: Hand) => getValue(hand) === 21;
+export const isBust = (hand: Hand) => getValue(hand) > 21;
 
-const markAsPlayed = (hand: Hand) => {
+export const isMaxValue = (hand: Hand) => getValue(hand) === 21;
+
+export const markAsPlayed = (hand: Hand) => {
     hand.played = true;
 };
 
-const setBet = (hand: Hand, bet: number) => {
+export const setBet = (hand: Hand, bet: number) => {
     hand.bet = bet;
 };
 
-const setStatus = (hand: Hand, status: HandStatus) => {
+export const setStatus = (hand: Hand, status: HandStatus) => {
     hand.status = status;
 };
 
-const updateHandStatus = (playerHand: Hand) => {
+export const updateHandStatus = (playerHand: Hand) => {
     const _isBlackJack = isBlackJack(playerHand);
     const _isBust = isBust(playerHand);
     const _isMaxValue = isMaxValue(playerHand);
@@ -114,43 +116,4 @@ const updateHandStatus = (playerHand: Hand) => {
     }
 
     return isHandFinished;
-};
-
-// TODO Rename to hasBeenSplit
-const wasHandSplit = (hand: Hand) => hand.cards.length === 1;
-
-export {
-    addCard,
-    canDouble,
-    canSplit,
-    create,
-    getHandEarnings,
-    getValue,
-    isAlreadyPlayed,
-    isBlackJack,
-    isBust,
-    isMaxValue,
-    markAsPlayed,
-    setBet,
-    setStatus,
-    updateHandStatus,
-    wasHandSplit
-};
-
-export default {
-    addCard,
-    canDouble,
-    canSplit,
-    create,
-    getHandEarnings,
-    getValue,
-    isAlreadyPlayed,
-    isBlackJack,
-    isBust,
-    isMaxValue,
-    markAsPlayed,
-    setBet,
-    setStatus,
-    updateHandStatus,
-    wasHandSplit
 };

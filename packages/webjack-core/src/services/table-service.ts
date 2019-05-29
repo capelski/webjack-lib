@@ -1,38 +1,38 @@
 import { Player } from '../models/player';
 import { Table } from '../models/table';
-import cardSetService from './card-set-service';
-import gameParametersService from './game-parameters-service';
-import playerService from './player-service';
-import orchestrationService from './orchestration-service';
-import handService from './hand-service';
+import { createCardSet } from './card-set-service';
+import { getParameters } from './game-parameters-service';
+import * as playerService from './player-service';
+import * as orchestrationService from './orchestration-service';
+import * as handService from './hand-service';
 import { v4 as uuid } from 'uuid';
 import { PlayerActions } from '../types/player-actions';
 
 let tables: Table[] = [];
 
-const clearTrigger = (table: Table) => {
+export const clearTrigger = (table: Table) => {
     if (table.nextTrigger) {
         clearTimeout(table.nextTrigger as any)
     };
      table.nextTrigger = table.nextActionTimestamp = table.baseTimestamp = undefined;
 };
 
-const createTable = () => {
+export const createTable = () => {
     const tableId = uuid();
     const dealer = playerService.createDealer();
-    const cardSet = cardSetService.createCardSet();
+    const cardSet = createCardSet();
 
     const table = new Table(tableId, dealer, cardSet);
     tables.push(table);
     return table;
 };
 
-const deleteTable = (tableId: string) => {
+export const deleteTable = (tableId: string) => {
     tables = tables.filter(table => table.id !== tableId);
 };
 
 const getAvailableTable = () => {
-    const { maxPlayers } = gameParametersService.getParameters();
+    const { maxPlayers } = getParameters();
     let table = tables.find(t => t.players.length < maxPlayers);
     if (!table) {
         table = createTable();
@@ -40,7 +40,7 @@ const getAvailableTable = () => {
     return table;
 };
 
-const getCurrentPlayer = (table: Table): Player | undefined => {
+export const getCurrentPlayer = (table: Table): Player | undefined => {
     let currentPlayer: Player | undefined;
     if (table.isRoundBeingPlayed) {
         currentPlayer = table.players.find(playerService.hasUnplayedHands);
@@ -48,14 +48,14 @@ const getCurrentPlayer = (table: Table): Player | undefined => {
     return currentPlayer;
 };
 
-const getTableById = (tableId: string) => tables.find(t => t.id == tableId);
+export const getTableById = (tableId: string) => tables.find(t => t.id == tableId);
 
-const isDealerTurn = (table: Table): boolean =>
+export const isDealerTurn = (table: Table): boolean =>
     table.isRoundBeingPlayed && !getCurrentPlayer(table) && playerService.hasUnplayedHands(table.dealer);
 
-const isRoundBeingPlayed = (table: Table) => table.isRoundBeingPlayed;
+export const isRoundBeingPlayed = (table: Table) => table.isRoundBeingPlayed;
 
-const joinTable = (playerId: string) => {
+export const joinTable = (playerId: string) => {
     const player = playerService.getPlayerById(playerId);
     if (!player) {
         throw 'No player identified by ' + playerId + ' was found';
@@ -67,7 +67,7 @@ const joinTable = (playerId: string) => {
     return table;
 };
 
-const makeDecision = (table: Table, playerId: string, decision: PlayerActions) => {
+export const makeDecision = (table: Table, playerId: string, decision: PlayerActions) => {
     const currentPlayer = getCurrentPlayer(table);
     if (!currentPlayer) {
         throw 'No player is playing now';
@@ -80,9 +80,9 @@ const makeDecision = (table: Table, playerId: string, decision: PlayerActions) =
     orchestrationService.makeDecision(table, currentPlayer, decision);
 };
 
-const moveRoundForward = (table: Table) => orchestrationService.moveRoundForward(table);
+export const moveRoundForward = (table: Table) => orchestrationService.moveRoundForward(table);
 
-const placeBet = (table: Table, playerId: string, bet: number) => {
+export const placeBet = (table: Table, playerId: string, bet: number) => {
     const player = table.players.find(p => p.id == playerId);
     if (!player) {
         throw 'No player identified by ' + playerId + ' was found';
@@ -101,7 +101,7 @@ const placeBet = (table: Table, playerId: string, bet: number) => {
     }
 };
 
-const removePlayer = (tableId: string, playerId: string) => {
+export const removePlayer = (tableId: string, playerId: string) => {
     const table = getTableById(tableId);
     if (!table) {
         throw 'No table identified by ' + tableId + ' was found';
@@ -119,45 +119,11 @@ const removePlayer = (tableId: string, playerId: string) => {
     table.players = table.players.filter(player => player.id != playerId);
 };
 
-const setIsRoundBeingPlayed = (table: Table, isRoundBeingPlayed: boolean) => {
+export const setIsRoundBeingPlayed = (table: Table, isRoundBeingPlayed: boolean) => {
     table.isRoundBeingPlayed = isRoundBeingPlayed;
 };
 
-const setTrigger = (table: Table, seconds: number, callback: (...args: any[]) => void) => {
+export const setTrigger = (table: Table, seconds: number, callback: (...args: any[]) => void) => {
     table.nextTrigger = setTimeout(callback, seconds * 1000) as any;
     table.nextActionTimestamp = Date.now() + seconds * 1000;
-};
-
-export {
-    clearTrigger,
-    createTable,
-    deleteTable,
-    getCurrentPlayer,
-    getTableById,
-    isDealerTurn,
-    isRoundBeingPlayed,
-    joinTable,
-    makeDecision,
-    moveRoundForward,
-    placeBet,
-    removePlayer,
-    setIsRoundBeingPlayed,
-    setTrigger
-};
-
-export default {
-    clearTrigger,
-    createTable,
-    deleteTable,
-    getCurrentPlayer,
-    getTableById,
-    isDealerTurn,
-    isRoundBeingPlayed,
-    joinTable,
-    makeDecision,
-    moveRoundForward,
-    placeBet,
-    removePlayer,
-    setIsRoundBeingPlayed,
-    setTrigger
 };

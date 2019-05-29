@@ -1,13 +1,13 @@
 import { Player } from '../models/player';
 import { Hand } from '../models/hand';
-import handService from './hand-service';
+import { isAlreadyPlayed } from './hand-service';
 import { v4 as uuid } from 'uuid';
 
 let players: Player[] = [];
 
-const createDealer = () => new Player(uuid(), 'Dealer');
+export const createDealer = () => new Player(uuid(), 'Dealer');
 
-const createPlayer = (playerName: string) => {
+export const createPlayer = (playerName: string) => {
     if (!playerName || !playerName.trim()) throw 'No player name was provided';
     playerName = playerName.trim();
     
@@ -23,63 +23,33 @@ const createPlayer = (playerName: string) => {
     return player;
 }
 
-const createRobot = (playerName: string) => new Player(uuid(), playerName);
+export const createRobot = (playerName: string) => new Player(uuid(), playerName);
 
-const getCurrentHand = (player: Player) => player.hands.find(hand => !handService.isAlreadyPlayed(hand));
+export const getCurrentHand = (player: Player) => player.hands.find(hand => !isAlreadyPlayed(hand));
 
-const getPlayerById = (playerId: string) => players.find(p => p.id == playerId);
+export const getPlayerById = (playerId: string) => players.find(p => p.id == playerId);
 
-const hasHands = (player: Player) => player.hands.length > 0;
+export const hasHands = (player: Player) => player.hands.length > 0;
 
-const hasUnplayedHands = (player: Player) =>
-    player.hands.reduce((unplayedHand, hand) => unplayedHand || !handService.isAlreadyPlayed(hand), false);
+export const hasUnplayedHands = (player: Player) =>
+    player.hands.reduce((unplayedHand, hand) => unplayedHand || !isAlreadyPlayed(hand), false);
 
-const increaseEarningRate = (player: Player, earningRateVariation: number) => {
+export const increaseEarningRate = (player: Player, earningRateVariation: number) => {
     player.earningRate += earningRateVariation;
 };
 
-const increaseInactiveRounds = (player: Player) => {
+export const increaseInactiveRounds = (player: Player) => {
     player.inactiveRounds++;
 };
 
-const setHands = (player: Player, hands: Hand[]) => {
+export const setHands = (player: Player, hands: Hand[]) => {
     player.hands = hands;
 };
 
-const setInactiveRounds = (player: Player, inactiveRounds: number) => {
+export const setInactiveRounds = (player: Player, inactiveRounds: number) => {
     player.inactiveRounds = inactiveRounds;
 };
 
-const updateEarningRate = (player: Player, earningRate: number) => {
+export const updateEarningRate = (player: Player, earningRate: number) => {
     player.earningRate += earningRate;
-};
-
-export {
-    createDealer,
-    createPlayer,
-    createRobot,
-    getCurrentHand,
-    getPlayerById,
-    hasHands,
-    hasUnplayedHands,
-    increaseInactiveRounds,
-    increaseEarningRate,
-    setInactiveRounds,
-    setHands,
-    updateEarningRate
-};
-
-export default {
-    createDealer,
-    createPlayer,
-    createRobot,
-    getCurrentHand,
-    getPlayerById,
-    hasHands,
-    hasUnplayedHands,
-    increaseInactiveRounds,
-    increaseEarningRate,
-    setInactiveRounds,
-    setHands,
-    updateEarningRate
 };
