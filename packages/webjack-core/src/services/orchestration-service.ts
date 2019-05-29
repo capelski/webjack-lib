@@ -3,7 +3,6 @@ import { HandStatus } from '../models/hand-status';
 import { Player } from '../models/player';
 import { Table } from '../models/table';
 import { delay } from '../utils/js-generics';
-import blackJackService from './black-jack-service';
 import cardSetService from './card-set-service';
 import gameParametersService from '../services/game-parameters-service';
 import handService from './hand-service';
@@ -23,21 +22,42 @@ const endRound = (table: Table) => {
 const makeDecision = (table: Table, player: Player, decision: PlayerActions) => {
     tableService.clearTrigger(table);
     try {
+        const currentHand = playerService.getCurrentHand(player)!;
         switch (decision) {
             case PlayerActions.Double: {
-                blackJackService.doublePlayerHand(player, table.cardSet);
+                if (!handService.canDouble(currentHand)) {
+                    throw 'Doubling is only allowed with 9, 10 or 11 points';
+                }
+                handService.setBet(currentHand, currentHand.bet * 2);
+                playerService.increaseEarningRate(player, -currentHand.bet);
+                handService.addCard(currentHand, cardSetService.getNextCard(table.cardSet));
+                handService.markAsPlayed(currentHand);
                 break;
             }
             case PlayerActions.Hit: {
-                blackJackService.hitPlayerHand(player, table.cardSet);
+                handService.addCard(currentHand, cardSetService.getNextCard(table.cardSet));
                 break;
             }
             case PlayerActions.Split: {
-                blackJackService.splitPlayerHand(player, table.cardSet);
+                if (!handService.canSplit(currentHand)) {
+                    throw 'Splitting is only allowed with two equal cards!';
+                }
+            
+                const handLastCard = currentHand.cards.splice(-1)[0];
+            
+                const newHand = handService.create(currentHand.bet);
+                handService.addCard(newHand, handLastCard);
+            
+                const index = player.hands.findIndex(hand => hand == currentHand);
+                player.hands.splice(index + 1, 0, newHand);
+            
+                handService.addCard(currentHand, cardSetService.getNextCard(table.cardSet));
+            
+                playerService.increaseEarningRate(player, -currentHand.bet);
                 break;
             }
             case PlayerActions.Stand: {
-                blackJackService.standPlayerHand(player);
+                handService.markAsPlayed(currentHand);
                 break;
             }
             default:
@@ -57,11 +77,11 @@ const moveRoundForward = (table: Table) => {
     if (currentPlayer) {
         const currentHand = playerService.getCurrentHand(currentPlayer)!;
 
-        if (blackJackService.wasHandSplit(currentHand)) {
-            blackJackService.dealCard(currentHand, table.cardSet);
+        if (handService.wasHandSplit(currentHand)) {
+            handService.addCard(currentHand, cardSetService.getNextCard(table.cardSet));
         }
 
-        const isHandFinished = updateHandStatus(currentHand);
+        const isHandFinished = handService.updateHandStatus(currentHand);
         if (isHandFinished) {
             moveRoundForward(table);
         }
@@ -83,7 +103,7 @@ const playDealerTurn = (table: Table) => {
 
     const dealerInterval = setInterval(() => {
         if (dealerHandValue < 17) {
-            blackJackService.dealCard(dealerHand, table.cardSet);
+            handService.addCard(dealerHand, cardSetService.getNextCard(table.cardSet));
             dealerHandValue = handService.getValue(dealerHand);
         }
         else {
@@ -104,7 +124,8 @@ const setStartRoundTrigger = (table: Table) => {
 
 const setMakeDecisionTrigger = (table: Table, player: Player) =>
     tableService.setTrigger(table, 20, () => {
-        blackJackService.standPlayerHand(player);
+        const currentHand = playerService.getCurrentHand(player)!;
+        handService.markAsPlayed(currentHand);
         moveRoundForward(table);
     });
 
@@ -129,15 +150,15 @@ const startRound = (table: Table) => {
     playerService.setHands(dealer, [dealerHand]);
 
     const dealFirstCards = playersHand.map(hand => () => {
-        blackJackService.dealCard(hand, table.cardSet);
+        handService.addCard(hand, cardSetService.getNextCard(table.cardSet));
     })
     .concat([() => {
-        blackJackService.dealCard(dealerHand, table.cardSet);
+        handService.addCard(dealerHand, cardSetService.getNextCard(table.cardSet));
     }]);
 
     const dealSecondCards = playersHand.map(hand => () => {
-        blackJackService.dealCard(hand, table.cardSet);
-        const isBlackJack = blackJackService.isBlackJack(hand);
+        handService.addCard(hand, cardSetService.getNextCard(table.cardSet));
+        const isBlackJack = handService.isBlackJack(hand);
         if (isBlackJack) {
             handService.setStatus(hand, HandStatus.BlackJack);
             handService.markAsPlayed(hand);
@@ -149,32 +170,11 @@ const startRound = (table: Table) => {
         .then(() => moveRoundForward(table));
 };
 
-const updateHandStatus = (playerHand: Hand) => {
-    const isBlackJack = blackJackService.isBlackJack(playerHand);
-    const isBust = blackJackService.isBust(playerHand);
-    const isMaxValue = blackJackService.isMaxValue(playerHand);
-
-    if (isBust) {
-        handService.setStatus(playerHand, HandStatus.Bust);
-    }
-    else if (isBlackJack) {
-        handService.setStatus(playerHand, HandStatus.BlackJack);
-    }
-    
-    const isHandFinished = isBlackJack || isBust || isMaxValue;
-    
-    if (isHandFinished) {
-        handService.markAsPlayed(playerHand);
-    }
-
-    return isHandFinished;
-};
-
 const updatePlayersEarnings = (players: Player[], dealerHand: Hand) => {
     players.forEach(player => {
         const playerHands = player.hands;
         const handsEarnings = playerHands.map(hand => {
-            const handEarnings = blackJackService.getHandEarnings(hand, dealerHand);
+            const handEarnings = handService.getHandEarnings(hand, dealerHand);
             handService.setBet(hand, 0);
             return handEarnings;
         });

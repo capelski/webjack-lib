@@ -43,7 +43,7 @@
 
 <script lang="ts">
     import toastr from 'toastr';
-    import { blackJackService, Player, playerService, handService, basicStrategyService, PlayerActions } from 'webjack-core';
+    import { Player, playerService, handService, basicStrategyService, PlayerActions } from 'webjack-core';
     import { PlayerActionsHandlers } from '../utils/handlers-types';
     import ShakyElement from './ShakyElement.vue';
 
@@ -94,11 +94,11 @@
         computed: {
             canDouble() {
                 const hand = playerService.getCurrentHand(this.userPlayer);
-                return blackJackService.canDouble(hand!);
+                return handService.canDouble(hand!);
             },
             canSplit() {
                 const hand = playerService.getCurrentHand(this.userPlayer);
-                return blackJackService.canSplit(hand!);
+                return handService.canSplit(hand!);
             },
             dealerScore() {
                 let dealerScore;

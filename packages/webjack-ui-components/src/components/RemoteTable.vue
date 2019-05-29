@@ -14,7 +14,7 @@
             :basicStrategyProgress="-1"
             :isUserPlayerHandler="isUserPlayer"
             :evaluteDecisions="false"
-            :displayDecisionHelp="true"
+            :displayDecisionHelp="false"
             :startRoundButtonText="'Place bet'"
         />
     </div>

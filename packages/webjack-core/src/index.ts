@@ -6,7 +6,6 @@ import { Hand } from './models/hand';
 import { Player } from './models/player';
 import { Table } from './models/table';
 import basicStrategyService from './services/basic-strategy-service';
-import blackJackService from './services/black-jack-service';
 import cardSetService from './services/card-set-service';
 import gameParametersService from './services/game-parameters-service';
 import handService from './services/hand-service';
@@ -23,7 +22,6 @@ export {
 	Player,
 	Table,
 	basicStrategyService,
-	blackJackService,
 	cardSetService,
 	GameParameters,
 	gameParametersService,
