@@ -1,5 +1,5 @@
 import { Card } from './card';
-import { HandStatus } from './hand-status';
+import { HandStatus } from '../types/hand-status';
 
 export interface Hand {
     bet: number;

@@ -4,9 +4,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'toastr/build/toastr.min.css';
     
 import Vue from 'vue';
-import App from './App.vue';
+import Development from './Development.vue';
 
 new Vue({
-    el: '#app',
-    render: h => h(App)
+    el: '#dev-app',
+    render: h => h(Development)
 });

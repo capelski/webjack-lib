@@ -43,7 +43,7 @@
 
 <script lang="ts">
     import toastr from 'toastr';
-    import { Player, playerService, handService, basicStrategyService, PlayerActions } from 'webjack-core';
+    import { models, services, types } from 'webjack-core';
     import { PlayerActionsHandlers } from '../utils/handlers-types';
     import ShakyElement from './ShakyElement.vue';
 
@@ -68,7 +68,7 @@
             },
             // TODO Replace by dealer hand
             dealer: {
-                type: Player,
+                type: models.Player,
                 required: true
             },
             displayDecisionHelp: {
@@ -82,7 +82,7 @@
             },
             // TODO Replace by user hand
             userPlayer: {
-                type: Player
+                type: models.Player
             }
         },
         data() {
@@ -93,32 +93,32 @@
         },
         computed: {
             canDouble() {
-                const hand = playerService.getCurrentHand(this.userPlayer);
-                return handService.canDouble(hand!);
+                const hand = services.playerService.getCurrentHand(this.userPlayer);
+                return services.handService.canDouble(hand!);
             },
             canSplit() {
-                const hand = playerService.getCurrentHand(this.userPlayer);
-                return handService.canSplit(hand!);
+                const hand = services.playerService.getCurrentHand(this.userPlayer);
+                return services.handService.canSplit(hand!);
             },
             dealerScore() {
                 let dealerScore;
-                const dealerHand = playerService.getCurrentHand(this.dealer);
+                const dealerHand = services.playerService.getCurrentHand(this.dealer);
                 if (dealerHand) {
-                    dealerScore = handService.getValue(dealerHand);
+                    dealerScore = services.handService.getValue(dealerHand);
                 }
                 return dealerScore;
             }
         },
         methods: {
             displayOptimalDecision() {
-                const hand = playerService.getCurrentHand(this.userPlayer);
-                const optimalDecisionInfo = basicStrategyService.getOptimalDecision(hand!, this.dealerScore!).description;
+                const hand = services.playerService.getCurrentHand(this.userPlayer);
+                const optimalDecisionInfo = services.basicStrategyService.getOptimalDecision(hand!, this.dealerScore!).description;
                 toastr.info(optimalDecisionInfo, 'Basic strategy');
             },
             double() {
                 if (this.canDouble) {
                     if (this.evaluteDecisions) {
-                        this.evaluatePlayerDecision(PlayerActions.Double);
+                        this.evaluatePlayerDecision(types.PlayerActions.Double);
                     }
                     this.actionsHandlers.double();
                 }
@@ -126,11 +126,11 @@
                     toastr.error('Doubling is only allowed with 9, 10 or 11 points', 'Action not allowed');
                 }
             },
-            evaluatePlayerDecision(userDecision: PlayerActions) {
-                const hand = playerService.getCurrentHand(this.userPlayer);
-                const optimalDecision = basicStrategyService.getOptimalDecision(hand!, this.dealerScore!);
+            evaluatePlayerDecision(userDecision: types.PlayerActions) {
+                const hand = services.playerService.getCurrentHand(this.userPlayer);
+                const optimalDecision = services.basicStrategyService.getOptimalDecision(hand!, this.dealerScore!);
                 this.basicStrategyAttempts++;
-                if (optimalDecision.action == userDecision) {
+                if (optimalDecision.action === userDecision) {
                     this.basicStrategyHits++;
                 }
                 else {
@@ -139,14 +139,14 @@
             },
             hit() {
                 if (this.evaluteDecisions) {
-                    this.evaluatePlayerDecision(PlayerActions.Hit);
+                    this.evaluatePlayerDecision(types.PlayerActions.Hit);
                 }
                 this.actionsHandlers.hit();
             },
             split() {
                 if (this.canSplit) {
                     if (this.evaluteDecisions) {
-                        this.evaluatePlayerDecision(PlayerActions.Split);
+                        this.evaluatePlayerDecision(types.PlayerActions.Split);
                     }
                     this.actionsHandlers.split();
                 }
@@ -156,7 +156,7 @@
             },
             stand() {
                 if (this.evaluteDecisions) {
-                    this.evaluatePlayerDecision(PlayerActions.Stand);
+                    this.evaluatePlayerDecision(types.PlayerActions.Stand);
                 }
                 this.actionsHandlers.stand();
             }

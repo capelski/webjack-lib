@@ -1,6 +1,6 @@
 import * as playerController from './controllers/player-controller';
 import * as tableController from './controllers/table-controller';
-import { GameParameters, gameParametersService, Card, cardSetService } from 'webjack-core';
+import { models, services } from 'webjack-core';
 import { Router, Application } from 'express';
 
 export const exposeWebjackRoutes = (app: Application | Router, routesPrefix = '') => {
@@ -17,8 +17,8 @@ export const exposeWebjackRoutes = (app: Application | Router, routesPrefix = ''
 	app.get(`${routesPrefix}/exit-table`, tableController.exitTable);
 };
 
-export const setGameParameters = (gameParameters: GameParameters) =>
-	gameParametersService.setParameters(gameParameters);
+export const setGameParameters = (gameParameters: models.GameParameters) =>
+	services.gameParametersService.setParameters(gameParameters);
 
-export const useDevelopmentCardSet = (developmentCardSet: Card[]) =>
-	cardSetService.useDevelopmentCards(developmentCardSet);
+export const useDevelopmentCardSet = (developmentCardSet: models.Card[]) =>
+	services.cardSetService.useDevelopmentCards(developmentCardSet);

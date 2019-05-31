@@ -4,6 +4,7 @@ import { CardSet } from '../models/card-set';
 import { Hand } from '../models/hand';
 import { addCard, create } from '../services/hand-service';
 
+// TODO Merge into cardSetService. Avoid BasicStrategyService manipulation
 const relevantDealerHands = [
     'A',
     '2',

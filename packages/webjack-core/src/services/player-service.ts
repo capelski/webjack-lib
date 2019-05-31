@@ -1,6 +1,6 @@
 import { Player } from '../models/player';
 import { Hand } from '../models/hand';
-import { isAlreadyPlayed } from './hand-service';
+import { create as createHand, isAlreadyPlayed } from './hand-service';
 import { v4 as uuid } from 'uuid';
 
 let players: Player[] = [];
@@ -8,26 +8,19 @@ let players: Player[] = [];
 export const createDealer = () => new Player(uuid(), 'Dealer');
 
 export const createPlayer = (playerName: string) => {
-    if (!playerName || !playerName.trim()) throw 'No player name was provided';
-    playerName = playerName.trim();
-    
-    if (playerName.toLowerCase() == 'dealer') throw 'So you think you are funny, huh? Choose another name';
-
-    const existingPlayer = players.find(p => p.name.toLowerCase() == playerName.toLowerCase());
-    if (existingPlayer) {
-        throw playerName + ' is already taken. Please choose another name';
-    }
-
     const player = new Player(uuid(), playerName);
     players.push(player);
     return player;
 }
 
+// TODO Remove this method an create removePlayer
 export const createRobot = (playerName: string) => new Player(uuid(), playerName);
 
 export const getCurrentHand = (player: Player) => player.hands.find(hand => !isAlreadyPlayed(hand));
 
-export const getPlayerById = (playerId: string) => players.find(p => p.id == playerId);
+export const getPlayerById = (playerId: string) => players.find(p => p.id === playerId);
+
+export const getPlayerByName = (name: string) => players.find(p => p.name.toLowerCase() === name.toLowerCase());
 
 export const hasHands = (player: Player) => player.hands.length > 0;
 
@@ -41,6 +34,12 @@ export const increaseEarningRate = (player: Player, earningRateVariation: number
 export const increaseInactiveRounds = (player: Player) => {
     player.inactiveRounds++;
 };
+
+export const initializeHand = (player: Player, bet: number) => {
+    const hand = createHand(bet);
+    setHands(player, [hand]);
+    increaseEarningRate(player, -bet);
+}
 
 export const setHands = (player: Player, hands: Hand[]) => {
     player.hands = hands;

@@ -23,7 +23,7 @@
                     <li v-for="(hand, handIndex) in player.hands" :key="handIndex" class="text-center">
                         <span v-for="(card, cardIndex) in hand.cards"
                             :key="cardIndex"
-                            :class="{ 'card': true, 'red': card.suit == '♦' || card.suit == '♥', 'black': card.suit == '♠' || card.suit == '♣'}">
+                            :class="{ 'card': true, 'red': card.suit === '♦' || card.suit === '♥', 'black': card.suit === '♠' || card.suit === '♣'}">
                             {{ card.symbol + card.suit }}
                         </span>
                         <div v-if="hand.status">{{ hand.status }}</div>
@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-    import { Player as PlayerModel } from 'webjack-core';
+    import { models } from 'webjack-core';
     import ShakyElement from './ShakyElement.vue';
 
     export default {
@@ -67,7 +67,7 @@
                 type: Boolean
             },
             player: {
-                type: PlayerModel
+                type: models.Player
             }
         },
         computed: {

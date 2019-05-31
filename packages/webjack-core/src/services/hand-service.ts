@@ -2,7 +2,7 @@ import { Card } from '../models/card';
 import { Hand } from '../models/hand';
 import * as cardService from './card-service';
 import js from '../utils/js-generics';
-import { HandStatus } from '../models/hand-status';
+import { HandStatus } from '../types/hand-status';
 
 export const addCard = (hand: Hand, card: Card) => {
     hand.cards.push(card);

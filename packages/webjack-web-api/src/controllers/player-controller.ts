@@ -1,16 +1,18 @@
-import { playerService } from 'webjack-core';
+import { useCases } from 'webjack-core';
 import { Request, Response } from 'express';
 
 export const registerPlayer = (req: Request, res: Response) => {
-    if (!req.session!.playerId) {
-        try {
-            const player = playerService.createPlayer(req.query.name);
-            req.session!.playerId = player.id;
-        }
-        catch (exception) {
-            return res.status(400).send(JSON.stringify({ message: exception }));
-        }
+    if (req.session!.playerId) {
+        return res.status(400).send(JSON.stringify({ message: 'You have already registered' }));
     }
-    
-    return res.send(JSON.stringify({ playerId: req.session!.playerId }));
+
+    const playerName = req.query.name;
+    const useCaseResult = useCases.registerPlayer(playerName);
+    if (useCaseResult.ok) {
+        req.session!.playerId = useCaseResult.result!.id;
+        res.status(200).send(JSON.stringify({ playerId: useCaseResult.result!.id }));
+    }
+    else {
+        res.status(400).send(JSON.stringify({ message: useCaseResult.error }));
+    }
 };

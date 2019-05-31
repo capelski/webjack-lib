@@ -20,12 +20,15 @@
     "url": "git+https://github.com/L3bowski/webjack-lib.git"
   },
   "scripts": {
-    "build": "rm -rf dist && tsc"
+    "build": "rm -rf dist && tsc",
+    "dev": "tsc -p tsconfig.dev.json && node dist/development.js"
   },
   "devDependencies": {
     "@types/express": "^4.16.1",
     "@types/express-session": "^1.15.12",
     "@types/node": "^11.13.5",
+    "express": "^4.17.1",
+    "express-session": "^1.16.1",
     "typescript": "^3.4.3"
   },
   "dependencies": {

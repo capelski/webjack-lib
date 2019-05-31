@@ -6,9 +6,9 @@ export interface Table {
     cardSet: CardSet;
     dealer: Player
     id: string;
-    isRoundBeingPlayed: boolean;
+    isRoundBeingPlayed: boolean; // TODO Replace with status; IDLE, betsPlaced, playerTurn, dealerTurn, etc.
     nextActionTimestamp: number | undefined;
-    nextTrigger: number | undefined;
+    nextAction: number | undefined;
     players: Player[];
 }
 
@@ -17,7 +17,7 @@ export class Table implements Table {
         this.baseTimestamp = undefined;
         this.isRoundBeingPlayed = false;
         this.nextActionTimestamp = undefined;
-        this.nextTrigger = undefined;
+        this.nextAction = undefined;
         this.players = [];
     }
 }

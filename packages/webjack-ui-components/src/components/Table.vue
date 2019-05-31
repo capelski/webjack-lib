@@ -36,7 +36,7 @@
     import Player from './Player.vue';
     import ActionsBar from './ActionsBar.vue';
     import { ActionsBarHandlers } from '../utils/handlers-types';
-    import { Player as PlayerModel, Table, tableService } from 'webjack-core';
+    import { models, services } from 'webjack-core';
 
     export default {
         name: 'Table',
@@ -67,7 +67,7 @@
                 required: true
             },
             table: {
-                type: Table,
+                type: models.Table,
                 required: true
             },
             userPlayerId: {
@@ -77,18 +77,18 @@
         },
         computed: {
             currentPlayerId() {
-                const currentPlayer = tableService.getCurrentPlayer(this.table);
+                const currentPlayer = services.tableService.getCurrentPlayer(this.table);
                 return currentPlayer ? currentPlayer.id : undefined;
             },
             isDealerTurn() {
-                return tableService.isDealerTurn(this.table);
+                return services.tableService.isDealerTurn(this.table);
             },
             userPlayer() {
                 return this.table.players.find(player => player.id === this.userPlayerId);
             }
         },
         methods: {
-            isUserPlayer(player: PlayerModel) {
+            isUserPlayer(player: models.Player) {
                 return player && this.isUserPlayerHandler(player);
             }
         }

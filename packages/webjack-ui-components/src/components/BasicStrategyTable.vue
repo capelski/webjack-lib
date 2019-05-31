@@ -14,15 +14,7 @@
 
 <script lang="ts">
     import toastr from 'toastr';
-    import {
-        Player,
-        Table as TableModel,
-        tableService,
-        playerService,
-        handService,
-        randomHandsService,
-        PlayerActions
-    } from 'webjack-core';
+    import { models, services, types, useCases } from 'webjack-core';
     import Table from './Table.vue';
     import { ActionsBarHandlers } from '../utils/handlers-types';
 
@@ -38,13 +30,13 @@
             }
         },
         data() {
-            const table = tableService.createTable();
+            const table = services.tableService.createTable();
             table.players = ' '.repeat(7).split('')
-                .map((_, index) => playerService.createRobot(`Robot ${index + 1}`));
+                .map((_, index) => services.playerService.createRobot(`Robot ${index + 1}`));
 
             return {
                 table: table,
-                randomState: randomHandsService.getRandomInitialState()
+                randomState: services.randomHandsService.getRandomInitialState()
             };
         },
         computed: {
@@ -58,50 +50,49 @@
                     stand: this.stand
                 } as ActionsBarHandlers;
             },
-            userPlayerId(): Player | undefined {
-                return (tableService.getCurrentPlayer(this.table) || this.table.players[0]).id;
+            userPlayerId(): models.Player | undefined {
+                return (services.tableService.getCurrentPlayer(this.table) || this.table.players[0]).id;
             }
         },
         methods: {
             double() {
-                this.makeDecision(PlayerActions.Double);
+                this.makeDecision(types.PlayerActions.Double);
             },
             exitTable() {
-                tableService.deleteTable(this.table.id);
+                services.tableService.deleteTable(this.table.id);
                 this.$emit('TableExited');
             },
             hit() {
-                this.makeDecision(PlayerActions.Hit);
+                this.makeDecision(types.PlayerActions.Hit);
             },
-            makeDecision(decision: PlayerActions) {
-                try {
-                    tableService.makeDecision(this.table, this.userPlayerId, decision);
-                }
-                catch(exception) {
-                    toastr.error(exception);
+            makeDecision(decision: types.PlayerActions) {
+                const result =
+                    useCases.makeDecision(this.table.id, this.userPlayerId, decision);
+                if (!result.ok) {
+                    toastr.error(result.error);
                 }
             },
             split() {
-                this.makeDecision(PlayerActions.Split);
+                this.makeDecision(types.PlayerActions.Split);
             },
             stand() {
-                this.makeDecision(PlayerActions.Stand);
+                this.makeDecision(types.PlayerActions.Stand);
             },
             startRound() {
-                tableService.setIsRoundBeingPlayed(this.table, true);
+                services.tableService.setIsRoundBeingPlayed(this.table, true);
 
-                const randomHandsSet = randomHandsService.getRandomHandsSet(this.randomState, this.table.players.length, this.table.cardSet);
+                const randomHandsSet = services.randomHandsService.getRandomHandsSet(this.randomState, this.table.players.length, this.table.cardSet);
 
                 this.table.players.forEach((player, index) => {
                     const randomHand = randomHandsSet.playersHand[index];
-                    playerService.setHands(player, [randomHand]);
-                    playerService.increaseEarningRate(player, -1);
+                    services.playerService.setHands(player, [randomHand]);
+                    services.playerService.increaseEarningRate(player, -1);
                 });
 
-                const dealerHand = handService.create(0);
-                playerService.setHands(this.table.dealer, [randomHandsSet.dealerHand]);
+                const dealerHand = services.handService.create(0);
+                services.playerService.setHands(this.table.dealer, [randomHandsSet.dealerHand]);
 
-                tableService.moveRoundForward(this.table);
+                useCases.moveRoundForward(this.table);
             }
         }
     };

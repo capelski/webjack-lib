@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-    import { Player, Table } from 'webjack-core';
+    import { models } from 'webjack-core';
 
     interface CountdownData {
         countdownAnimation: boolean;
@@ -23,7 +23,7 @@
         name: 'Countdown',
         props: {
             table: {
-                type: Table,
+                type: models.Table,
                 required: true
             },
             isPlayerTurn: {

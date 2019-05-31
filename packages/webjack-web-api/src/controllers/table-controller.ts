@@ -1,25 +1,27 @@
-import { tableService } from 'webjack-core';
+import { services, useCases } from 'webjack-core';
 import { Request, Response } from 'express';
 
 export const exitTable = (req: Request, res: Response) => {
-    const playerId = req.session!.playerId;
-    const tableId = req.session!.tableId;
-    tableService.removePlayer(tableId, playerId);
-    delete req.session!.tableId;
-    return res.status(200).send(JSON.stringify({}));
+    const useCaseResult = useCases.exitTable(req.session!.tableId, req.session!.playerId);
+    if (useCaseResult.ok) {
+        delete req.session!.tableId;
+        res.status(200).send(JSON.stringify({}));
+    }
+    else {
+        res.status(400).send(JSON.stringify({ message: useCaseResult.error }));
+    }
 };
 
 export const getTableStatus = (req: Request, res: Response) => {
-    const table = tableService.getTableById(req.session!.tableId);
+    const table = services.tableService.getTableById(req.session!.tableId);
     if (!table) {
-        return noTableJoined(res);
+        res.status(400).send(JSON.stringify({ message: 'No table has been joined' }));
     }
     else {
-        const player = table.players.find(p => p.id == req.session!.playerId);
-
+        const player = services.tableService.getPlayerById(table, req.session!.playerId);
         if (!player) {
             delete req.session!.tableId;
-            return res.status(400).send(JSON.stringify({ message: 'You have been kicked out due to inactivity' }));
+            res.status(400).send(JSON.stringify({ message: 'You have been kicked out due to inactivity' }));
         }
         else {
             table.baseTimestamp = Date.now();
@@ -36,41 +38,36 @@ export const getTableStatus = (req: Request, res: Response) => {
 };
 
 export const joinTable = (req: Request, res: Response) => {
-    const playerId = req.session!.playerId;
-    const table = tableService.joinTable(playerId);
-    req.session!.tableId = table.id;
-    return res.status(200).send(JSON.stringify({ tableId: table.id }));
+    const useCaseResult = useCases.joinTable(req.session!.playerId);
+    if (useCaseResult.ok) {
+        req.session!.tableId = useCaseResult.result!.id;
+        res.status(200).send(JSON.stringify({ tableId: useCaseResult.result!.id }));
+    }
+    else {
+        res.status(400).send(JSON.stringify({ message: useCaseResult.error }));
+    }
 };
 
 export const makeDecision = (req: Request, res: Response) => {
-    const playerId = req.session!.playerId;
     const decision = req.query.decision;
-    const table = tableService.getTableById(req.session!.tableId);
-    if (!table) {
-        return noTableJoined(res);
+    const useCaseResult =
+        useCases.makeDecision(req.session!.tableId, req.session!.playerId, decision);
+
+    if (useCaseResult.ok) {
+        res.status(200).send(JSON.stringify({}));
     }
     else {
-        try {
-            tableService.makeDecision(table, playerId, decision);
-            return res.status(200).send(JSON.stringify({}));
-        }
-        catch(exception) {
-            return res.status(400).send(JSON.stringify({ message: exception }))
-        }
+        res.status(400).send(JSON.stringify({ message: useCaseResult.error }));
     }
 };
 
-const noTableJoined = (res: Response) =>
-    res.status(400).send(JSON.stringify({ message: 'No table has been joined' }));
-
 export const placeBet = (req: Request, res: Response) => {
-    const table = tableService.getTableById(req.session!.tableId);
     const bet = parseInt(req.query.bet);
-    if (!table) {
-        return noTableJoined(res);
+    const useCaseResult = useCases.placeBet(req.session!.tableId, req.session!.playerId, bet);
+    if (useCaseResult.ok) {
+        res.status(200).send(JSON.stringify({}))
     }
     else {
-        tableService.placeBet(table, req.session!.playerId, bet);
-        return res.status(200).send(JSON.stringify({}));
+        res.status(400).send(JSON.stringify({ message: useCaseResult.error }));
     }
 };

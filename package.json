@@ -22,10 +22,12 @@
   },
   "scripts": {
     "build": "lerna run build",
+    "clean": "lerna clean -y && rm -rf node_modules/",
     "clean:dist": "rm packages/**/dist -rf",
     "prepare": "lerna bootstrap && npm run build",
     "publish": "lerna publish",
-    "reset": "lerna clean -y && rm -rf node_modules/",
-    "symlinks": "cd packages/webjack-core && npm link && cd ../webjack-ui-components && npm link && cd ../webjack-web-api && npm link"
+    "start:client": "cd packages/webjack-ui-components && npm run dev",
+    "start:server": "cd packages/webjack-web-api && npm run dev",
+    "symlinks": "cd packages/webjack-core && npm link && cd ../webjack-ui-components && npm link && cd ../webjack-web-api && npm link && cd .. && lerna bootstrap"
   }
 }

@@ -38,7 +38,7 @@
 
 <script lang="ts">
     import toastr from 'toastr';
-    import { Player, playerService, Table } from 'webjack-core';
+    import { models, services } from 'webjack-core';
     import { ActionsBarHandlers } from '../utils/handlers-types';
     import Countdown from './Countdown.vue';
     import PlayerActions from './PlayerActions.vue';
@@ -71,16 +71,16 @@
                 required: true
             },
             table: {
-                type: Table,
+                type: models.Table,
                 required: true
             },
             userPlayer: {
-                type: Player
+                type: models.Player
             }
         },
         computed: {
             isRoundInProgress() {
-                return this.userPlayer && playerService.hasHands(this.userPlayer);
+                return this.userPlayer && services.playerService.hasHands(this.userPlayer);
             }
         },
         methods: {

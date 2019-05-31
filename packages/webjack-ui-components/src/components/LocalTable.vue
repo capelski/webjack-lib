@@ -3,7 +3,7 @@
         v-if="renderCondition"
         :table="table"
         :actionsHandlers="actionsHandlers"
-        :userPlayerId="playerId"
+        :userPlayerId="userPlayerId"
         :basicStrategyProgress="-1"
         :isUserPlayerHandler="isUserPlayer"
         :evaluteDecisions="false"
@@ -14,13 +14,7 @@
 
 <script lang="ts">
     import toastr from 'toastr';
-    import {
-        Player,
-        Table as TableModel,
-        playerService,
-        tableService,
-        PlayerActions
-    } from 'webjack-core';
+    import { models, services, types, useCases } from 'webjack-core';
     import Table from './Table.vue';
     import { ActionsBarHandlers } from '../utils/handlers-types';
 
@@ -36,12 +30,12 @@
             }
         },
         data() {
-            const player = playerService.createRobot('You');
-            const table = tableService.createTable();
-            table.players = [player];
+            const player = services.playerService.createRobot('You');
+            const table = services.tableService.createTable();
+            services.tableService.addPlayer(table, player);
 
             return {
-                playerId: player.id,
+                userPlayerId: player.id,
                 table
             };
         },
@@ -59,35 +53,33 @@
         },
         methods: {
             double() {
-                this.makeDecision(PlayerActions.Double);
+                this.makeDecision(types.PlayerActions.Double);
             },
             exitTable() {
-                tableService.deleteTable(this.table.id);
+                services.tableService.deleteTable(this.table.id);
                 this.$emit('TableExited');
             },
             hit() {
-                this.makeDecision(PlayerActions.Hit);
+                this.makeDecision(types.PlayerActions.Hit);
             },
-            isUserPlayer(player: Player) {
+            isUserPlayer(player: models.Player) {
                 return true;
             },
-            makeDecision(decision: PlayerActions) {
-                try {
-                    tableService.makeDecision(this.table, this.playerId, decision);
-                }
-                catch(exception) {
-                    toastr.error(exception);
+            makeDecision(decision: types.PlayerActions) {
+                const result =
+                    useCases.makeDecision(this.table.id, this.userPlayerId, decision);
+                if (!result.ok) {
+                    toastr.error(result.error);
                 }
             },
             split() {
-                this.makeDecision(PlayerActions.Split);
+                this.makeDecision(types.PlayerActions.Split);
             },
             stand() {
-                this.makeDecision(PlayerActions.Stand);
+                this.makeDecision(types.PlayerActions.Stand);
             },
             startRound() {
-                const bet = 1;
-                tableService.placeBet(this.table, this.playerId, bet);
+                useCases.placeBet(this.table.id, this.userPlayerId, 1);
             }
         }
     };
