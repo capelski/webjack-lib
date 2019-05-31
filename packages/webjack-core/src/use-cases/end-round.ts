@@ -33,8 +33,8 @@ export const endRound = (tableId: string): UseCaseResult => {
     tableService.setNextAction(table, 5, () => {
         tableService.clearNextAction(table);
         collectPlayedCards(table.cardSet);
-        activePlayers.forEach(player => playerService.setHands(player, []));
-        playerService.setHands(table.dealer, []);
+        activePlayers.forEach(playerService.clearHands);
+        playerService.clearHands(table.dealer);
         tableService.setStatus(table, TableStatus.Idle);
     });
     

@@ -1,6 +1,6 @@
 <template>
     <Table
-        v-if="renderCondition"
+        v-if="renderCondition && table"
         :table="table"
         :actionsHandlers="actionsHandlers"
         :userPlayerId="userPlayerId"
@@ -30,14 +30,20 @@
             }
         },
         data() {
-            const table = services.tableService.createTable();
-            table.players = ' '.repeat(7).split('')
-                .map((_, index) => services.playerService.createRobot(`Robot ${index + 1}`));
-
             return {
-                table: table,
-                randomState: services.randomHandsService.getRandomInitialState()
+                table: undefined,
+                randomState: undefined
             };
+        },
+        created() {
+            this.table = services.tableService.createTable();
+            ' '.repeat(7)
+                .split('')
+                .forEach((_, index) => {
+                    const player = services.playerService.createPlayer(`Robot ${index + 1}`);
+                    services.tableService.addPlayer(this.table, player);
+                });
+            this.randomState = services.randomHandsService.getRandomInitialState();
         },
         computed: {
             actionsHandlers() {
@@ -59,7 +65,9 @@
                 this.makeDecision(types.PlayerActions.Double);
             },
             exitTable() {
+                this.table.players.forEach(services.playerService.deletePlayer);
                 services.tableService.deleteTable(this.table.id);
+                this.table = undefined;
                 this.$emit('TableExited');
             },
             hit() {
@@ -84,7 +92,7 @@
                 this.table.players.forEach((player, index) => {
                     const randomHand = randomHandsSet.playersHand[index];
                     services.playerService.setHands(player, [randomHand]);
-                    services.playerService.increaseEarningRate(player, -1);
+                    services.playerService.updateEarningRate(player, -1);
                 });
 
                 const dealerHand = services.handService.create(0);

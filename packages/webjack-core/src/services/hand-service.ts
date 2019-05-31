@@ -77,13 +77,13 @@ const handValuesReducer = (reducedValues: number[], card: Card) => {
 
 export const hasBeenSplit = (hand: Hand) => hand.cards.length === 1;
 
-export const isAlreadyPlayed = (hand: Hand) => hand.played;
-
 export const isBlackJack = (hand: Hand) => isMaxValue(hand) && hand.cards.length === 2;
 
 export const isBust = (hand: Hand) => getValue(hand) > 21;
 
 export const isMaxValue = (hand: Hand) => getValue(hand) === 21;
+
+export const isUnplayed = (hand: Hand) => !hand.played;
 
 export const markAsPlayed = (hand: Hand) => {
     hand.played = true;

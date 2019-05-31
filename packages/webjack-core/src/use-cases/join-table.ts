@@ -10,7 +10,7 @@ export const joinTable = (playerId: string): UseCaseResult => {
             error: 'No player identified by ' + playerId + ' was found'
         };
     }
-    playerService.setInactiveRounds(player, 0);
+    playerService.resetInactiveRounds(player);
 
     const table = tableService.getAvailableTable();
     tableService.addPlayer(table, player);

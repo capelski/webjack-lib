@@ -6,7 +6,7 @@ export interface Hand {
     canDouble: boolean;
     canSplit: boolean;
     cards: Card[];
-    played: boolean;
+    played: boolean; // TODO Remove. Use status + a new one for played
     values: number[];
     status: HandStatus;
 }

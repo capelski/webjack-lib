@@ -44,11 +44,9 @@ export const getAvailableTable = () => {
 };
 
 export const getCurrentPlayer = (table: Table): Player | undefined => {
-    let currentPlayer: Player | undefined;
-    if (table.status === TableStatus.PlayerTurns) {
-        currentPlayer = table.players.find(playerService.hasUnplayedHands);
-    }
-    return currentPlayer;
+    return table.status === TableStatus.PlayerTurns ?
+        table.players.find(player => !!playerService.getCurrentHand(player)) :
+        undefined;
 };
 
 export const getPlayerById = (table: Table, playerId: string) => table.players.find(p => p.id === playerId);

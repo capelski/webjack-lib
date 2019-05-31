@@ -43,7 +43,7 @@ export const makeDecision = (tableId: string, playerId: string, decision: Player
                 };
             }
             handService.setBet(currentHand, currentHand.bet * 2);
-            playerService.increaseEarningRate(player, -currentHand.bet);
+            playerService.updateEarningRate(player, -currentHand.bet);
             handService.addCard(currentHand, getNextCard(table.cardSet));
             handService.markAsPlayed(currentHand);
             break;
@@ -70,7 +70,7 @@ export const makeDecision = (tableId: string, playerId: string, decision: Player
         
             handService.addCard(currentHand, getNextCard(table.cardSet));
         
-            playerService.increaseEarningRate(player, -currentHand.bet);
+            playerService.updateEarningRate(player, -currentHand.bet);
             break;
         }
         case PlayerActions.Stand: {

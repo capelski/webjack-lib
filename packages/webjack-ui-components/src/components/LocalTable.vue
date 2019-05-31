@@ -1,9 +1,9 @@
 <template>
     <Table
-        v-if="renderCondition"
+        v-if="renderCondition && table"
         :table="table"
         :actionsHandlers="actionsHandlers"
-        :userPlayerId="userPlayerId"
+        :userPlayerId="player.id"
         :basicStrategyProgress="-1"
         :isUserPlayerHandler="isUserPlayer"
         :evaluteDecisions="false"
@@ -30,14 +30,15 @@
             }
         },
         data() {
-            const player = services.playerService.createRobot('You');
-            const table = services.tableService.createTable();
-            services.tableService.addPlayer(table, player);
-
             return {
-                userPlayerId: player.id,
-                table
+                player: undefined,
+                table: undefined
             };
+        },
+        created() {
+            this.table = services.tableService.createTable();
+            this.player = services.playerService.createPlayer('You');
+            services.tableService.addPlayer(this.table, this.player);
         },
         computed: {
             actionsHandlers() {
@@ -57,6 +58,9 @@
             },
             exitTable() {
                 services.tableService.deleteTable(this.table.id);
+                this.table = undefined;
+                services.playerService.deletePlayer(this.player.id);
+                this.player = undefined;
                 this.$emit('TableExited');
             },
             hit() {
@@ -67,7 +71,7 @@
             },
             makeDecision(decision: types.PlayerActions) {
                 const result =
-                    useCases.makeDecision(this.table.id, this.userPlayerId, decision);
+                    useCases.makeDecision(this.table.id, this.player.id, decision);
                 if (!result.ok) {
                     toastr.error(result.error);
                 }
@@ -79,7 +83,7 @@
                 this.makeDecision(types.PlayerActions.Stand);
             },
             startRound() {
-                useCases.placeBet(this.table.id, this.userPlayerId, 1);
+                useCases.placeBet(this.table.id, this.player.id, 1);
             }
         }
     };
