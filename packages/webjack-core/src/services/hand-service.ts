@@ -1,7 +1,7 @@
 import { Card } from '../models/card';
 import { Hand } from '../models/hand';
 import * as cardService from './card-service';
-import js from '../utils/js-generics';
+import { cartesianProduct, removeDuplicates } from '../utils/js-generics';
 import { HandStatus } from '../types/hand-status';
 
 export const addCard = (hand: Hand, card: Card) => {
@@ -61,8 +61,8 @@ export const getValue = (hand: Hand) => hand.values[hand.values.length - 1];
 
 const handValuesReducer = (reducedValues: number[], card: Card) => {
     const cardValues = cardService.getValue(card);
-    const nextValuesCandidates = js.cartesianProduct(reducedValues, cardValues, (x, y) => x + y);
-    let nextValues = js.removeDuplicates(nextValuesCandidates);
+    const nextValuesCandidates = cartesianProduct(reducedValues, cardValues, (x, y) => x + y);
+    let nextValues = removeDuplicates(nextValuesCandidates);
 
     if (nextValues.indexOf(21) > -1) {
         nextValues = [21];

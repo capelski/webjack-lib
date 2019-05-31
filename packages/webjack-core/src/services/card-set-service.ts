@@ -2,7 +2,7 @@ import { Card } from '../models/card';
 import { CardSet } from '../models/card-set';
 import { createDeck } from '../services/card-service';
 import { getParameters } from '../services/game-parameters-service';
-import js from '../utils/js-generics';
+import { shuffleArray } from '../utils/js-generics';
 
 let developmentCards: Card[];
 
@@ -12,7 +12,7 @@ export const collectPlayedCards = (cardSet: CardSet) => {
 
     const { maxDiscardedCards } = getParameters();
     if (cardSet.discardPile.length > maxDiscardedCards) {
-        js.shuffleArray(cardSet.discardPile);
+        shuffleArray(cardSet.discardPile);
         cardSet.unusedCards = cardSet.unusedCards.concat(cardSet.discardPile);
         cardSet.discardPile = [];
     }
@@ -24,7 +24,7 @@ export const createCardSet = () => {
         .split('')
         .map(_ => createDeck())
         .reduce((x, y) => x.concat(y), []);
-    js.shuffleArray(cards);
+    shuffleArray(cards);
 
     return new CardSet(developmentCards ? developmentCards : cards);
 }

@@ -1,5 +1,5 @@
 import { Card } from '../models/card';
-import js from '../utils/js-generics';
+import { cartesianProduct } from '../utils/js-generics';
 
 const cardsValue: { [key: string]: number[] } = {
     'A': [1, 11],
@@ -20,6 +20,6 @@ const symbols = Object.keys(cardsValue);
 const suits = ['\u2663', '\u2666', '\u2665', '\u2660'];
 
 export const createDeck = () =>
-    js.cartesianProduct(suits, symbols, (suit, symbol) => new Card(suit, symbol));
+    cartesianProduct(suits, symbols, (suit, symbol) => new Card(suit, symbol));
 
 export const getValue = (card: Card) => cardsValue[card.symbol];

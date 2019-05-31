@@ -43,7 +43,7 @@
 
 <script lang="ts">
     import toastr from 'toastr';
-    import { models, services, types } from 'webjack-core';
+    import { models, services, types, utils } from 'webjack-core';
     import { PlayerActionsHandlers } from '../utils/handlers-types';
     import ShakyElement from './ShakyElement.vue';
 
@@ -112,7 +112,7 @@
         methods: {
             displayOptimalDecision() {
                 const hand = services.playerService.getCurrentHand(this.userPlayer);
-                const optimalDecisionInfo = services.basicStrategyService.getOptimalDecision(hand!, this.dealerScore!).description;
+                const optimalDecisionInfo = utils.basicStrategy.getOptimalDecision(hand!, this.dealerScore!).description;
                 toastr.info(optimalDecisionInfo, 'Basic strategy');
             },
             double() {
@@ -128,7 +128,7 @@
             },
             evaluatePlayerDecision(userDecision: types.PlayerActions) {
                 const hand = services.playerService.getCurrentHand(this.userPlayer);
-                const optimalDecision = services.basicStrategyService.getOptimalDecision(hand!, this.dealerScore!);
+                const optimalDecision = utils.basicStrategy.getOptimalDecision(hand!, this.dealerScore!);
                 this.basicStrategyAttempts++;
                 if (optimalDecision.action === userDecision) {
                     this.basicStrategyHits++;
