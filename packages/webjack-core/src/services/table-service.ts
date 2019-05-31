@@ -65,19 +65,3 @@ export const setNextAction = (table: Table, delay: number, nextAction: (...args:
     table.nextAction = setTimeout(nextAction, delay * 1000) as any;
     table.nextActionTimestamp = Date.now() + delay * 1000;
 };
-
-// TODO Extract into startRound use case
-export const updatePlayersInactivity = (table: Table) => {
-    const players = table.players;
-    const activePlayers = players.filter(playerService.isPlaying);
-    const inactivePlayers = players.filter(p => !playerService.isPlaying(p));
-    const { maxInactiveRounds } = getParameters();
-
-    activePlayers.forEach(p => p.inactiveRounds = 0);
-    inactivePlayers.forEach(p => {
-        playerService.increaseInactiveRounds(p);
-        if (p.inactiveRounds > maxInactiveRounds) {
-            removePlayer(table, p.id);
-        }
-    });
-};

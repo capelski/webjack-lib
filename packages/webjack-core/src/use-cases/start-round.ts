@@ -1,4 +1,5 @@
 import { getNextCard } from '../services/card-set-service';
+import { getParameters } from '../services/game-parameters-service';
 import * as handService from '../services/hand-service';
 import * as playerService from '../services/player-service';
 import * as tableService from '../services/table-service';
@@ -25,10 +26,18 @@ export const startRound = (tableId: string): Promise<UseCaseResult> => {
     }
 
     tableService.clearNextAction(table);
-    tableService.updatePlayersInactivity(table);
+
+    const { maxInactiveRounds } = getParameters();
+    table.players.forEach(playerService.increaseInactiveRounds);
+    table.players
+        .filter(player => player.inactiveRounds > maxInactiveRounds)
+        .forEach(player => tableService.removePlayer(table, player.id));
+
     const activePlayers = tableService.getActivePlayers(table);
-    tableService.setStatus(table, TableStatus.DealingCards);
+    activePlayers.forEach(playerService.resetInactiveRounds);
+
     playerService.initializeHand(table.dealer, 0);
+    tableService.setStatus(table, TableStatus.DealingCards);
 
     const firstPromiseChain = activePlayers.concat([table.dealer])
         .map(player => () => new Promise(resolve => {
