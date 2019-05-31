@@ -22,8 +22,6 @@ export const getPlayerById = (playerId: string) => players.find(p => p.id === pl
 
 export const getPlayerByName = (name: string) => players.find(p => p.name.toLowerCase() === name.toLowerCase());
 
-export const hasHands = (player: Player) => player.hands.length > 0;
-
 export const hasUnplayedHands = (player: Player) =>
     player.hands.reduce((unplayedHand, hand) => unplayedHand || !isAlreadyPlayed(hand), false);
 
@@ -40,6 +38,8 @@ export const initializeHand = (player: Player, bet: number) => {
     setHands(player, [hand]);
     increaseEarningRate(player, -bet);
 }
+
+export const isPlaying = (player: Player) => player.hands.length > 0;
 
 export const setHands = (player: Player, hands: Hand[]) => {
     player.hands = hands;

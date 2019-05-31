@@ -29,9 +29,9 @@ export const getTableStatus = (req: Request, res: Response) => {
                 baseTimestamp: table.baseTimestamp,
                 dealer: table.dealer,
                 id: table.id,
-                isRoundBeingPlayed: table.isRoundBeingPlayed,
                 nextActionTimestamp: table.nextActionTimestamp,
-                players: table.players
+                players: table.players,
+                status: table.status
             }));
         }
     }

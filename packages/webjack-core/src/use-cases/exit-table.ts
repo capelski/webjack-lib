@@ -19,7 +19,7 @@ export const exitTable = (tableId: string, playerId: string): UseCaseResult => {
         };
     }
 
-    if (playerService.hasHands(player)) {
+    if (playerService.isPlaying(player)) {
         return {
             ok: false,
             error: 'Wait to finish the current round before leaving the table'

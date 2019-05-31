@@ -1,11 +1,12 @@
-// TODO Rename the file to updateTableRound
 import * as handService from '../services/hand-service';
 import * as playerService from '../services/player-service';
 import * as tableService from '../services/table-service';
 import { getNextCard } from '../services/card-set-service';
+import { TableStatus } from '../types/table-status';
+import { UseCaseResult } from '../types/use-case-result';
 import { playDealerTurn } from './play-dealer-turn';
 
-export const moveRoundForward = (tableId: string) => {
+export const updateCurrentRound = (tableId: string): UseCaseResult => {
     const table = tableService.getTableById(tableId);
     if (!table) {
         return {
@@ -14,8 +15,12 @@ export const moveRoundForward = (tableId: string) => {
         };
     }
 
-    // TODO If not playing a round, return error
-    // TODO Use the tableStatus to playDealerTurn
+    if (table.status !== TableStatus.PlayerTurns) {
+        return {
+            ok: false,
+            error: 'Not allowed to update the current round now'
+        };
+    }
 
     const currentPlayer = tableService.getCurrentPlayer(table);
     if (currentPlayer) {
@@ -27,17 +32,22 @@ export const moveRoundForward = (tableId: string) => {
 
         const isHandFinished = handService.updateHandStatus(currentHand);
         if (isHandFinished) {
-            moveRoundForward(tableId);
+            updateCurrentRound(tableId);
         }
         else {
             tableService.setNextAction(table, 20, () => {
-                // Reuse playerService.stand() when available
+                // TODO Reuse playerService.stand() when available
                 const currentHand = playerService.getCurrentHand(currentPlayer)!;
                 handService.markAsPlayed(currentHand);
             });
         }
     }
-    else if (tableService.isDealerTurn(table)) {
+    else {
+        tableService.setStatus(table, TableStatus.DealerTurn);
         tableService.setNextAction(table, 3, () => playDealerTurn(tableId))
     }
+
+    return {
+        ok: true
+    };
 };

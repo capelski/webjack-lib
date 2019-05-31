@@ -1,9 +1,10 @@
+import { v4 as uuid } from 'uuid';
 import { Player } from '../models/player';
 import { Table } from '../models/table';
+import { TableStatus } from '../types/table-status';
 import { createCardSet } from './card-set-service';
 import { getParameters } from './game-parameters-service';
 import * as playerService from './player-service';
-import { v4 as uuid } from 'uuid';
 
 let tables: Table[] = [];
 
@@ -31,7 +32,7 @@ export const deleteTable = (tableId: string) => {
 };
 
 export const getActivePlayers = (table: Table) =>
-    table.players.filter(playerService.hasHands);
+    table.players.filter(playerService.isPlaying);
 
 export const getAvailableTable = () => {
     const { maxPlayers } = getParameters();
@@ -44,7 +45,7 @@ export const getAvailableTable = () => {
 
 export const getCurrentPlayer = (table: Table): Player | undefined => {
     let currentPlayer: Player | undefined;
-    if (table.isRoundBeingPlayed) {
+    if (table.status === TableStatus.PlayerTurns) {
         currentPlayer = table.players.find(playerService.hasUnplayedHands);
     }
     return currentPlayer;
@@ -52,17 +53,14 @@ export const getCurrentPlayer = (table: Table): Player | undefined => {
 
 export const getPlayerById = (table: Table, playerId: string) => table.players.find(p => p.id === playerId);
 
-export const getTableById = (tableId: string) => tables.find(t => t.id == tableId);
-
-export const isDealerTurn = (table: Table): boolean =>
-    table.isRoundBeingPlayed && !getCurrentPlayer(table) && playerService.hasUnplayedHands(table.dealer);
+export const getTableById = (tableId: string) => tables.find(t => t.id == tableId);    
 
 export const removePlayer = (table: Table, playerId: string) => {
     table.players = table.players.filter(player => player.id !== playerId);
 };
 
-export const setIsRoundBeingPlayed = (table: Table, isRoundBeingPlayed: boolean) => {
-    table.isRoundBeingPlayed = isRoundBeingPlayed;
+export const setStatus = (table: Table, status: TableStatus) => {
+    table.status = status;
 };
 
 export const setNextAction = (table: Table, delay: number, nextAction: (...args: any[]) => void) => {
@@ -73,8 +71,8 @@ export const setNextAction = (table: Table, delay: number, nextAction: (...args:
 // TODO Extract into startRound use case
 export const updatePlayersInactivity = (table: Table) => {
     const players = table.players;
-    const activePlayers = players.filter(playerService.hasHands);
-    const inactivePlayers = players.filter(p => !playerService.hasHands(p));
+    const activePlayers = players.filter(playerService.isPlaying);
+    const inactivePlayers = players.filter(p => !playerService.isPlaying(p));
     const { maxInactiveRounds } = getParameters();
 
     activePlayers.forEach(p => p.inactiveRounds = 0);

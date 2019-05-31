@@ -10,12 +10,12 @@
                     <div class="col-xs-12 text-center">
                         <div class="table-actions" v-if="!isPlayerTurn">
                             <button type="button" class="btn btn-primary"
-                                :class="{'disabled-action': isRoundInProgress }"
+                                :class="{'disabled-action': isUserPlaying }"
                                 v-on:click="startRound">
                                 {{ startRoundButtonText }}
                             </button>
                             <button type="button" class="btn btn-danger"
-                                :class="{'disabled-action': isRoundInProgress }"
+                                :class="{'disabled-action': isUserPlaying }"
                                 v-on:click="exitTable">
                                 Exit table
                             </button>
@@ -79,13 +79,13 @@
             }
         },
         computed: {
-            isRoundInProgress() {
-                return this.userPlayer && services.playerService.hasHands(this.userPlayer);
+            isUserPlaying() {
+                return this.userPlayer && services.playerService.isPlaying(this.userPlayer);
             }
         },
         methods: {
             exitTable() {
-                if (this.isRoundInProgress) {
+                if (this.isUserPlaying) {
                     toastr.error('You cannot leave the table while playing a round', 'Round in progress');
                 }
                 else {
@@ -93,7 +93,7 @@
                 }
             },
             startRound() {
-                if (this.isRoundInProgress) {
+                if (this.isUserPlaying) {
                     toastr.error('Wait for the current round to finish before starting the next one', 'Round in progress');
                 }
                 else {

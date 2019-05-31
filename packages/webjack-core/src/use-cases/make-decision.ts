@@ -3,8 +3,9 @@ import * as playerService from '../services/player-service';
 import * as tableService from '../services/table-service';
 import { PlayerActions } from '../types/player-actions';
 import { getNextCard } from '../services/card-set-service';
+import { TableStatus } from '../types/table-status';
 import { UseCaseResult } from '../types/use-case-result';
-import { moveRoundForward } from './move-round-forward';
+import { updateCurrentRound } from './update-current-round';
 
 export const makeDecision = (tableId: string, playerId: string, decision: PlayerActions): UseCaseResult => {
     const table = tableService.getTableById(tableId);
@@ -15,8 +16,15 @@ export const makeDecision = (tableId: string, playerId: string, decision: Player
         };
     }
 
-    const player = tableService.getCurrentPlayer(table);
-    if (!player || player.id !== playerId) {
+    if (table.status !== TableStatus.PlayerTurns) {
+        return {
+            ok: false,
+            error: 'Not allowed to update the current round now'
+        };
+    }
+
+    const player = tableService.getCurrentPlayer(table)!;
+    if (player.id !== playerId) {
         return {
             ok: false,
             error: 'You are not allowed to make a decision now'
@@ -76,7 +84,7 @@ export const makeDecision = (tableId: string, playerId: string, decision: Player
             };
     }
     tableService.clearNextAction(table);
-    moveRoundForward(tableId);
+    updateCurrentRound(tableId);
 
     return {
         ok: true

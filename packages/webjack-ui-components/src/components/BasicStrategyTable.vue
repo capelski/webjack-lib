@@ -79,8 +79,6 @@
                 this.makeDecision(types.PlayerActions.Stand);
             },
             startRound() {
-                services.tableService.setIsRoundBeingPlayed(this.table, true);
-
                 const randomHandsSet = services.randomHandsService.getRandomHandsSet(this.randomState, this.table.players.length, this.table.cardSet);
 
                 this.table.players.forEach((player, index) => {
@@ -91,8 +89,9 @@
 
                 const dealerHand = services.handService.create(0);
                 services.playerService.setHands(this.table.dealer, [randomHandsSet.dealerHand]);
+                services.tableService.setStatus(this.table, types.TableStatus.PlayerTurns);
 
-                useCases.moveRoundForward(this.table);
+                useCases.updateCurrentRound(this.table);
             }
         }
     };

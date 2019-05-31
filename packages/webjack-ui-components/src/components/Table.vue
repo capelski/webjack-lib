@@ -36,7 +36,7 @@
     import Player from './Player.vue';
     import ActionsBar from './ActionsBar.vue';
     import { ActionsBarHandlers } from '../utils/handlers-types';
-    import { models, services } from 'webjack-core';
+    import { models, services, types } from 'webjack-core';
 
     export default {
         name: 'Table',
@@ -81,7 +81,7 @@
                 return currentPlayer ? currentPlayer.id : undefined;
             },
             isDealerTurn() {
-                return services.tableService.isDealerTurn(this.table);
+                return this.table.status === types.TableStatus.DealerTurn;
             },
             userPlayer() {
                 return this.table.players.find(player => player.id === this.userPlayerId);

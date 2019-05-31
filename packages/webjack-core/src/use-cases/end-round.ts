@@ -2,6 +2,7 @@ import * as handService from '../services/hand-service';
 import * as playerService from '../services/player-service';
 import * as tableService from '../services/table-service';
 import { collectPlayedCards } from '../services/card-set-service';
+import { TableStatus } from '../types/table-status';
 import { UseCaseResult } from '../types/use-case-result';
 
 export const endRound = (tableId: string): UseCaseResult => {
@@ -13,15 +14,18 @@ export const endRound = (tableId: string): UseCaseResult => {
         };
     }
 
-    // TODO Return errors if table not in "endable" status
+    if (table.status !== TableStatus.EndingRound) {
+        return {
+            ok: false,
+            error: 'Round can\'t be ended now'
+        };
+    }
 
     const dealerHand = table.dealer.hands[0];
     const activePlayers = tableService.getActivePlayers(table);
     activePlayers.forEach(player => {
-        const handsEarnings = player.hands.map(hand => {
-            const handEarnings = handService.getHandEarnings(hand, dealerHand);
-            return handEarnings;
-        });
+        const handsEarnings = player.hands.map(hand => 
+            handService.getHandEarnings(hand, dealerHand));
         const earningRate = handsEarnings.reduce((x, y) => x + y, 0);
         playerService.updateEarningRate(player, earningRate);
     });
@@ -31,7 +35,7 @@ export const endRound = (tableId: string): UseCaseResult => {
         collectPlayedCards(table.cardSet);
         activePlayers.forEach(player => playerService.setHands(player, []));
         playerService.setHands(table.dealer, []);
-        tableService.setIsRoundBeingPlayed(table, false);
+        tableService.setStatus(table, TableStatus.Idle);
     });
     
     return {

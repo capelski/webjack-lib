@@ -1,7 +1,7 @@
 <template>
-    <!-- <BasicStrategyTable />
-    <LocalTable /> -->
-    <RemoteTable serverUrl="http://localhost:3000/api" />
+    <!-- <BasicStrategyTable /> -->
+    <LocalTable />
+    <!-- <RemoteTable serverUrl="http://localhost:3000/api" /> -->
 </template>
 
 <script lang="ts">

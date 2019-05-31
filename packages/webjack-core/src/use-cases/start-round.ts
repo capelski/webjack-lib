@@ -2,10 +2,11 @@ import { getNextCard } from '../services/card-set-service';
 import * as handService from '../services/hand-service';
 import * as playerService from '../services/player-service';
 import * as tableService from '../services/table-service';
-import { delay } from '../utils/js-generics';
 import { UseCaseResult } from '../types/use-case-result';
 import { HandStatus } from '../types/hand-status';
-import { moveRoundForward } from './move-round-forward';
+import { TableStatus } from '../types/table-status';
+import { delay } from '../utils/js-generics';
+import { updateCurrentRound } from './update-current-round';
 
 export const startRound = (tableId: string): Promise<UseCaseResult> => {
     const table = tableService.getTableById(tableId);
@@ -16,10 +17,17 @@ export const startRound = (tableId: string): Promise<UseCaseResult> => {
         });
     }
 
+    if (table.status !== TableStatus.PlacingBets) {
+        return Promise.reject({
+            ok: false,
+            error: 'A round can only be started when some bet has been placed'
+        });
+    }
+
     tableService.clearNextAction(table);
     tableService.updatePlayersInactivity(table);
     const activePlayers = tableService.getActivePlayers(table);
-    tableService.setIsRoundBeingPlayed(table, true);
+    tableService.setStatus(table, TableStatus.DealingCards);
     playerService.initializeHand(table.dealer, 0);
 
     const firstPromiseChain = activePlayers.concat([table.dealer])
@@ -44,7 +52,8 @@ export const startRound = (tableId: string): Promise<UseCaseResult> => {
         .reduce((promiseChain, runPromise) => promiseChain.then(runPromise), firstPromiseChain);
     
     return secondPromiseChain.then(_ => {
-        moveRoundForward(tableId);
+        tableService.setStatus(table, TableStatus.PlayerTurns);
+        updateCurrentRound(tableId);
         return {
             ok: true
         };
