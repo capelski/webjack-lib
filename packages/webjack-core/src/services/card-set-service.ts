@@ -140,13 +140,18 @@ const getHardHandSymbols = (value: number): string[] => {
     const minValue = Math.max(2, value - 10);
     const maxValue = Math.min(value - minValue, 10);
 
-    const randomNumber = Math.floor(Math.random() * (maxValue - minValue) + minValue);
+    let randomNumber = Math.floor(Math.random() * (maxValue - minValue) + minValue);
+    let difference = value - randomNumber;
+
+    // If numbers are equal, we would be training a splittable hand. Change them when possible
+    // E.g. Transform a 7,7 (for 14) into a 6,8. Do not transform a 10,10 for 20
+    if (randomNumber === difference && randomNumber > minValue && randomNumber < maxValue) {
+        randomNumber++;
+        difference--;
+    }
 
     const firstCardSymbol = randomNumber === 10 ? getFigureSymbol() : randomNumber.toString();
-    const difference = value - randomNumber;
     const secondCardSymbol = difference === 10 ? getFigureSymbol() : difference.toString();
-
-    // TODO Make sure that both numbers are not the same
 
     return [firstCardSymbol, secondCardSymbol];
 };
