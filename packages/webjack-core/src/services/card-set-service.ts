@@ -5,8 +5,36 @@ import { getParameters } from '../services/game-parameters-service';
 import { TrainingHands } from '../types/training-hands';
 import { shuffleArray } from '../utils/js-generics';
 
-// TODO Remove
-let developmentCards: Card[];
+// const devCards: Card[] = [
+//     {
+//       symbol: '10',
+//       suit: '!'
+//     },
+//     {
+//       symbol: '2',
+//       suit: '!'
+//     },
+//     {
+//       symbol: '10',
+//       suit: '!'
+//     },
+//     {
+//       symbol: 'A',
+//       suit: '!'
+//     },
+//     {
+//       symbol: '6',
+//       suit: '!'
+//     },
+//     {
+//       symbol: '10',
+//       suit: '!'
+//     },
+//     {
+//       symbol: '9',
+//       suit: '!'
+//     }
+// ];
 
 // TODO Place somehwere else?
 const relevantDealerHands = [
@@ -92,8 +120,9 @@ export const createCardSet = (useTrainingHands = false) => {
         .map(_ => createDeck())
         .reduce((x, y) => x.concat(y), []);
     shuffleArray(cards);
-    // TODO Pass development cards as parameter
-    const cardSet = new CardSet(developmentCards ? developmentCards : cards);
+
+    const cardSet = new CardSet(cards);
+    // const cardSet = new CardSet(devCards);
 
     if (useTrainingHands) {
         cardSet.trainingHands = {
@@ -194,8 +223,8 @@ const getRandomHandSymbols = (trainingHands: TrainingHands): string[] => {
 };
 
 export const setNextTrainingRound = (cardSet: CardSet) => {
-    const playersNumber = 7; // When using training hands, there must always be 7 players
-    updateTrainingHands(playersNumber, cardSet.trainingHands!);
+    const playersNumber = 7; // When using training hands there must always be 7 players playing
+    updateTrainingHands(cardSet.trainingHands!);
     const playerCards = Array(playersNumber).fill(0).map(_ => {
         const symbols = getRandomHandSymbols(cardSet.trainingHands!);
         return {
@@ -213,7 +242,7 @@ export const setNextTrainingRound = (cardSet: CardSet) => {
         .concat(playersSecondCard);
 };
 
-const updateTrainingHands = (playersNumber: number, trainingHands: TrainingHands) => {
+const updateTrainingHands = (trainingHands: TrainingHands) => {
     let mustUpdateDealerHand = trainingHands.dealerCurrentHand === '';
 
     if (trainingHands.playerAvailableHands.length === 0) {
@@ -240,9 +269,4 @@ const updateTrainingHands = (playersNumber: number, trainingHands: TrainingHands
     const coveredHands = coveredDealerHands * relevantPlayerHands.length + coveredPlayerHands;
     const totalHands = relevantDealerHands.length * relevantPlayerHands.length;
     trainingHands.progress = Math.min(100, Math.floor(coveredHands * 1000 / totalHands) / 10);
-};
-
-// TODO Remove. Pass as parameter in the constructor
-export const useDevelopmentCards = (cards: Card[]) => {
-    developmentCards = cards;
 };

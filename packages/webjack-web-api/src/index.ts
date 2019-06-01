@@ -19,6 +19,3 @@ export const exposeWebjackRoutes = (app: Application | Router, routesPrefix = ''
 
 export const setGameParameters = (gameParameters: models.GameParameters) =>
 	services.gameParametersService.setParameters(gameParameters);
-
-export const useDevelopmentCardSet = (developmentCardSet: models.Card[]) =>
-	services.cardSetService.useDevelopmentCards(developmentCardSet);
