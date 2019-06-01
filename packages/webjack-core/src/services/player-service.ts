@@ -1,6 +1,5 @@
 import { Player } from '../models/player';
-import { Hand } from '../models/hand';
-import { create as createHand, isUnplayed } from './hand-service';
+import { createHand, isUnplayed } from './hand-service';
 import { v4 as uuid } from 'uuid';
 
 let players: Player[] = [];
@@ -38,11 +37,6 @@ export const initializeHand = (player: Player, bet: number) => {
 export const isPlaying = (player: Player) => player.hands.length > 0;
 
 export const resetInactiveRounds = (player: Player) => player.inactiveRounds = 0;
-
-// TODO Remove
-export const setHands = (player: Player, hands: Hand[]) => {
-    player.hands = hands;
-};
 
 export const updateEarningRate = (player: Player, earningRateVariation: number) => {
     player.earningRate += earningRateVariation;

@@ -13,7 +13,7 @@ export const canDouble = (hand: Hand) => getValue(hand) > 8 && getValue(hand) < 
 
 export const canSplit = (hand: Hand) => hand.cards.length === 2 && cardService.getValue(hand.cards[0])[0] === cardService.getValue(hand.cards[1])[0];
 
-export const create = (bet: number) => new Hand(bet);
+export const createHand = (bet: number) => new Hand(bet);
 
 // TODO Split into to functions => resolve + getEarnings
 export const getHandEarnings = (hand: Hand, dealerHand: Hand) => {

@@ -4,7 +4,7 @@
         :table="table"
         :actionsHandlers="actionsHandlers"
         :userPlayerId="userPlayerId"
-        :trainingProgress="randomState.progress"
+        :trainingProgress="table.cardSet.trainingHands.progress"
         :isUserPlayerHandler="() => true"
         :evaluteDecisions="true"
         :displayDecisionHelp="false"
@@ -32,18 +32,16 @@
         data() {
             return {
                 table: undefined,
-                randomState: undefined
             };
         },
         created() {
-            this.table = services.tableService.createTable();
+            this.table = services.tableService.createTable(true);
             ' '.repeat(7)
                 .split('')
                 .forEach((_, index) => {
                     const player = services.playerService.createPlayer(`Robot ${index + 1}`);
                     services.tableService.addPlayer(this.table, player);
                 });
-            this.randomState = services.randomHandsService.getRandomInitialState();
         },
         computed: {
             actionsHandlers() {
@@ -87,19 +85,12 @@
                 this.makeDecision(types.PlayerActions.Stand);
             },
             startRound() {
-                const randomHandsSet = services.randomHandsService.getRandomHandsSet(this.randomState, this.table.players.length, this.table.cardSet);
-
-                this.table.players.forEach((player, index) => {
-                    const randomHand = randomHandsSet.playersHand[index];
-                    services.playerService.setHands(player, [randomHand]);
-                    services.playerService.updateEarningRate(player, -1);
-                });
-
-                const dealerHand = services.handService.create(0);
-                services.playerService.setHands(this.table.dealer, [randomHandsSet.dealerHand]);
-                services.tableService.setStatus(this.table, types.TableStatus.PlayerTurns);
-
-                useCases.updateCurrentRound(this.table);
+                this.table.players.reduce((promiseChain, player) => {
+                    return promiseChain.then(_ =>  {
+                        useCases.placeBet(this.table.id, player.id, 1);
+                        return new Promise(resolve => setTimeout(resolve, 800));
+                    })
+                }, Promise.resolve({}));
             }
         }
     };

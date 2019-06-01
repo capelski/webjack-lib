@@ -62,7 +62,7 @@ export const makeDecision = (tableId: string, playerId: string, decision: Player
         
             const handLastCard = currentHand.cards.splice(-1)[0];
         
-            const newHand = handService.create(currentHand.bet);
+            const newHand = handService.createHand(currentHand.bet);
             handService.addCard(newHand, handLastCard);
         
             const index = player.hands.findIndex(hand => hand === currentHand);
