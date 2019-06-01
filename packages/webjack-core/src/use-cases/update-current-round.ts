@@ -39,6 +39,7 @@ export const updateCurrentRound = (tableId: string): UseCaseResult => {
                 // TODO Reuse playerService.stand() when available
                 const currentHand = playerService.getCurrentHand(currentPlayer)!;
                 handService.markAsPlayed(currentHand);
+                updateCurrentRound(tableId);
             });
         }
     }

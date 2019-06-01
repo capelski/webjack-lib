@@ -7,7 +7,7 @@
         </div>
 
         <div class="row top-space-20">
-            <div class="col-sm-4 col-sm-offset-4">
+            <div class="col-sm-4 col-sm-offset-4 col-xs-8 col-xs-offset-2">
                 <input type="text" class="form-control" v-model="playerName" />
             </div>
         </div>
