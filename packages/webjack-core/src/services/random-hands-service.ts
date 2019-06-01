@@ -1,90 +1,18 @@
-import { TrainingRandomState, TrainingHandsSet } from '../types/random-hands';
+import { TrainingState, TrainingHandsSet } from '../types/training-hands';
 import { Card } from '../models/card';
 import { CardSet } from '../models/card-set';
 import { Hand } from '../models/hand';
 import { addCard, create } from '../services/hand-service';
 
-// TODO Merge into cardSetService. Avoid TrainingService manipulation
-const relevantDealerHands = [
-    'A',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    'Figure'
-];
-
-const splittableHands = [
-    '2,2',
-    '3,3',
-    '4,4',
-    '5,5', // Not relevant as splittable hand, but still there to train
-    '6,6',
-    '7,7',
-    '8,8',
-    '9,9',
-    'Figure,Figure', // Not relevant as splittable hand, but still there to train
-    'A,A',
-];
-
-const softHands = [
-    'A,2',
-    'A,3',
-    'A,4',
-    'A,5',
-    'A,6',
-    'A,7',
-    'A,8',
-    'A,9',
-    // 'A,Figure' -> There is no decision to make since the hand is skipped
-];
-
-const hardHands = [
-    '+5',
-    '+6',
-    '+7',
-    '+8',
-    '+9',
-    '+10',
-    '+11',
-    '+12',
-    '+13',
-    '+14',
-    '+15',
-    '+16',
-    '+17',
-    '+18',
-    '+19',
-    '+20',
-    // '+21' -> There is no decision to make since the hand is skipped
-]
-
-const relevantPlayerHands = [
-    ...splittableHands,
-    ...softHands,
-    ...hardHands
-];
-
-const getFigureSymbol = (): string => {
-    return ['10', 'J', 'Q', 'K'][Math.floor(Math.random() * 3)];
-}
-
-const getHardHandSymbols = (value: number): string[] => {
-    const minValue = Math.max(2, value - 10);
-    const maxValue = Math.min(value - minValue, 10);
-
-    const randomNumber = Math.floor(Math.random() * (maxValue - minValue) + minValue);
-
-    const firstCardSymbol = randomNumber === 10 ? getFigureSymbol() : randomNumber.toString();
-    const difference = value - randomNumber;
-    const secondCardSymbol = difference === 10 ? getFigureSymbol() : difference.toString();
-
-    return [firstCardSymbol, secondCardSymbol];
-}
+const getCardFromCardSet = (symbol: string, cardSet: CardSet): Card => {
+    // We search for the cards in the discardPile first to minimize the game interfering
+    let card = getCardFromCollection(symbol, cardSet.discardPile);
+    if (!card) {
+        card = getCardFromCollection(symbol, cardSet.unusedCards);
+    }
+    cardSet.beingPlayed.push(card!);
+    return card!;
+};
 
 const getCardFromCollection = (symbol: string, cards: Card[]): Card | undefined => {
     let targetCard: Card | undefined = undefined;
@@ -98,19 +26,50 @@ const getCardFromCollection = (symbol: string, cards: Card[]): Card | undefined 
         }
     }
     return targetCard;
-}
+};
 
-const getCardFromCardSet = (symbol: string, cardSet: CardSet): Card => {
-    // We search for the cards in the discardPile first to minimize the game interfering
-    let card = getCardFromCollection(symbol, cardSet.discardPile);
-    if (!card) {
-        card = getCardFromCollection(symbol, cardSet.unusedCards);
-    }
-    cardSet.beingPlayed.push(card!);
-    return card!;
-}
+const getDealerRandomHand = (randomState: TrainingState, cardSet: CardSet): Hand => {    
+    const randomDealerCard = getCardFromCardSet(randomState.dealerCurrentHand.replace(/Figure/, getFigureSymbol()), cardSet);
+    return getHandFromCards([randomDealerCard]);
+};
 
-const getRandomHandSymbols = (randomState: TrainingRandomState): string[] => {
+const getFigureSymbol = (): string => {
+    return ['10', 'J', 'Q', 'K'][Math.floor(Math.random() * 3)];
+};
+
+const getHandFromCards = (cards: Card[]) => {
+    return cards.reduce((hand, card) => {
+        addCard(hand, card);
+        return hand;
+    }, create(1));
+};
+
+const getHardHandSymbols = (value: number): string[] => {
+    const minValue = Math.max(2, value - 10);
+    const maxValue = Math.min(value - minValue, 10);
+
+    const randomNumber = Math.floor(Math.random() * (maxValue - minValue) + minValue);
+
+    const firstCardSymbol = randomNumber === 10 ? getFigureSymbol() : randomNumber.toString();
+    const difference = value - randomNumber;
+    const secondCardSymbol = difference === 10 ? getFigureSymbol() : difference.toString();
+
+    return [firstCardSymbol, secondCardSymbol];
+};
+
+const getPlayersRandomHand = (
+    playersNumber: number,
+    randomState: TrainingState,
+    cardSet: CardSet
+): Hand[] => {
+    return Array(playersNumber).fill(0).map(_ => {
+        const symbols = getRandomHandSymbols(randomState);
+        const cards = symbols.map(symbol => getCardFromCardSet(symbol, cardSet));
+        return getHandFromCards(cards);
+    });
+};
+
+const getRandomHandSymbols = (randomState: TrainingState): string[] => {
     let handsSet = randomState.playerAvailableHands.length > 0 ? randomState.playerAvailableHands : randomState.playerUsedHands;
 
     const randomIndex = Math.floor(Math.random() * (handsSet.length - 1));
@@ -132,27 +91,9 @@ const getRandomHandSymbols = (randomState: TrainingRandomState): string[] => {
     }
 
     return symbols;
-}
+};
 
-const getHandFromCards = (cards: Card[]) => cards.reduce((hand, card) => {
-        addCard(hand, card);
-        return hand;
-    }, create(1));
-
-const getPlayersRandomHand = (playersNumber: number, randomState: TrainingRandomState, cardSet: CardSet): Hand[] => {
-    return Array(playersNumber).fill(0).map(_ => {
-        const symbols = getRandomHandSymbols(randomState);
-        const cards = symbols.map(symbol => getCardFromCardSet(symbol, cardSet));
-        return getHandFromCards(cards);
-    });
-}
-
-const getDealerRandomHand = (randomState: TrainingRandomState, cardSet: CardSet): Hand => {    
-    const randomDealerCard = getCardFromCardSet(randomState.dealerCurrentHand.replace(/Figure/, getFigureSymbol()), cardSet);
-    return getHandFromCards([randomDealerCard]);
-}
-
-const updateDealerHand = (playersNumber: number, randomState: TrainingRandomState) => {
+const updateDealerHand = (playersNumber: number, randomState: TrainingState) => {
     let mustUpdateDealerHand = randomState.dealerCurrentHand === '';
 
     if (randomState.playerAvailableHands.length === 0) {
@@ -179,15 +120,7 @@ const updateDealerHand = (playersNumber: number, randomState: TrainingRandomStat
     randomState.progress = Math.min(100, Math.floor(coveredHands * 1000 / totalHands) / 10);
 };
 
-export const getRandomInitialState = (): TrainingRandomState => ({
-    dealerAvailableHands: [...relevantDealerHands],
-    dealerCurrentHand: '',
-    playerAvailableHands: [...relevantPlayerHands],
-    playerUsedHands: [],
-    progress: 0
-});
-
-export const getRandomHandsSet = (randomState: TrainingRandomState, playersNumber: number, cardSet: CardSet): TrainingHandsSet => {
+export const getRandomHandsSet = (randomState: TrainingState, playersNumber: number, cardSet: CardSet): TrainingHandsSet => {
     updateDealerHand(playersNumber, randomState);
     return {
         playersHand: getPlayersRandomHand(playersNumber, randomState, cardSet),

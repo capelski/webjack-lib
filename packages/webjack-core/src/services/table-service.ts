@@ -17,11 +17,10 @@ export const clearNextAction = (table: Table) => {
      table.nextAction = table.nextActionTimestamp = table.baseTimestamp = undefined;
 };
 
-export const createTable = () => {
+export const createTable = (useTrainingHands = false) => {
     const tableId = uuid();
     const dealer = playerService.createDealer();
-    const cardSet = createCardSet();
-
+    const cardSet = createCardSet(useTrainingHands);
     const table = new Table(tableId, dealer, cardSet);
     tables.push(table);
     return table;
