@@ -35,13 +35,7 @@
             };
         },
         created() {
-            this.table = services.tableService.createTable(true);
-            ' '.repeat(7)
-                .split('')
-                .forEach((_, index) => {
-                    const player = services.playerService.createPlayer(`Robot ${index + 1}`);
-                    services.tableService.addPlayer(this.table, player);
-                });
+            this.joinTable();
         },
         computed: {
             actionsHandlers() {
@@ -58,6 +52,13 @@
                 return (services.tableService.getCurrentPlayer(this.table) || this.table.players[0]).id;
             }
         },
+        watch: {
+            renderCondition(newVal, oldVal) {
+                if (newVal && !oldVal && !this.table) {
+                    this.joinTable();
+                }
+            }
+        },
         methods: {
             double() {
                 this.makeDecision(types.PlayerActions.Double);
@@ -70,6 +71,15 @@
             },
             hit() {
                 this.makeDecision(types.PlayerActions.Hit);
+            },
+            joinTable() {
+                this.table = services.tableService.createTable(true);
+                ' '.repeat(7)
+                    .split('')
+                    .forEach((_, index) => {
+                        const player = services.playerService.createPlayer(`Robot ${index + 1}`);
+                        services.tableService.addPlayer(this.table, player);
+                    });
             },
             makeDecision(decision: types.PlayerActions) {
                 const result =

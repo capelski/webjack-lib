@@ -36,9 +36,7 @@
             };
         },
         created() {
-            this.table = services.tableService.createTable();
-            this.player = services.playerService.createPlayer('You');
-            services.tableService.addPlayer(this.table, this.player);
+            this.joinTable();
         },
         computed: {
             actionsHandlers() {
@@ -50,6 +48,13 @@
                     split: this.split,
                     stand: this.stand
                 } as ActionsBarHandlers;
+            }
+        },
+        watch: {
+            renderCondition(newVal, oldVal) {
+                if (newVal && !oldVal && !this.table) {
+                    this.joinTable();
+                }
             }
         },
         methods: {
@@ -68,6 +73,11 @@
             },
             isUserPlayer(player: models.Player) {
                 return true;
+            },
+            joinTable() {
+                this.table = services.tableService.createTable();
+                this.player = services.playerService.createPlayer('You');
+                services.tableService.addPlayer(this.table, this.player);
             },
             makeDecision(decision: types.PlayerActions) {
                 const result =
