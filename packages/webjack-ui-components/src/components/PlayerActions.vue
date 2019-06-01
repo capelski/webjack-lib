@@ -31,7 +31,7 @@
         <ShakyElement
             :class="{'basic-strategy-progress': true }"
             v-if="evaluteDecisions"
-            :html="(basicStrategyProgress !== -1 ? basicStrategyProgress : 0) + ' &#10227;'"
+            :html="(trainingProgress !== -1 ? trainingProgress : 0) + ' &#10227;'"
         />
         <ShakyElement
             :class="{'basic-strategy-counter': true }"
@@ -62,7 +62,7 @@
                 type: PlayerActionsHandlers,
                 required: true
             },
-            basicStrategyProgress: {
+            trainingProgress: {
                 type: Number,
                 default: -1,
             },

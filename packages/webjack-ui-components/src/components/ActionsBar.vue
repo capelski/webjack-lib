@@ -24,7 +24,7 @@
                             :dealer="table.dealer"
                             :userPlayer="userPlayer"
                             :isPlayerTurn="isPlayerTurn"
-                            :basicStrategyProgress="basicStrategyProgress"
+                            :trainingProgress="trainingProgress"
                             :actionsHandlers="actionsHandlers"
                             :evaluteDecisions="evaluteDecisions"
                             :displayDecisionHelp="displayDecisionHelp"
@@ -54,7 +54,7 @@
                 type: ActionsBarHandlers,
                 required: true
             },
-            basicStrategyProgress: {
+            trainingProgress: {
                 type: Number
             },
             displayDecisionHelp: {

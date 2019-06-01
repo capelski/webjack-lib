@@ -11,7 +11,7 @@
             :table="table"
             :actionsHandlers="actionsHandlers"
             :userPlayerId="userPlayerId"
-            :basicStrategyProgress="-1"
+            :trainingProgress="-1"
             :isUserPlayerHandler="isUserPlayer"
             :evaluteDecisions="false"
             :displayDecisionHelp="false"

@@ -28,7 +28,6 @@ export const placeBet = (tableId: string, playerId: string, bet = 1): UseCaseRes
         };
     }
 
-    // TODO Use initializeHand in BasicStrategyTable
     initializeHand(player, bet);
     tableService.setStatus(table, TableStatus.PlacingBets);
 

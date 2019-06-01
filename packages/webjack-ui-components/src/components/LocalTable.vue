@@ -4,7 +4,7 @@
         :table="table"
         :actionsHandlers="actionsHandlers"
         :userPlayerId="player.id"
-        :basicStrategyProgress="-1"
+        :trainingProgress="-1"
         :isUserPlayerHandler="isUserPlayer"
         :evaluteDecisions="false"
         :displayDecisionHelp="true"

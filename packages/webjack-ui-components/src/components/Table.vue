@@ -24,7 +24,7 @@
             :table="table"
             :userPlayer="userPlayer"
             :isPlayerTurn="userPlayerId === currentPlayerId"
-            :basicStrategyProgress="basicStrategyProgress"
+            :trainingProgress="trainingProgress"
             :evaluteDecisions="evaluteDecisions"
             :displayDecisionHelp="displayDecisionHelp"
             :startRoundButtonText="startRoundButtonText"
@@ -49,7 +49,7 @@
                 type: ActionsBarHandlers,
                 required: true
             },
-            basicStrategyProgress: {
+            trainingProgress: {
                 type: Number,
                 default: -1
             },

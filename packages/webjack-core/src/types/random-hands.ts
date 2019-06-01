@@ -1,6 +1,6 @@
 import { Hand } from '../models/hand';
 
-export interface BasicStrategyRandomState {
+export interface TrainingRandomState {
     dealerAvailableHands: string[];
     dealerCurrentHand: string;
     playerAvailableHands: string[];
@@ -8,7 +8,7 @@ export interface BasicStrategyRandomState {
     progress: number;
 }
 
-export interface BasicStrategyHandsSet {
+export interface TrainingHandsSet {
     dealerHand: Hand;
     playersHand: Hand[];
 }

@@ -1,10 +1,10 @@
-import { BasicStrategyRandomState, BasicStrategyHandsSet } from '../types/random-hands';
+import { TrainingRandomState, TrainingHandsSet } from '../types/random-hands';
 import { Card } from '../models/card';
 import { CardSet } from '../models/card-set';
 import { Hand } from '../models/hand';
 import { addCard, create } from '../services/hand-service';
 
-// TODO Merge into cardSetService. Avoid BasicStrategyService manipulation
+// TODO Merge into cardSetService. Avoid TrainingService manipulation
 const relevantDealerHands = [
     'A',
     '2',
@@ -110,7 +110,7 @@ const getCardFromCardSet = (symbol: string, cardSet: CardSet): Card => {
     return card!;
 }
 
-const getRandomHandSymbols = (randomState: BasicStrategyRandomState): string[] => {
+const getRandomHandSymbols = (randomState: TrainingRandomState): string[] => {
     let handsSet = randomState.playerAvailableHands.length > 0 ? randomState.playerAvailableHands : randomState.playerUsedHands;
 
     const randomIndex = Math.floor(Math.random() * (handsSet.length - 1));
@@ -139,7 +139,7 @@ const getHandFromCards = (cards: Card[]) => cards.reduce((hand, card) => {
         return hand;
     }, create(1));
 
-const getPlayersRandomHand = (playersNumber: number, randomState: BasicStrategyRandomState, cardSet: CardSet): Hand[] => {
+const getPlayersRandomHand = (playersNumber: number, randomState: TrainingRandomState, cardSet: CardSet): Hand[] => {
     return Array(playersNumber).fill(0).map(_ => {
         const symbols = getRandomHandSymbols(randomState);
         const cards = symbols.map(symbol => getCardFromCardSet(symbol, cardSet));
@@ -147,12 +147,12 @@ const getPlayersRandomHand = (playersNumber: number, randomState: BasicStrategyR
     });
 }
 
-const getDealerRandomHand = (randomState: BasicStrategyRandomState, cardSet: CardSet): Hand => {    
+const getDealerRandomHand = (randomState: TrainingRandomState, cardSet: CardSet): Hand => {    
     const randomDealerCard = getCardFromCardSet(randomState.dealerCurrentHand.replace(/Figure/, getFigureSymbol()), cardSet);
     return getHandFromCards([randomDealerCard]);
 }
 
-const updateDealerHand = (playersNumber: number, randomState: BasicStrategyRandomState) => {
+const updateDealerHand = (playersNumber: number, randomState: TrainingRandomState) => {
     let mustUpdateDealerHand = randomState.dealerCurrentHand === '';
 
     if (randomState.playerAvailableHands.length === 0) {
@@ -179,7 +179,7 @@ const updateDealerHand = (playersNumber: number, randomState: BasicStrategyRando
     randomState.progress = Math.min(100, Math.floor(coveredHands * 1000 / totalHands) / 10);
 };
 
-export const getRandomInitialState = (): BasicStrategyRandomState => ({
+export const getRandomInitialState = (): TrainingRandomState => ({
     dealerAvailableHands: [...relevantDealerHands],
     dealerCurrentHand: '',
     playerAvailableHands: [...relevantPlayerHands],
@@ -187,7 +187,7 @@ export const getRandomInitialState = (): BasicStrategyRandomState => ({
     progress: 0
 });
 
-export const getRandomHandsSet = (randomState: BasicStrategyRandomState, playersNumber: number, cardSet: CardSet): BasicStrategyHandsSet => {
+export const getRandomHandsSet = (randomState: TrainingRandomState, playersNumber: number, cardSet: CardSet): TrainingHandsSet => {
     updateDealerHand(playersNumber, randomState);
     return {
         playersHand: getPlayersRandomHand(playersNumber, randomState, cardSet),

@@ -1,20 +1,20 @@
 <template>
-    <!-- <BasicStrategyTable /> -->
-    <LocalTable />
+    <!-- <LocalTable /> -->
     <!-- <RemoteTable serverUrl="http://localhost:3000/api" /> -->
+    <TrainingTable />
 </template>
 
 <script lang="ts">
-    import BasicStrategyTable from './components/BasicStrategyTable.vue';
     import LocalTable from './components/LocalTable.vue';
     import RemoteTable from './components/RemoteTable.vue';
+    import TrainingTable from './components/TrainingTable.vue';
 
     export default {
         name: 'Development',
         components: {
-            BasicStrategyTable,
             LocalTable,
-            RemoteTable
+            RemoteTable,
+            TrainingTable
         }
     };
 </script>

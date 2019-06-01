@@ -4,7 +4,7 @@
         :table="table"
         :actionsHandlers="actionsHandlers"
         :userPlayerId="userPlayerId"
-        :basicStrategyProgress="randomState.progress"
+        :trainingProgress="randomState.progress"
         :isUserPlayerHandler="() => true"
         :evaluteDecisions="true"
         :displayDecisionHelp="false"
@@ -19,7 +19,7 @@
     import { ActionsBarHandlers } from '../utils/handlers-types';
 
     export default {
-        name: 'BasicStrategyTable',
+        name: 'TrainingTable',
         components: {
             Table
         },
