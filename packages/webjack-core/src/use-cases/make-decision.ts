@@ -33,7 +33,6 @@ export const makeDecision = (tableId: string, playerId: string, decision: Player
 
     const currentHand = playerService.getCurrentHand(player)!;
     
-    // TODO Extract actions into PlayerService. Reuse
     switch (decision) {
         case PlayerActions.Double: {
             if (!handService.canDouble(currentHand)) {
@@ -42,14 +41,11 @@ export const makeDecision = (tableId: string, playerId: string, decision: Player
                     error: 'Doubling is only allowed with 9, 10 or 11 points',
                 };
             }
-            handService.setBet(currentHand, currentHand.bet * 2);
-            playerService.updateEarningRate(player, -currentHand.bet);
-            handService.addCard(currentHand, getNextCard(table.cardSet));
-            handService.markAsPlayed(currentHand);
+            playerService.double(player, getNextCard(table.cardSet));
             break;
         }
         case PlayerActions.Hit: {
-            handService.addCard(currentHand, getNextCard(table.cardSet));
+            playerService.hit(player, getNextCard(table.cardSet));
             break;
         }
         case PlayerActions.Split: {
@@ -59,22 +55,11 @@ export const makeDecision = (tableId: string, playerId: string, decision: Player
                     error: 'Splitting is only allowed with two equal cards!',
                 };
             }
-        
-            const handLastCard = currentHand.cards.splice(-1)[0];
-        
-            const newHand = handService.createHand(currentHand.bet);
-            handService.addCard(newHand, handLastCard);
-        
-            const index = player.hands.findIndex(hand => hand === currentHand);
-            player.hands.splice(index + 1, 0, newHand);
-        
-            handService.addCard(currentHand, getNextCard(table.cardSet));
-        
-            playerService.updateEarningRate(player, -currentHand.bet);
+            playerService.split(player, getNextCard(table.cardSet));
             break;
         }
         case PlayerActions.Stand: {
-            handService.markAsPlayed(currentHand);
+            playerService.stand(player);
             break;
         }
         default:

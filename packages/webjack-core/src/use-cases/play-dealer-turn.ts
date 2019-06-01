@@ -34,7 +34,6 @@ export const playDealerTurn = (tableId: string): UseCaseResult => {
         }
         else {
             clearInterval(dealerInterval);
-            handService.markAsPlayed(dealerHand);
             tableService.setStatus(table, TableStatus.EndingRound);
             endRound(table.id);
         }

@@ -2,6 +2,7 @@ import * as handService from '../services/hand-service';
 import * as playerService from '../services/player-service';
 import * as tableService from '../services/table-service';
 import { getNextCard } from '../services/card-set-service';
+import { HandStatus } from '../types/hand-status';
 import { TableStatus } from '../types/table-status';
 import { UseCaseResult } from '../types/use-case-result';
 import { playDealerTurn } from './play-dealer-turn';
@@ -30,15 +31,13 @@ export const updateCurrentRound = (tableId: string): UseCaseResult => {
             handService.addCard(currentHand, getNextCard(table.cardSet));
         }
 
-        const isHandFinished = handService.updateHandStatus(currentHand);
-        if (isHandFinished) {
+        // After dealing the card to the split hand, the current hand might be a BlackJack
+        if (currentHand.status === HandStatus.BlackJack) {
             updateCurrentRound(tableId);
         }
         else {
             tableService.setNextAction(table, 20, () => {
-                // TODO Reuse playerService.stand() when available
-                const currentHand = playerService.getCurrentHand(currentPlayer)!;
-                handService.markAsPlayed(currentHand);
+                playerService.stand(currentPlayer);
                 updateCurrentRound(tableId);
             });
         }

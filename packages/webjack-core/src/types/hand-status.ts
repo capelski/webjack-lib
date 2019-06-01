@@ -1,5 +1,6 @@
 export enum HandStatus {
-    Unplayed = '',
+    Unplayed = 'Unplayed',
+    Unresolved = 'Unresolved',
     Bust = 'Bust',
     BlackJack = 'BlackJack!',
     PlayerWins = 'Player wins',

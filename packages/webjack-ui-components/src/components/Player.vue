@@ -26,7 +26,7 @@
                             :class="{ 'card': true, 'red': card.suit === '♦' || card.suit === '♥', 'black': card.suit === '♠' || card.suit === '♣'}">
                             {{ card.symbol + card.suit }}
                         </span>
-                        <div v-if="hand.status">{{ hand.status }}</div>
+                        <div v-if="showHandStatus(hand)">{{ hand.status }}</div>
                     </li>
                 </ul>
             </div>
@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-    import { models } from 'webjack-core';
+    import { models, types } from 'webjack-core';
     import ShakyElement from './ShakyElement.vue';
 
     export default {
@@ -77,6 +77,11 @@
                     handValues = this.player.hands.map(hand => hand.values.join(' / ')).filter(Boolean);
                 }
                 return handValues;
+            }
+        },
+        methods: {
+            showHandStatus(hand: models.Hand) {
+                return hand.status !== types.HandStatus.Unplayed && hand.status !== types.HandStatus.Unresolved;
             }
         }
     };

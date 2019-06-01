@@ -51,11 +51,6 @@ export const startRound = (tableId: string): Promise<UseCaseResult> => {
         .map(player => () => new Promise(resolve => {
             const hand = playerService.getCurrentHand(player)!;
             handService.addCard(hand, getNextCard(table.cardSet, true));
-            const isBlackJack = handService.isBlackJack(hand);
-            if (isBlackJack) {
-                handService.setStatus(hand, HandStatus.BlackJack);
-                handService.markAsPlayed(hand);
-            }
             delay(400).then(resolve);
         }))
         .reduce((promiseChain, runPromise) => promiseChain.then(runPromise), firstPromiseChain);

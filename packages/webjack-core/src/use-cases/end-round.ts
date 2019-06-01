@@ -25,7 +25,7 @@ export const endRound = (tableId: string): UseCaseResult => {
     const activePlayers = tableService.getActivePlayers(table);
     activePlayers.forEach(player => {
         const handsEarnings = player.hands.map(hand => 
-            handService.getHandEarnings(hand, dealerHand));
+            handService.resolveHand(hand, dealerHand));
         const earningRate = handsEarnings.reduce((x, y) => x + y, 0);
         playerService.updateEarningRate(player, earningRate);
     });
