@@ -1,6 +1,6 @@
 import { Card } from './card';
 
-export interface TrainingSet {
+export interface ITrainingSet {
     currentRoundCards: Card[];
     dealerAvailableHands: string[];
     dealerCurrentHand: string;
@@ -9,7 +9,12 @@ export interface TrainingSet {
     progress: number;
 }
 
-export class TrainingSet implements TrainingSet {
+export class TrainingSet implements ITrainingSet {
+    currentRoundCards: Card[];
+    dealerCurrentHand: string;
+    playerUsedHands: string[];
+    progress: number;
+
     constructor (public dealerAvailableHands: string[], public playerAvailableHands: string[]) {
         this.currentRoundCards = [],
         this.dealerCurrentHand = '',

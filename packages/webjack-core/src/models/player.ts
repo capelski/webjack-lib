@@ -1,6 +1,6 @@
 import { Hand } from './hand';
 
-export interface Player {
+export interface IPlayer {
     earningRate: number;
     hands: Hand[];
     id: string;
@@ -8,7 +8,11 @@ export interface Player {
     name: string;
 }
 
-export class Player implements Player {
+export class Player implements IPlayer {
+    earningRate: number;
+    hands: Hand[];
+    inactiveRounds: number;
+
     constructor (public id: string, public name: string = 'Unnamed') {
         this.earningRate = 0;
         this.hands = [];

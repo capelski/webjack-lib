@@ -1,11 +1,16 @@
-export interface GameParameters {
+export interface IGameParameters {
 	decksNumber: number;
 	maxDiscardedCards: number;
 	maxPlayers: number;
 	maxInactiveRounds: number;
 }
 
-export class GameParameters implements GameParameters {    
+export class GameParameters implements IGameParameters {   
+	decksNumber: number;
+	maxDiscardedCards: number;
+	maxPlayers: number;
+	maxInactiveRounds: number;
+	 
     constructor () {
         this.decksNumber = 4;
 	    this.maxDiscardedCards = 40;

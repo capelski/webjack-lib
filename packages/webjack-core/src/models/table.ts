@@ -2,7 +2,7 @@ import { CardSet } from './card-set';
 import { Player } from './player';
 import { TableStatus } from '../types/table-status';
 
-export interface Table {
+export interface ITable {
     baseTimestamp: number | undefined;
     cardSet: CardSet;
     dealer: Player
@@ -13,7 +13,13 @@ export interface Table {
     status: TableStatus;
 }
 
-export class Table implements Table {
+export class Table implements ITable {
+    baseTimestamp: number | undefined;
+    nextActionTimestamp: number | undefined;
+    nextAction: number | undefined;
+    players: Player[];
+    status: TableStatus;
+
     constructor (public id: string, public dealer: Player, public cardSet: CardSet) {
         this.baseTimestamp = undefined;
         this.nextActionTimestamp = undefined;

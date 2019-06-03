@@ -17,5 +17,5 @@ export const exposeWebjackRoutes = (app: Application | Router, routesPrefix = ''
 	app.get(`${routesPrefix}/exit-table`, tableController.exitTable);
 };
 
-export const setGameParameters = (gameParameters: models.GameParameters) =>
+export const setGameParameters = (gameParameters: models.IGameParameters) =>
 	services.gameParametersService.setParameters(gameParameters);
