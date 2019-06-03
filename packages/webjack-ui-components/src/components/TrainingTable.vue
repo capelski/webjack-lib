@@ -4,7 +4,7 @@
         :table="table"
         :actionsHandlers="actionsHandlers"
         :userPlayerId="userPlayerId"
-        :trainingProgress="table.cardSet.trainingHands.progress"
+        :trainingProgress="table.cardSet.trainingSet.progress"
         :isUserPlayerHandler="() => true"
         :evaluteDecisions="true"
         :displayDecisionHelp="false"

@@ -1,8 +1,8 @@
 import { Card } from '../models/card';
 import { CardSet } from '../models/card-set';
+import { TrainingSet } from '../models/training-set';
 import { createDeck } from '../services/card-service';
 import { getParameters } from '../services/game-parameters-service';
-import { TrainingHands } from '../types/training-hands';
 import { shuffleArray } from '../utils/js-generics';
 
 // const devCards: Card[] = [
@@ -113,27 +113,19 @@ export const collectPlayedCards = (cardSet: CardSet) => {
     }
 };
 
-export const createCardSet = (useTrainingHands = false) => {
+export const createCardSet = (useTrainingSet = false) => {
     const { decksNumber } = getParameters();
     const cards = ' '.repeat(decksNumber)
         .split('')
         .map(_ => createDeck())
         .reduce((x, y) => x.concat(y), []);
     shuffleArray(cards);
+    const trainingSet = useTrainingSet ?
+        new TrainingSet([...relevantDealerHands], [...relevantPlayerHands]) :
+        undefined;
 
-    const cardSet = new CardSet(cards);
+    const cardSet = new CardSet(cards, trainingSet);
     // const cardSet = new CardSet(devCards);
-
-    if (useTrainingHands) {
-        cardSet.trainingHands = {
-            currentRoundCards: [],
-            dealerAvailableHands: [...relevantDealerHands],
-            dealerCurrentHand: '',
-            playerAvailableHands: [...relevantPlayerHands],
-            playerUsedHands: [],
-            progress: 0
-        };
-    }
 
     return cardSet;
 };
@@ -187,24 +179,24 @@ const getHardHandSymbols = (value: number): string[] => {
 
 export const getNextCard = (cardSet: CardSet, isInitialDealing = false) => {
     let cardSource = cardSet.unusedCards;
-    if (isInitialDealing && cardSet.trainingHands) {
-        if (cardSet.trainingHands.currentRoundCards.length === 0) {
+    if (isInitialDealing && cardSet.trainingSet) {
+        if (cardSet.trainingSet.currentRoundCards.length === 0) {
             setNextTrainingRound(cardSet);
         }
-        cardSource = cardSet.trainingHands.currentRoundCards;
+        cardSource = cardSet.trainingSet.currentRoundCards;
     }
     const nextCard = cardSource.splice(0, 1)[0];
     cardSet.beingPlayed.push(nextCard);
     return nextCard;
 };
 
-const getRandomHandSymbols = (trainingHands: TrainingHands): string[] => {
-    let handsSet = trainingHands.playerAvailableHands.length > 0 ? trainingHands.playerAvailableHands : trainingHands.playerUsedHands;
+const getRandomHandSymbols = (trainingSet: TrainingSet): string[] => {
+    let handsSet = trainingSet.playerAvailableHands.length > 0 ? trainingSet.playerAvailableHands : trainingSet.playerUsedHands;
 
     const randomIndex = Math.floor(Math.random() * (handsSet.length - 1));
     const randomHand = handsSet[randomIndex];
     handsSet.splice(randomIndex, 1);
-    trainingHands.playerUsedHands.push(randomHand);
+    trainingSet.playerUsedHands.push(randomHand);
 
     let symbols: string[] = [];
     const hardHandMatch = randomHand.match(/^\+(.*)$/);
@@ -224,9 +216,9 @@ const getRandomHandSymbols = (trainingHands: TrainingHands): string[] => {
 
 export const setNextTrainingRound = (cardSet: CardSet) => {
     const playersNumber = 7; // When using training hands there must always be 7 players playing
-    updateTrainingHands(cardSet.trainingHands!);
+    updateTrainingSet(cardSet.trainingSet!);
     const playerCards = Array(playersNumber).fill(0).map(_ => {
-        const symbols = getRandomHandSymbols(cardSet.trainingHands!);
+        const symbols = getRandomHandSymbols(cardSet.trainingSet!);
         return {
             first: getCardFromCardSet(symbols[0], cardSet),
             second: getCardFromCardSet(symbols[1], cardSet)
@@ -234,39 +226,39 @@ export const setNextTrainingRound = (cardSet: CardSet) => {
     });
     const playersFirstCard = playerCards.map(x => x.first);
     const dealerCard = getCardFromCardSet(
-        cardSet.trainingHands!.dealerCurrentHand.replace(/Figure/, getFigureSymbol()),
+        cardSet.trainingSet!.dealerCurrentHand.replace(/Figure/, getFigureSymbol()),
         cardSet);
     const playersSecondCard = playerCards.map(x => x.second);
-    cardSet.trainingHands!.currentRoundCards = playersFirstCard
+    cardSet.trainingSet!.currentRoundCards = playersFirstCard
         .concat([dealerCard])
         .concat(playersSecondCard);
 };
 
-const updateTrainingHands = (trainingHands: TrainingHands) => {
-    let mustUpdateDealerHand = trainingHands.dealerCurrentHand === '';
+const updateTrainingSet = (trainingSet: TrainingSet) => {
+    let mustUpdateDealerHand = trainingSet.dealerCurrentHand === '';
 
-    if (trainingHands.playerAvailableHands.length === 0) {
-        trainingHands.playerAvailableHands = [...relevantPlayerHands];
-        trainingHands.playerUsedHands = [];
+    if (trainingSet.playerAvailableHands.length === 0) {
+        trainingSet.playerAvailableHands = [...relevantPlayerHands];
+        trainingSet.playerUsedHands = [];
         mustUpdateDealerHand = true;
     }
 
     if (mustUpdateDealerHand) {
-        if (trainingHands.dealerAvailableHands.length === 0) {
+        if (trainingSet.dealerAvailableHands.length === 0) {
             // TODO When tracking the progress, we should mark 100% in this point
-            trainingHands.dealerAvailableHands = [...relevantDealerHands];
+            trainingSet.dealerAvailableHands = [...relevantDealerHands];
         }
 
-        const dealerIndex = Math.floor(Math.random() * (trainingHands.dealerAvailableHands.length - 1));
-        trainingHands.dealerCurrentHand = trainingHands.dealerAvailableHands[dealerIndex];
-        trainingHands.dealerAvailableHands.splice(dealerIndex, 1);
+        const dealerIndex = Math.floor(Math.random() * (trainingSet.dealerAvailableHands.length - 1));
+        trainingSet.dealerCurrentHand = trainingSet.dealerAvailableHands[dealerIndex];
+        trainingSet.dealerAvailableHands.splice(dealerIndex, 1);
     }
 
     const coveredDealerHands =
-        relevantDealerHands.length - (trainingHands.dealerAvailableHands.length + 1);
+        relevantDealerHands.length - (trainingSet.dealerAvailableHands.length + 1);
     const coveredPlayerHands =
-        relevantPlayerHands.length - trainingHands.playerAvailableHands.length;
+        relevantPlayerHands.length - trainingSet.playerAvailableHands.length;
     const coveredHands = coveredDealerHands * relevantPlayerHands.length + coveredPlayerHands;
     const totalHands = relevantDealerHands.length * relevantPlayerHands.length;
-    trainingHands.progress = Math.min(100, Math.floor(coveredHands * 1000 / totalHands) / 10);
+    trainingSet.progress = Math.min(100, Math.floor(coveredHands * 1000 / totalHands) / 10);
 };
