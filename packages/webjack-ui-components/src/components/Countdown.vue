@@ -11,16 +11,16 @@
 <script lang="ts">
     import Vue from 'vue';
     import { Component, Prop, Watch } from 'vue-property-decorator';
-    import { models } from 'webjack-core';
+    import { types } from 'webjack-core';
     import { INullableValueReference } from '../utils/types';
 
     @Component({})
     export default class Countdown extends Vue {
         @Prop({ required: true })
-        table: models.ITable;
+        table: types.ITable;
 
         @Watch('table')
-        tableChanged(newValue: models.ITable, oldValue: models.ITable) {
+        tableChanged(newValue: types.ITable, oldValue: types.ITable) {
             if (newValue.nextActionTimestamp && !oldValue.nextActionTimestamp) {
                 this.setCountdownInterval();
             }

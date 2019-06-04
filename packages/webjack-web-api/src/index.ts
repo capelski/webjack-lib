@@ -1,6 +1,6 @@
 import * as playerController from './controllers/player-controller';
 import * as tableController from './controllers/table-controller';
-import { models, services } from 'webjack-core';
+import { services, types } from 'webjack-core';
 import { Router, Application } from 'express';
 
 export const exposeWebjackRoutes = (app: Application | Router, routesPrefix = '') => {
@@ -17,5 +17,5 @@ export const exposeWebjackRoutes = (app: Application | Router, routesPrefix = ''
 	app.get(`${routesPrefix}/exit-table`, tableController.exitTable);
 };
 
-export const setGameParameters = (gameParameters: models.IGameParameters) =>
+export const setGameParameters = (gameParameters: types.IGameParameters) =>
 	services.gameParametersService.setParameters(gameParameters);

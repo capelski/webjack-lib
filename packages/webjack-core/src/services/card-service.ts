@@ -1,4 +1,4 @@
-import { ICard } from '../models/card';
+import { ICard } from '../types/card';
 import { cartesianProduct } from '../utils/js-generics';
 
 const cardsValue: { [key: string]: number[] } = {

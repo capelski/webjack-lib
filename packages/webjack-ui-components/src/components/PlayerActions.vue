@@ -45,7 +45,7 @@
     import toastr from 'toastr';
     import Vue from 'vue';
     import { Component, Prop } from 'vue-property-decorator';
-    import { models, services, types, utils } from 'webjack-core';
+    import { services, types, utils } from 'webjack-core';
     import { IPlayerActionsHandlers, IValueReference } from '../utils/types';
     import ShakyElement from './ShakyElement.vue';
 
@@ -63,7 +63,7 @@
         
         // TODO Replace by dealer hand
         @Prop({ required: true })
-        dealer: models.IPlayer;
+        dealer: types.IPlayer;
 
         @Prop()
         displayDecisionHelp: boolean;
@@ -76,7 +76,7 @@
 
         // TODO Replace by user hand
         @Prop()
-        userPlayer: models.IPlayer;
+        userPlayer: types.IPlayer;
 
         trainingAttempts: IValueReference<number> = { value: 0 };
         trainingHits: IValueReference<number> = { value: 0 };

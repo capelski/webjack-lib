@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid';
-import { IPlayer } from '../models/player';
-import { ICard } from '../models/card';
+import { IPlayer } from '../types/player';
+import { ICard } from '../types/card';
 import { HandStatus } from '../types/hand-status';
 import { addCard, createHand, doubleBet, finishHand, isUnplayed } from './hand-service';
 

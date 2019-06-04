@@ -35,7 +35,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import { Component, Prop } from 'vue-property-decorator';
-    import { models, services, types } from 'webjack-core';
+    import { services, types } from 'webjack-core';
     import { IActionsBarHandlers } from '../utils/types';
     import Player from './Player.vue';
     import ActionsBar from './ActionsBar.vue';
@@ -60,13 +60,13 @@
         evaluteDecisions: boolean;
 
         @Prop()
-        isUserPlayerHandler: (player?: models.IPlayer) => boolean;
+        isUserPlayerHandler: (player?: types.IPlayer) => boolean;
 
         @Prop({ required: true })
         startRoundButtonText: string;
 
         @Prop({ required: true })
-        table: models.ITable;
+        table: types.ITable;
 
         @Prop({ required: true })
         userPlayerId: string;
@@ -84,7 +84,7 @@
             return this.table.players.find(player => player.id === this.userPlayerId);
         }
 
-        isUserPlayer(player?: models.IPlayer) {
+        isUserPlayer(player?: types.IPlayer) {
             return player && this.isUserPlayerHandler(player);
         }
     }

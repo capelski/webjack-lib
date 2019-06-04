@@ -23,7 +23,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import { Component, Prop, Watch } from 'vue-property-decorator';
-    import { models, types } from 'webjack-core';
+    import { types } from 'webjack-core';
     import { get } from '../utils/http';
     import { stallPromise } from '../utils/shared';
     import { IActionsBarHandlers, IValueReference, INullableValueReference } from '../utils/types';
@@ -63,7 +63,7 @@
         };
         isPlayerRegistered: IValueReference<boolean> = { value: false };
         loading: IValueReference<boolean> = { value: false };
-        table: models.ITable = null;
+        table: types.ITable = null;
         tableId: INullableValueReference<string> = { value: undefined };
         tableInterval: INullableValueReference<number> = { value: undefined };
         userPlayerId: INullableValueReference<string> = { value: undefined };
@@ -125,7 +125,7 @@
             this.makeDecision(types.PlayerActions.Hit);
         }
 
-        isUserPlayer(player?: models.IPlayer) {
+        isUserPlayer(player?: types.IPlayer) {
             return player && player.id === this.userPlayerId.value;
         }
 

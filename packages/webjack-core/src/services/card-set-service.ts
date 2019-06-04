@@ -1,6 +1,6 @@
-import { ICard } from '../models/card';
-import { ICardSet } from '../models/card-set';
-import { ITrainingSet } from '../models/training-set';
+import { ICard } from '../types/card';
+import { ICardSet } from '../types/card-set';
+import { ITrainingSet } from '../types/training-set';
 import { createDeck } from '../services/card-service';
 import { getParameters } from '../services/game-parameters-service';
 import { shuffleArray } from '../utils/js-generics';

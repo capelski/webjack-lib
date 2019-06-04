@@ -49,7 +49,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import { Component, Prop } from 'vue-property-decorator';
-    import { models, types } from 'webjack-core';
+    import { types } from 'webjack-core';
     import ShakyElement from './ShakyElement.vue';
 
     @Component({
@@ -68,7 +68,7 @@
         isUserPlayer: boolean;
         
         @Prop()
-        player: models.IPlayer;
+        player: types.IPlayer;
 
         get handValues(): string[] | undefined {
             let handValues;
@@ -78,7 +78,7 @@
             return handValues;
         }
 
-        showHandStatus(hand: models.IHand) {
+        showHandStatus(hand: types.IHand) {
             return hand.status !== types.HandStatus.Unplayed && hand.status !== types.HandStatus.Unresolved;
         }
     }

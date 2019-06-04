@@ -40,7 +40,7 @@
     import toastr from 'toastr';
     import Vue from 'vue';
     import { Component, Prop } from 'vue-property-decorator';
-    import { models, services } from 'webjack-core';
+    import { services, types } from 'webjack-core';
     import { IActionsBarHandlers } from '../utils/types';
     import Countdown from './Countdown.vue';
     import PlayerActions from './PlayerActions.vue';
@@ -71,10 +71,10 @@
         startRoundButtonText: string;
 
         @Prop({ required: true })
-        table: models.ITable;
+        table: types.ITable;
         
         @Prop()
-        userPlayer: models.IPlayer;
+        userPlayer: types.IPlayer;
 
         get isUserPlaying() {
             return this.userPlayer && services.playerService.isPlaying(this.userPlayer);

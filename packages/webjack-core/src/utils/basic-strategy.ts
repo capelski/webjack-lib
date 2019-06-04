@@ -1,4 +1,4 @@
-import { IHand } from '../models/hand';
+import { IHand } from '../types/hand';
 import { DecisionsSet, HandDecisionsData, DecisionsSetGetter, NumberDictionary, OptimalDecision } from '../types/basic-strategy';
 import { PlayerActions } from '../types/player-actions';
 

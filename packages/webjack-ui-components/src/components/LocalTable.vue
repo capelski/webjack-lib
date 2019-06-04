@@ -16,7 +16,7 @@
     import toastr from 'toastr';
     import Vue from 'vue';
     import { Component, Prop, Watch } from 'vue-property-decorator';
-    import { models, services, types, useCases } from 'webjack-core';
+    import { services, types, useCases } from 'webjack-core';
     import { IActionsBarHandlers, INullableValueReference } from '../utils/types';
     import Table from './Table.vue';
 
@@ -44,8 +44,8 @@
             split: this.split,
             stand: this.stand
         };
-        player: models.IPlayer = null;
-        table: models.ITable = null;
+        player: types.IPlayer = null;
+        table: types.ITable = null;
         tableInterval: INullableValueReference<number> = { value: undefined };
 
         private created() {
@@ -73,7 +73,7 @@
             this.makeDecision(types.PlayerActions.Hit);
         }
 
-        isUserPlayer(player?: models.IPlayer) {
+        isUserPlayer(player?: types.IPlayer) {
             return true;
         }
 

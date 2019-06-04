@@ -1,5 +1,5 @@
-import { ICard } from '../models/card';
-import { IHand } from '../models/hand';
+import { ICard } from '../types/card';
+import { IHand } from '../types/hand';
 import * as cardService from './card-service';
 import { cartesianProduct, removeDuplicates } from '../utils/js-generics';
 import { HandStatus } from '../types/hand-status';

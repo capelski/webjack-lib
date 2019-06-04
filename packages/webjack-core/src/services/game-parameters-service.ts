@@ -1,4 +1,4 @@
-import { IGameParameters } from '../models/game-parameters';
+import { IGameParameters } from '../types/game-parameters';
 
 let gameParameters: IGameParameters = {
     decksNumber: 4,

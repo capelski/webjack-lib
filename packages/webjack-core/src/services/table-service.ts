@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid';
-import { IPlayer } from '../models/player';
-import { ITable } from '../models/table';
+import { IPlayer } from '../types/player';
+import { ITable } from '../types/table';
 import { TableStatus } from '../types/table-status';
 import { createCardSet } from './card-set-service';
 import { getParameters } from './game-parameters-service';

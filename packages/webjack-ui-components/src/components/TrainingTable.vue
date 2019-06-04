@@ -16,7 +16,7 @@
     import toastr from 'toastr';
     import Vue from 'vue';
     import { Component, Prop, Watch } from 'vue-property-decorator';
-    import { models, services, types, useCases } from 'webjack-core';
+    import { services, types, useCases } from 'webjack-core';
     import { IActionsBarHandlers, INullableValueReference } from '../utils/types';
     import Table from './Table.vue';
 
@@ -44,7 +44,7 @@
             split: this.split,
             stand: this.stand
         };
-        table: models.ITable | null = null;
+        table: types.ITable | null = null;
         tableInterval: INullableValueReference<number> = { value: undefined };
 
         private created() {
