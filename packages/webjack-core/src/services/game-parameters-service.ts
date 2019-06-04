@@ -1,10 +1,15 @@
-import { GameParameters } from '../models/game-parameters';
+import { IGameParameters } from '../models/game-parameters';
 
-let gameParameters: GameParameters = new GameParameters();
+let gameParameters: IGameParameters = {
+    decksNumber: 4,
+    maxDiscardedCards: 40,
+    maxPlayers: 7,
+    maxInactiveRounds: 4
+};
 
 export const getParameters = () => gameParameters;
 
-export const setParameters = (_gameParameters: GameParameters) => {
+export const setParameters = (_gameParameters: IGameParameters) => {
     gameParameters = {
         ...gameParameters,
         ..._gameParameters

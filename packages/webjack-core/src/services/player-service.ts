@@ -1,17 +1,25 @@
 import { v4 as uuid } from 'uuid';
-import { Player } from '../models/player';
-import { Card } from '../models/card';
+import { IPlayer } from '../models/player';
+import { ICard } from '../models/card';
 import { HandStatus } from '../types/hand-status';
 import { addCard, createHand, doubleBet, finishHand, isUnplayed } from './hand-service';
 
-let players: Player[] = [];
+let players: IPlayer[] = [];
 
-export const clearHands = (player: Player) => player.hands = [];
+export const clearHands = (player: IPlayer) => player.hands = [];
 
-export const createDealer = () => new Player(uuid(), 'Dealer');
+const create = (name: string = 'Unnamed'): IPlayer => ({
+    id: uuid(),
+    earningRate: 0,
+    hands: [],
+    inactiveRounds: 0,
+    name
+});
+
+export const createDealer = () => create('Dealer');
 
 export const createPlayer = (playerName: string) => {
-    const player = new Player(uuid(), playerName);
+    const player = create(playerName);
     players.push(player);
     return player;
 };
@@ -20,7 +28,7 @@ export const deletePlayer = (playerId: string) => {
     players = players.filter(player => player.id !== playerId);
 };
 
-export const double = (player: Player, nextCard: Card) => {
+export const double = (player: IPlayer, nextCard: ICard) => {
     const currentHand = getCurrentHand(player)!;
     const currentBet = currentHand.bet;
     doubleBet(currentHand);
@@ -31,32 +39,32 @@ export const double = (player: Player, nextCard: Card) => {
     }
 };
 
-export const getCurrentHand = (player: Player) => player.hands.find(isUnplayed);
+export const getCurrentHand = (player: IPlayer) => player.hands.find(isUnplayed);
 
 export const getPlayerById = (playerId: string) => players.find(p => p.id === playerId);
 
 export const getPlayerByName = (name: string) =>
     players.find(p => p.name.toLowerCase() === name.toLowerCase());
 
-export const hit = (player: Player, nextCard: Card) => {
+export const hit = (player: IPlayer, nextCard: ICard) => {
     const currentHand = getCurrentHand(player)!;
     addCard(currentHand, nextCard);
 };
 
-export const increaseInactiveRounds = (player: Player) => {
+export const increaseInactiveRounds = (player: IPlayer) => {
     player.inactiveRounds++;
 };
 
-export const initializeHand = (player: Player, bet: number) => {
+export const initializeHand = (player: IPlayer, bet: number) => {
     player.hands = [createHand(bet)];
     updateEarningRate(player, -bet);
 };
 
-export const isPlaying = (player: Player) => player.hands.length > 0;
+export const isPlaying = (player: IPlayer) => player.hands.length > 0;
 
-export const resetInactiveRounds = (player: Player) => player.inactiveRounds = 0;
+export const resetInactiveRounds = (player: IPlayer) => player.inactiveRounds = 0;
 
-export const split = (player: Player, nextCard: Card) => {
+export const split = (player: IPlayer, nextCard: ICard) => {
     const currentHand = getCurrentHand(player)!;
     const currentHandIndex = player.hands.findIndex(hand => hand === currentHand);
     const newHand = createHand(currentHand.bet);
@@ -69,11 +77,11 @@ export const split = (player: Player, nextCard: Card) => {
     updateEarningRate(player, -currentHand.bet);
 };
 
-export const stand = (player: Player) => {
+export const stand = (player: IPlayer) => {
     const currentHand = getCurrentHand(player)!;
     finishHand(currentHand);
 };
 
-export const updateEarningRate = (player: Player, earningRateVariation: number) => {
+export const updateEarningRate = (player: IPlayer, earningRateVariation: number) => {
     player.earningRate += earningRateVariation;
 };

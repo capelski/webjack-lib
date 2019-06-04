@@ -1,4 +1,4 @@
-import { Hand } from '../models/hand';
+import { IHand } from '../models/hand';
 import { DecisionsSet, HandDecisionsData, DecisionsSetGetter, NumberDictionary, OptimalDecision } from '../types/basic-strategy';
 import { PlayerActions } from '../types/player-actions';
 
@@ -103,13 +103,13 @@ const hardHandDecisions: DecisionsSetGetter = decisionsData => hardHandsMap[deci
 
 const allHandsDecisions = splittableHandDecisions.concat(softHandDecisions).concat(hardHandDecisions);
 
-const getHandDecisionsData = (hand: Hand): HandDecisionsData => ({
+const getHandDecisionsData = (hand: IHand): HandDecisionsData => ({
     symbols: hand.cards.map(c => c.symbol).join(','),
     value: hand.values[hand.values.length - 1],
     values: hand.values
 });
 
-export const getOptimalDecision = (hand: Hand, dealerHandValue: number): OptimalDecision => {
+export const getOptimalDecision = (hand: IHand, dealerHandValue: number): OptimalDecision => {
     const handDecisionsData = getHandDecisionsData(hand);
     const decisionsSet = allHandsDecisions.reduce(
         (decisionsSet, decisionsSetGetter) => decisionsSet || decisionsSetGetter(handDecisionsData),

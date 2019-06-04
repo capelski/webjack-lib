@@ -1,11 +1,11 @@
-import { Card } from '../models/card';
-import { CardSet } from '../models/card-set';
-import { TrainingSet } from '../models/training-set';
+import { ICard } from '../models/card';
+import { ICardSet } from '../models/card-set';
+import { ITrainingSet } from '../models/training-set';
 import { createDeck } from '../services/card-service';
 import { getParameters } from '../services/game-parameters-service';
 import { shuffleArray } from '../utils/js-generics';
 
-// const devCards: Card[] = [
+// const devCards: ICard[] = [
 //     {
 //       symbol: '10',
 //       suit: '!'
@@ -101,7 +101,7 @@ const relevantPlayerHands = [
     ...hardHands
 ];
 
-export const collectPlayedCards = (cardSet: CardSet) => {
+export const collectPlayedCards = (cardSet: ICardSet) => {
     cardSet.discardPile = cardSet.discardPile.concat(cardSet.beingPlayed);
     cardSet.beingPlayed = [];
 
@@ -120,17 +120,28 @@ export const createCardSet = (useTrainingSet = false) => {
         .map(_ => createDeck())
         .reduce((x, y) => x.concat(y), []);
     shuffleArray(cards);
-    const trainingSet = useTrainingSet ?
-        new TrainingSet([...relevantDealerHands], [...relevantPlayerHands]) :
-        undefined;
 
-    const cardSet = new CardSet(cards, trainingSet);
-    // const cardSet = new CardSet(devCards);
+    const cardSet: ICardSet = {
+        beingPlayed: [],
+        discardPile: [],
+        trainingSet: useTrainingSet ?
+            {
+                currentRoundCards: [],
+                dealerAvailableHands: [...relevantDealerHands],
+                dealerCurrentHand: '',
+                playerAvailableHands: [...relevantPlayerHands],
+                playerUsedHands: [],
+                progress: 0
+            } :
+            undefined,
+        unusedCards: cards
+        // unusedCards: devCards
+    };
 
     return cardSet;
 };
 
-const getCardFromCardSet = (symbol: string, cardSet: CardSet): Card => {
+const getCardFromCardSet = (symbol: string, cardSet: ICardSet): ICard => {
     // We search for the cards in the discardPile first to minimize the game interfering
     let card = getCardFromCollection(symbol, cardSet.discardPile);
     if (!card) {
@@ -139,8 +150,8 @@ const getCardFromCardSet = (symbol: string, cardSet: CardSet): Card => {
     return card!;
 };
 
-const getCardFromCollection = (symbol: string, cards: Card[]): Card | undefined => {
-    let targetCard: Card | undefined;
+const getCardFromCollection = (symbol: string, cards: ICard[]): ICard | undefined => {
+    let targetCard: ICard | undefined;
     // We iterate the cards set from end to beginning to minimize the game interfering
     for (let i = cards.length - 1; i >= 0 ; --i) {
         const card = cards[i];
@@ -177,7 +188,7 @@ const getHardHandSymbols = (value: number): string[] => {
     return [firstCardSymbol, secondCardSymbol];
 };
 
-export const getNextCard = (cardSet: CardSet, isInitialDealing = false) => {
+export const getNextCard = (cardSet: ICardSet, isInitialDealing = false) => {
     let cardSource = cardSet.unusedCards;
     if (isInitialDealing && cardSet.trainingSet) {
         if (cardSet.trainingSet.currentRoundCards.length === 0) {
@@ -190,7 +201,7 @@ export const getNextCard = (cardSet: CardSet, isInitialDealing = false) => {
     return nextCard;
 };
 
-const getRandomHandSymbols = (trainingSet: TrainingSet): string[] => {
+const getRandomHandSymbols = (trainingSet: ITrainingSet): string[] => {
     let handsSet = trainingSet.playerAvailableHands.length > 0 ? trainingSet.playerAvailableHands : trainingSet.playerUsedHands;
 
     const randomIndex = Math.floor(Math.random() * (handsSet.length - 1));
@@ -214,7 +225,7 @@ const getRandomHandSymbols = (trainingSet: TrainingSet): string[] => {
     return symbols;
 };
 
-export const setNextTrainingRound = (cardSet: CardSet) => {
+export const setNextTrainingRound = (cardSet: ICardSet) => {
     const playersNumber = 7; // When using training hands there must always be 7 players playing
     updateTrainingSet(cardSet.trainingSet!);
     const playerCards = Array(playersNumber).fill(0).map(_ => {
@@ -234,7 +245,7 @@ export const setNextTrainingRound = (cardSet: CardSet) => {
         .concat(playersSecondCard);
 };
 
-const updateTrainingSet = (trainingSet: TrainingSet) => {
+const updateTrainingSet = (trainingSet: ITrainingSet) => {
     let mustUpdateDealerHand = trainingSet.dealerCurrentHand === '';
 
     if (trainingSet.playerAvailableHands.length === 0) {

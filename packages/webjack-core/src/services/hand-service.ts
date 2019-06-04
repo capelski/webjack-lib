@@ -1,10 +1,10 @@
-import { Card } from '../models/card';
-import { Hand } from '../models/hand';
+import { ICard } from '../models/card';
+import { IHand } from '../models/hand';
 import * as cardService from './card-service';
 import { cartesianProduct, removeDuplicates } from '../utils/js-generics';
 import { HandStatus } from '../types/hand-status';
 
-export const addCard = (hand: Hand, card: Card) => {
+export const addCard = (hand: IHand, card: ICard) => {
     hand.cards.push(card);
     hand.values = hand.cards.reduce(handValuesReducer, [0]);
     if (isBlackJack(hand)) {
@@ -18,23 +18,28 @@ export const addCard = (hand: Hand, card: Card) => {
     }
 };
 
-export const canDouble = (hand: Hand) => getValue(hand) > 8 && getValue(hand) < 12;
+export const canDouble = (hand: IHand) => getValue(hand) > 8 && getValue(hand) < 12;
 
-export const canSplit = (hand: Hand) => hand.cards.length === 2 && cardService.getValue(hand.cards[0])[0] === cardService.getValue(hand.cards[1])[0];
+export const canSplit = (hand: IHand) => hand.cards.length === 2 && cardService.getValue(hand.cards[0])[0] === cardService.getValue(hand.cards[1])[0];
 
-export const createHand = (bet: number) => new Hand(bet);
+export const createHand = (bet: number): IHand => ({
+    bet,
+    cards: [],
+    values: [],
+    status: HandStatus.Unplayed,
+});
 
-export const doubleBet = (hand: Hand) => {
+export const doubleBet = (hand: IHand) => {
     hand.bet = hand.bet * 2;
 };
 
-export const finishHand = (hand: Hand) => {
+export const finishHand = (hand: IHand) => {
     hand.status = HandStatus.Unresolved;
 };
 
-export const getValue = (hand: Hand) => hand.values[hand.values.length - 1];
+export const getValue = (hand: IHand) => hand.values[hand.values.length - 1];
 
-const handValuesReducer = (reducedValues: number[], card: Card) => {
+const handValuesReducer = (reducedValues: number[], card: ICard) => {
     const cardValues = cardService.getValue(card);
     const nextValuesCandidates = cartesianProduct(reducedValues, cardValues, (x, y) => x + y);
     let nextValues = removeDuplicates(nextValuesCandidates);
@@ -50,17 +55,17 @@ const handValuesReducer = (reducedValues: number[], card: Card) => {
     return nextValues;
 };
 
-export const hasBeenSplit = (hand: Hand) => hand.cards.length === 1;
+export const hasBeenSplit = (hand: IHand) => hand.cards.length === 1;
 
-const isBlackJack = (hand: Hand) => isMaxValue(hand) && hand.cards.length === 2;
+const isBlackJack = (hand: IHand) => isMaxValue(hand) && hand.cards.length === 2;
 
-const isBust = (hand: Hand) => getValue(hand) > 21;
+const isBust = (hand: IHand) => getValue(hand) > 21;
 
-const isMaxValue = (hand: Hand) => getValue(hand) === 21;
+const isMaxValue = (hand: IHand) => getValue(hand) === 21;
 
-export const isUnplayed = (hand: Hand) => hand.status === HandStatus.Unplayed;
+export const isUnplayed = (hand: IHand) => hand.status === HandStatus.Unplayed;
 
-export const resolveHand = (hand: Hand, dealerHand: Hand) => {
+export const resolveHand = (hand: IHand, dealerHand: IHand) => {
     let earnings = 0;
 
     if (isBust(hand)) {
