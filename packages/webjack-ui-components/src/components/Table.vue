@@ -33,66 +33,61 @@
 </template>
 
 <script lang="ts">
+    import Vue from 'vue';
+    import { Component, Prop } from 'vue-property-decorator';
+    import { models, services, types } from 'webjack-core';
+    import { IActionsBarHandlers } from '../utils/types';
     import Player from './Player.vue';
     import ActionsBar from './ActionsBar.vue';
-    import { ActionsBarHandlers } from '../utils/handlers-types';
-    import { models, services, types } from 'webjack-core';
 
-    export default {
-        name: 'Table',
+    @Component({
         components: {
             Player,
             ActionsBar
-        },
-        props: {
-            actionsHandlers: {
-                type: ActionsBarHandlers,
-                required: true
-            },
-            trainingProgress: {
-                type: Number,
-                default: -1
-            },
-            displayDecisionHelp: {
-                type: Boolean
-            },
-            evaluteDecisions: {
-                type: Boolean
-            },
-            isUserPlayerHandler: {
-                type: Function
-            },
-            startRoundButtonText: {
-                type: String,
-                required: true
-            },
-            table: {
-                type: models.Table,
-                required: true
-            },
-            userPlayerId: {
-                type: String,
-                required: true
-            }
-        },
-        computed: {
-            currentPlayerId() {
-                const currentPlayer = services.tableService.getCurrentPlayer(this.table);
-                return currentPlayer ? currentPlayer.id : undefined;
-            },
-            isDealerTurn() {
-                return this.table.status === types.TableStatus.DealerTurn;
-            },
-            userPlayer() {
-                return this.table.players.find(player => player.id === this.userPlayerId);
-            }
-        },
-        methods: {
-            isUserPlayer(player: models.Player) {
-                return player && this.isUserPlayerHandler(player);
-            }
         }
-    };
+    })
+    export default class Table extends Vue {
+        @Prop({ required: true })
+        actionsHandlers: IActionsBarHandlers;
+
+        @Prop({ default: -1 })
+        trainingProgress: number;
+
+        @Prop()
+        displayDecisionHelp: boolean;
+
+        @Prop()
+        evaluteDecisions: boolean;
+
+        @Prop()
+        isUserPlayerHandler: (player?: models.IPlayer) => boolean;
+
+        @Prop({ required: true })
+        startRoundButtonText: string;
+
+        @Prop({ required: true })
+        table: models.ITable;
+
+        @Prop({ required: true })
+        userPlayerId: string;
+
+        get currentPlayerId() {
+            const currentPlayer = services.tableService.getCurrentPlayer(this.table);
+            return currentPlayer ? currentPlayer.id : undefined;
+        }
+
+        get isDealerTurn() {
+            return this.table.status === types.TableStatus.DealerTurn;
+        }
+        
+        get userPlayer() {
+            return this.table.players.find(player => player.id === this.userPlayerId);
+        }
+
+        isUserPlayer(player?: models.IPlayer) {
+            return player && this.isUserPlayerHandler(player);
+        }
+    }
 </script>
 
 <style>

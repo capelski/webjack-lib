@@ -1,33 +1,34 @@
 <template>
-        <div :class="{'shake': shakyTimeout }" v-html="html"></div>
+    <div :class="{'shake': hasTimeout }" v-html="html"></div>
 </template>
 
 <script lang="ts">
-    interface ShakyElementData {
-        shakyTimeout: number | undefined;
-    }
+    import Vue from 'vue';
+    import { Component, Prop, Watch } from 'vue-property-decorator';
+    import { INullableValueReference } from '../utils/types';
 
-    export default {
-        name: 'ShakyElement',
-        props: {
-            html: {
-                required: true
-            }
-        },
-        data(): ShakyElementData {
-            return {
-                shakyTimeout: undefined,
-            };
-        },
-        watch: {
-            html(newValue, oldValue) {
-                if (newValue !== oldValue) {
-                    clearTimeout(this.shakyTimeout);
-                    this.shakyTimeout = setTimeout(() => this.shakyTimeout = undefined, 400);
+    @Component
+    export default class ShakyElement extends Vue {
+        @Prop({ required: true })
+        html: string;
+        
+        shakyTimeout: INullableValueReference<number> = { value: undefined };
+
+        @Watch('html')
+        htmlChanged(newValue: boolean, oldValue: boolean) {
+            if (newValue !== oldValue) {
+                if (this.hasTimeout) {
+                    clearTimeout(this.shakyTimeout.value);
                 }
+                const timeout = window.setTimeout(() => Vue.set(this, 'shakyTimeout', { value: undefined }), 400);
+                Vue.set(this, 'shakyTimeout', { value: timeout });
             }
         }
-    };
+
+        get hasTimeout() {
+            return !!this.shakyTimeout.value;
+        }
+    }
 </script>
 
 <style>

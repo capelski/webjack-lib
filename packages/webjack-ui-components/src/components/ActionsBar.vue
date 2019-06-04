@@ -38,70 +38,66 @@
 
 <script lang="ts">
     import toastr from 'toastr';
+    import Vue from 'vue';
+    import { Component, Prop } from 'vue-property-decorator';
     import { models, services } from 'webjack-core';
-    import { ActionsBarHandlers } from '../utils/handlers-types';
+    import { IActionsBarHandlers } from '../utils/types';
     import Countdown from './Countdown.vue';
     import PlayerActions from './PlayerActions.vue';
 
-    export default {
-        name: 'ActionsBar',
+    @Component({
         components: {
             Countdown,
             PlayerActions
-        },
-        props: {
-            actionsHandlers: {
-                type: ActionsBarHandlers,
-                required: true
-            },
-            trainingProgress: {
-                type: Number
-            },
-            displayDecisionHelp: {
-                type: Boolean
-            },
-            evaluteDecisions: {
-                type: Boolean
-            },
-            isPlayerTurn: {
-                type: Boolean
-            },
-            startRoundButtonText: {
-                type: String,
-                required: true
-            },
-            table: {
-                type: models.Table,
-                required: true
-            },
-            userPlayer: {
-                type: models.Player
+        }
+    })
+    export default class ActionsBar extends Vue {
+        @Prop({ required: true })
+        actionsHandlers: IActionsBarHandlers;
+
+        @Prop()
+        trainingProgress: number;
+
+        @Prop()
+        displayDecisionHelp: boolean;
+
+        @Prop()
+        evaluteDecisions: boolean;
+
+        @Prop()
+        isPlayerTurn: boolean;
+
+        @Prop({ required: true })
+        startRoundButtonText: string;
+
+        @Prop({ required: true })
+        table: models.ITable;
+        
+        @Prop()
+        userPlayer: models.IPlayer;
+
+        get isUserPlaying() {
+            return this.userPlayer && services.playerService.isPlaying(this.userPlayer);
+        }
+
+        exitTable() {
+            if (this.isUserPlaying) {
+                toastr.error('You cannot leave the table while playing a round', 'Round in progress');
             }
-        },
-        computed: {
-            isUserPlaying() {
-                return this.userPlayer && services.playerService.isPlaying(this.userPlayer);
-            }
-        },
-        methods: {
-            exitTable() {
-                if (this.isUserPlaying) {
-                    toastr.error('You cannot leave the table while playing a round', 'Round in progress');
-                }
-                else {
-                    this.actionsHandlers.exitTable();
-                }
-            },
-            startRound() {
-                if (this.isUserPlaying) {
-                    toastr.error('Wait for the current round to finish before starting the next one', 'Round in progress');
-                }
-                else {
-                    this.actionsHandlers.startRound();
-                }
+            else {
+                this.actionsHandlers.exitTable();
             }
         }
-    };
+
+        startRound() {
+            if (this.isUserPlaying) {
+                toastr.error('Wait for the current round to finish before starting the next one', 'Round in progress');
+            }
+            else {
+                this.actionsHandlers.startRound();
+            }
+        }
+    }
 </script>
 
 <style>

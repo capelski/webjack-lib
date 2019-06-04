@@ -47,44 +47,41 @@
 </template>
 
 <script lang="ts">
+    import Vue from 'vue';
+    import { Component, Prop } from 'vue-property-decorator';
     import { models, types } from 'webjack-core';
     import ShakyElement from './ShakyElement.vue';
 
-    export default {
-        name: 'Player',
+    @Component({
         components: {
             ShakyElement
-        },
-        props: {
-            isPlayerTurn: {
-                type: Boolean
-            },
-            isDealer: {
-                type: Boolean,
-                default: false
-            },
-            isUserPlayer: {
-                type: Boolean
-            },
-            player: {
-                type: models.Player
-            }
-        },
-        computed: {
-            handValues(): string[] | undefined {
-                let handValues;
-                if (this.player && this.player.hands) {
-                    handValues = this.player.hands.map(hand => hand.values.join(' / ')).filter(Boolean);
-                }
-                return handValues;
-            }
-        },
-        methods: {
-            showHandStatus(hand: models.Hand) {
-                return hand.status !== types.HandStatus.Unplayed && hand.status !== types.HandStatus.Unresolved;
-            }
         }
-    };
+    })
+    export default class Player extends Vue {
+        @Prop()
+        isPlayerTurn: boolean;
+
+        @Prop({ default: false })
+        isDealer: boolean;
+        
+        @Prop()
+        isUserPlayer: boolean;
+        
+        @Prop()
+        player: models.IPlayer;
+
+        get handValues(): string[] | undefined {
+            let handValues;
+            if (this.player && this.player.hands) {
+                handValues = this.player.hands.map(hand => hand.values.join(' / ')).filter(Boolean);
+            }
+            return handValues;
+        }
+
+        showHandStatus(hand: models.IHand) {
+            return hand.status !== types.HandStatus.Unplayed && hand.status !== types.HandStatus.Unresolved;
+        }
+    }
 </script>
 
 <style>

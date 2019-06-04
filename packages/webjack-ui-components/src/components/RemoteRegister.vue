@@ -8,7 +8,7 @@
 
         <div class="row top-space-20">
             <div class="col-sm-4 col-sm-offset-4 col-xs-8 col-xs-offset-2">
-                <input type="text" class="form-control" v-model="playerName" />
+                <input type="text" class="form-control" v-model="playerName.value" />
             </div>
         </div>
 
@@ -16,7 +16,7 @@
             <div class="col-xs-12 text-center">
                 <button type="button" class="btn btn-primary"
                     v-on:click="registerPlayer"
-                    :disabled="!playerName"
+                    :disabled="!playerName.value"
                 >
                     Join table
                 </button>
@@ -31,22 +31,26 @@
 </template>
 
 <script lang="ts">
-    export default {
-        name: 'RemoteRegister',
-        data() {
-            return {
-                playerName: undefined
-            };
-        },
-        methods: {
-            cancelRegister() {
-                this.$emit('RegisterCanceled');
-            },
-            registerPlayer() {
-                this.$emit('RegisterRequested', this.playerName);
-            }
+    import Vue from 'vue';
+    import { Component } from 'vue-property-decorator';
+    import { INullableValueReference } from '../utils/types';
+
+    @Component
+    export default class RemoteRegister extends Vue {
+        playerName: INullableValueReference<string> = { value: undefined };
+        
+        private created() {
+            Vue.set(this, 'playerName', { value: undefined });
         }
-    };
+
+        cancelRegister() {
+            this.$emit('RegisterCanceled');
+        }
+        
+        registerPlayer() {
+            this.$emit('RegisterRequested', this.playerName.value);
+        }
+    }
 </script>
 
 <style>

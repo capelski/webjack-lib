@@ -29,139 +29,138 @@
 
         <!-- TODO Place directly in the ActionsBar component and remove the isPlayerTurn prop -->
         <ShakyElement
-            :class="{'basic-strategy-progress': true }"
+            :class="{'training-progress': true }"
             v-if="evaluteDecisions"
             :html="(trainingProgress !== -1 ? trainingProgress : 0) + ' &#10227;'"
         />
         <ShakyElement
-            :class="{'basic-strategy-counter': true }"
+            :class="{'training-counter': true }"
             v-if="evaluteDecisions"
-            :html="(basicStrategyAttempts ? Math.floor(basicStrategyHits * 1000 / basicStrategyAttempts) / 10 : 0) + '%'"
+            :html="trainingPercentage + '%'"
         />
     </div>
 </template>
 
 <script lang="ts">
     import toastr from 'toastr';
+    import Vue from 'vue';
+    import { Component, Prop } from 'vue-property-decorator';
     import { models, services, types, utils } from 'webjack-core';
-    import { PlayerActionsHandlers } from '../utils/handlers-types';
+    import { IPlayerActionsHandlers, IValueReference } from '../utils/types';
     import ShakyElement from './ShakyElement.vue';
 
-    interface PlayerActionsData {
-        basicStrategyAttempts: number;
-        basicStrategyHits: number;
-    }
-
-    export default {
-        name: 'PlayerActions',
+    @Component({
         components: {
             ShakyElement
-        },
-        props: {
-            actionsHandlers: {
-                type: PlayerActionsHandlers,
-                required: true
-            },
-            trainingProgress: {
-                type: Number,
-                default: -1,
-            },
-            // TODO Replace by dealer hand
-            dealer: {
-                type: models.Player,
-                required: true
-            },
-            displayDecisionHelp: {
-                type: Boolean
-            },
-            evaluteDecisions: {
-                type: Boolean
-            },
-            isPlayerTurn: {
-                type: Boolean
-            },
-            // TODO Replace by user hand
-            userPlayer: {
-                type: models.Player
+        }
+    })
+    export default class PlayerActions extends Vue {
+        @Prop({ required: true })
+        actionsHandlers: IPlayerActionsHandlers;
+
+        @Prop({ default: -1 })
+        trainingProgress: number;
+        
+        // TODO Replace by dealer hand
+        @Prop({ required: true })
+        dealer: models.IPlayer;
+
+        @Prop()
+        displayDecisionHelp: boolean;
+
+        @Prop()
+        evaluteDecisions: boolean;
+
+        @Prop()
+        isPlayerTurn: boolean;
+
+        // TODO Replace by user hand
+        @Prop()
+        userPlayer: models.IPlayer;
+
+        trainingAttempts: IValueReference<number> = { value: 0 };
+        trainingHits: IValueReference<number> = { value: 0 };
+
+        get canDouble() {
+            const hand = services.playerService.getCurrentHand(this.userPlayer);
+            return services.handService.canDouble(hand!);
+        }
+
+        get canSplit() {
+            const hand = services.playerService.getCurrentHand(this.userPlayer);
+            return services.handService.canSplit(hand!);
+        }
+
+        get dealerScore() {
+            let dealerScore;
+            const dealerHand = services.playerService.getCurrentHand(this.dealer);
+            if (dealerHand) {
+                dealerScore = services.handService.getValue(dealerHand);
             }
-        },
-        data() {
-            return {
-                basicStrategyAttempts: 0,
-                basicStrategyHits: 0
-            } as PlayerActionsData;
-        },
-        computed: {
-            canDouble() {
-                const hand = services.playerService.getCurrentHand(this.userPlayer);
-                return services.handService.canDouble(hand!);
-            },
-            canSplit() {
-                const hand = services.playerService.getCurrentHand(this.userPlayer);
-                return services.handService.canSplit(hand!);
-            },
-            dealerScore() {
-                let dealerScore;
-                const dealerHand = services.playerService.getCurrentHand(this.dealer);
-                if (dealerHand) {
-                    dealerScore = services.handService.getValue(dealerHand);
+            return dealerScore;
+        }
+
+        get trainingPercentage() {
+            return this.trainingAttempts.value ?
+                Math.floor(this.trainingHits.value * 1000 / this.trainingAttempts.value) / 10 : 0;
+        }
+
+        displayOptimalDecision() {
+            const hand = services.playerService.getCurrentHand(this.userPlayer);
+            const optimalDecisionInfo = utils.basicStrategy.getOptimalDecision(hand!, this.dealerScore!).description;
+            toastr.info(optimalDecisionInfo, 'Basic strategy');
+        }
+
+        double() {
+            if (this.canDouble) {
+                if (this.evaluteDecisions) {
+                    this.evaluatePlayerDecision(types.PlayerActions.Double);
                 }
-                return dealerScore;
+                this.actionsHandlers.double();
             }
-        },
-        methods: {
-            displayOptimalDecision() {
-                const hand = services.playerService.getCurrentHand(this.userPlayer);
-                const optimalDecisionInfo = utils.basicStrategy.getOptimalDecision(hand!, this.dealerScore!).description;
-                toastr.info(optimalDecisionInfo, 'Basic strategy');
-            },
-            double() {
-                if (this.canDouble) {
-                    if (this.evaluteDecisions) {
-                        this.evaluatePlayerDecision(types.PlayerActions.Double);
-                    }
-                    this.actionsHandlers.double();
-                }
-                else {
-                    toastr.error('Doubling is only allowed with 9, 10 or 11 points', 'Action not allowed');
-                }
-            },
-            evaluatePlayerDecision(userDecision: types.PlayerActions) {
-                const hand = services.playerService.getCurrentHand(this.userPlayer);
-                const optimalDecision = utils.basicStrategy.getOptimalDecision(hand!, this.dealerScore!);
-                this.basicStrategyAttempts++;
-                if (optimalDecision.action === userDecision) {
-                    this.basicStrategyHits++;
-                }
-                else {
-                    toastr.error(`Wrong! ${optimalDecision.description}`, 'Basic strategy');
-                }
-            },
-            hit() {
-                if (this.evaluteDecisions) {
-                    this.evaluatePlayerDecision(types.PlayerActions.Hit);
-                }
-                this.actionsHandlers.hit();
-            },
-            split() {
-                if (this.canSplit) {
-                    if (this.evaluteDecisions) {
-                        this.evaluatePlayerDecision(types.PlayerActions.Split);
-                    }
-                    this.actionsHandlers.split();
-                }
-                else {
-                    toastr.error('Splitting is only allowed with two equal cards', 'Action not allowed');
-                }
-            },
-            stand() {
-                if (this.evaluteDecisions) {
-                    this.evaluatePlayerDecision(types.PlayerActions.Stand);
-                }
-                this.actionsHandlers.stand();
+            else {
+                toastr.error('Doubling is only allowed with 9, 10 or 11 points', 'Action not allowed');
             }
         }
-    };
+
+        evaluatePlayerDecision(userDecision: types.PlayerActions) {
+            const hand = services.playerService.getCurrentHand(this.userPlayer);
+            const optimalDecision = utils.basicStrategy.getOptimalDecision(hand!, this.dealerScore!);
+            Vue.set(this, 'trainingAttempts', { value: this.trainingAttempts.value + 1 });
+            if (optimalDecision.action === userDecision) {
+                Vue.set(this, 'trainingHits', { value: this.trainingHits.value + 1 });
+            }
+            else {
+                toastr.error(`Wrong! ${optimalDecision.description}`, 'Basic strategy');
+            }
+        }
+
+        hit() {
+            if (this.evaluteDecisions) {
+                this.evaluatePlayerDecision(types.PlayerActions.Hit);
+            }
+            this.actionsHandlers.hit();
+        }
+
+        split() {
+            if (this.canSplit) {
+                if (this.evaluteDecisions) {
+                    this.evaluatePlayerDecision(types.PlayerActions.Split);
+                }
+                this.actionsHandlers.split();
+            }
+            else {
+                toastr.error('Splitting is only allowed with two equal cards', 'Action not allowed');
+            }
+        }
+
+        stand() {
+            if (this.evaluteDecisions) {
+                this.evaluatePlayerDecision(types.PlayerActions.Stand);
+            }
+            this.actionsHandlers.stand();
+        }
+    }
 </script>
 
 <style>
@@ -178,19 +177,19 @@
         padding: 0 5px;
     }
 
-    .basic-strategy-progress {
+    .training-progress {
         color: white;
     }
 
-    .basic-strategy-progress,
-    .basic-strategy-counter {
+    .training-progress,
+    .training-counter {
         padding-left: 5px;
         font-size: 14px;
     }
 
     @media(min-width: 768px) {
-        .basic-strategy-progress,
-        .basic-strategy-counter {
+        .training-progress,
+        .training-counter {
             font-size: 18px;
         }
     }

@@ -12,9 +12,9 @@ export const addPlayer = (table: Table, player: Player) => table.players.push(pl
 
 export const clearNextAction = (table: Table) => {
     if (table.nextAction) {
-        clearTimeout(table.nextAction as any)
-    };
-     table.nextAction = table.nextActionTimestamp = table.baseTimestamp = undefined;
+        clearTimeout(table.nextAction as any);
+    }
+    table.nextAction = table.nextActionTimestamp = table.baseTimestamp = undefined;
 };
 
 export const createTable = (useTrainingSet = false) => {
