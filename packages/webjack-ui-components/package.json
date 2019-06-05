@@ -12,6 +12,7 @@
   "homepage": "https://github.com/L3bowski/webjack-lib/tree/master/packages/webjack-ui-components#readme",
   "license": "MIT",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
