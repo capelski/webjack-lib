@@ -1,4 +1,5 @@
 import { v4 as uuid } from 'uuid';
+import { IDictionary } from '../types/dictionary';
 import { IPlayer } from '../types/player';
 import { ITable } from '../types/table';
 import { TableStatus } from '../types/table-status';
@@ -6,7 +7,7 @@ import { createCardSet } from './card-set-service';
 import { getParameters } from './game-parameters-service';
 import * as playerService from './player-service';
 
-let tables: ITable[] = [];
+let tables: IDictionary<ITable> = {};
 
 export const addPlayer = (table: ITable, player: IPlayer) => table.players.push(player);
 
@@ -18,22 +19,22 @@ export const clearNextAction = (table: ITable) => {
 };
 
 export const createTable = (useTrainingSet = false) => {
-    const table: ITable = {
+    const tableId = uuid();
+    tables[tableId] = {
         baseTimestamp: undefined,
         cardSet: createCardSet(useTrainingSet),
         dealer: playerService.createDealer(),
-        id: uuid(),
+        id: tableId,
         nextAction: undefined,
         nextActionTimestamp: undefined,
         players: [],
         status: TableStatus.Idle,
     };
-    tables.push(table);
-    return table;
+    return tables[tableId];
 };
 
 export const deleteTable = (tableId: string) => {
-    tables = tables.filter(table => table.id !== tableId);
+    delete tables[tableId];
 };
 
 export const getActivePlayers = (table: ITable) =>
@@ -41,7 +42,9 @@ export const getActivePlayers = (table: ITable) =>
 
 export const getAvailableTable = () => {
     const { maxPlayers } = getParameters();
-    let table = tables.find(t => t.players.length < maxPlayers);
+    let table = Object.keys(tables)
+        .map(key => tables[key])
+        .find(t => t.players.length < maxPlayers);
     if (!table) {
         table = createTable();
     }
@@ -56,7 +59,7 @@ export const getCurrentPlayer = (table: ITable): IPlayer | undefined => {
 
 export const getPlayerById = (table: ITable, playerId: string) => table.players.find(p => p.id === playerId);
 
-export const getTableById = (tableId: string) => tables.find(t => t.id == tableId);    
+export const getTableById = (tableId: string) => tables[tableId];
 
 export const removePlayer = (table: ITable, playerId: string) => {
     table.players = table.players.filter(player => player.id !== playerId);

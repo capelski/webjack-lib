@@ -1,10 +1,11 @@
 import { v4 as uuid } from 'uuid';
+import { IDictionary } from '../types/dictionary';
 import { IPlayer } from '../types/player';
 import { ICard } from '../types/card';
 import { HandStatus } from '../types/hand-status';
 import { addCard, createHand, doubleBet, finishHand, isUnplayed } from './hand-service';
 
-let players: IPlayer[] = [];
+let players: IDictionary<IPlayer> = {};
 
 export const clearHands = (player: IPlayer) => player.hands = [];
 
@@ -20,12 +21,12 @@ export const createDealer = () => create('Dealer');
 
 export const createPlayer = (playerName: string) => {
     const player = create(playerName);
-    players.push(player);
+    players[player.id] = player;
     return player;
 };
 
 export const deletePlayer = (playerId: string) => {
-    players = players.filter(player => player.id !== playerId);
+    delete players[playerId];
 };
 
 export const double = (player: IPlayer, nextCard: ICard) => {
@@ -41,10 +42,11 @@ export const double = (player: IPlayer, nextCard: ICard) => {
 
 export const getCurrentHand = (player: IPlayer) => player.hands.find(isUnplayed);
 
-export const getPlayerById = (playerId: string) => players.find(p => p.id === playerId);
+export const getPlayerById = (playerId: string) => players[playerId];
 
-export const getPlayerByName = (name: string) =>
-    players.find(p => p.name.toLowerCase() === name.toLowerCase());
+export const getPlayerByName = (name: string) => Object.keys(players)
+    .map(key => players[key])
+    .find(p => p.name.toLowerCase() === name.toLowerCase());
 
 export const hit = (player: IPlayer, nextCard: ICard) => {
     const currentHand = getCurrentHand(player)!;
