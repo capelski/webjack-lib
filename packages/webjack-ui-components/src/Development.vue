@@ -1,19 +1,19 @@
 <template>
+    <!-- <AjaxTable serverUrl="http://localhost:3000/api" /> -->
     <!-- <LocalTable /> -->
-    <!-- <RemoteTable serverUrl="http://localhost:3000/api" /> -->
     <TrainingTable />
 </template>
 
 <script lang="ts">
+    import AjaxTable from './components/AjaxTable.vue';
     import LocalTable from './components/LocalTable.vue';
-    import RemoteTable from './components/RemoteTable.vue';
     import TrainingTable from './components/TrainingTable.vue';
 
     export default {
         name: 'Development',
         components: {
+            AjaxTable,
             LocalTable,
-            RemoteTable,
             TrainingTable
         }
     };

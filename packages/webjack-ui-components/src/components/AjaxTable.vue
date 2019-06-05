@@ -38,7 +38,7 @@
             Table
         }
     })
-    export default class RemoteTable extends Vue {
+    export default class AjaxTable extends Vue {
         @Prop({ default: true })
         renderCondition: boolean;
 
