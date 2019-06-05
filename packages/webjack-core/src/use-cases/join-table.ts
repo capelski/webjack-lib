@@ -14,6 +14,8 @@ export const joinTable = (playerId: string): UseCaseResult => {
 
     const table = tableService.getAvailableTable();
     tableService.addPlayer(table, player);
+    tableService.notifySubscribers(table.id);
+
     return {
         ok: true,
         result: table

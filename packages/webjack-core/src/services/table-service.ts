@@ -1,13 +1,14 @@
 import { v4 as uuid } from 'uuid';
 import { IDictionary } from '../types/dictionary';
 import { IPlayer } from '../types/player';
-import { ITable } from '../types/table';
+import { ITable, TableSubscriber } from '../types/table';
 import { TableStatus } from '../types/table-status';
 import { createCardSet } from './card-set-service';
 import { getParameters } from './game-parameters-service';
 import * as playerService from './player-service';
 
 let tables: IDictionary<ITable> = {};
+let tableSubscribers: IDictionary<TableSubscriber[]> = {};
 
 export const addPlayer = (table: ITable, player: IPlayer) => table.players.push(player);
 
@@ -30,6 +31,7 @@ export const createTable = (useTrainingSet = false) => {
         players: [],
         status: TableStatus.Idle,
     };
+    tableSubscribers[tableId] = [];
     return tables[tableId];
 };
 
@@ -61,6 +63,16 @@ export const getPlayerById = (table: ITable, playerId: string) => table.players.
 
 export const getTableById = (tableId: string) => tables[tableId];
 
+export const notifySubscribers = (tableId: string) => {
+    // TODO Validate that tableId exists
+    tableSubscribers[tableId].forEach(subscriber => {
+        try {
+            subscriber(tables[tableId]);
+        }
+        catch(error) {}
+    });
+};
+
 export const removePlayer = (table: ITable, playerId: string) => {
     table.players = table.players.filter(player => player.id !== playerId);
 };
@@ -72,4 +84,13 @@ export const setStatus = (table: ITable, status: TableStatus) => {
 export const setNextAction = (table: ITable, delay: number, nextAction: (...args: any[]) => void) => {
     table.nextAction = setTimeout(nextAction, delay * 1000) as any;
     table.nextActionTimestamp = Date.now() + delay * 1000;
+};
+
+export const subscribe = (tableId: string, subscriberCallback: TableSubscriber) => {
+    // TODO Validate that tableId exists
+    const subscriberIndex = tableSubscribers[tableId].length;
+    tableSubscribers[tableId].push(subscriberCallback);
+    return () => {
+        tableSubscribers[tableId].splice(subscriberIndex, 1);    
+    };
 };

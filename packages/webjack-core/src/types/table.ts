@@ -12,3 +12,5 @@ export interface ITable {
     players: IPlayer[];
     status: TableStatus;
 }
+
+export type TableSubscriber = (table: ITable) => void;

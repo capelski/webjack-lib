@@ -29,6 +29,7 @@ export const updateCurrentRound = (tableId: string): UseCaseResult => {
 
         if (handService.hasBeenSplit(currentHand)) {
             handService.addCard(currentHand, getNextCard(table.cardSet));
+            tableService.notifySubscribers(tableId);
         }
 
         // After dealing the card to the split hand, the current hand might be a BlackJack
@@ -40,11 +41,14 @@ export const updateCurrentRound = (tableId: string): UseCaseResult => {
                 playerService.stand(currentPlayer);
                 updateCurrentRound(tableId);
             });
+            tableService.notifySubscribers(tableId);
+
         }
     }
     else {
         tableService.setStatus(table, TableStatus.DealerTurn);
         tableService.setNextAction(table, 3, () => playDealerTurn(tableId))
+        tableService.notifySubscribers(tableId);
     }
 
     return {

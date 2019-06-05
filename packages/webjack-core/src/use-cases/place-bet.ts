@@ -34,6 +34,8 @@ export const placeBet = (tableId: string, playerId: string, bet = 1): UseCaseRes
     if (!table.nextAction) {
         tableService.setNextAction(table, 7, () => startRound(tableId));
     }
+    tableService.notifySubscribers(tableId);
+
     
     return {
         ok: true

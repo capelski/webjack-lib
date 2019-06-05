@@ -46,7 +46,7 @@
         };
         player: types.IPlayer = null;
         table: types.ITable = null;
-        tableInterval: INullableValueReference<number> = { value: undefined };
+        unsubscriber: INullableValueReference<() => void> = { value: undefined };
 
         private created() {
             this.joinTable();
@@ -57,11 +57,10 @@
         }
 
         exitTable() {
-            // TODO Create an unsubscribe method in tableService
-            if (this.tableInterval.value) {
-                clearInterval(this.tableInterval.value);
+            if (this.unsubscriber.value) {
+                this.unsubscriber.value();
             }
-            Vue.set(this, 'tableInterval', { value: undefined });
+            Vue.set(this, 'unsubscriber', { value: undefined });
             services.tableService.deleteTable(this.table.id);
             Vue.set(this, 'table', undefined);
             services.playerService.deletePlayer(this.player.id);
@@ -83,11 +82,10 @@
             services.tableService.addPlayer(table, player);
             Vue.set(this, 'table', table);
             Vue.set(this, 'player', player);
-            // TODO Create a subscribe method in tableService
-            const interval = setInterval(() => {
-                Vue.set(this, 'table', {...services.tableService.getTableById(this.table.id)});
-            }, 1000);
-            Vue.set(this, 'tableInterval', { value: interval });
+            const unsubscriber = services.tableService.subscribe(table.id, (table) => {
+                Vue.set(this, 'table', { ...table });
+            })
+            Vue.set(this, 'unsubscriber', { value: unsubscriber });
         }
 
         makeDecision(decision: types.PlayerActions) {

@@ -68,6 +68,7 @@ export const makeDecision = (tableId: string, playerId: string, decision: Player
                 error: 'Action not supported',
             };
     }
+    tableService.notifySubscribers(tableId);
     tableService.clearNextAction(table);
     updateCurrentRound(tableId);
 

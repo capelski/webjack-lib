@@ -27,6 +27,7 @@ export const exitTable = (tableId: string, playerId: string): UseCaseResult => {
     }
 
     tableService.removePlayer(table, playerId);
+    tableService.notifySubscribers(tableId);
 
     return {
         ok: true

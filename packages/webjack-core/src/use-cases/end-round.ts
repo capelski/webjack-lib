@@ -36,7 +36,9 @@ export const endRound = (tableId: string): UseCaseResult => {
         activePlayers.forEach(playerService.clearHands);
         playerService.clearHands(table.dealer);
         tableService.setStatus(table, TableStatus.Idle);
+        tableService.notifySubscribers(tableId);
     });
+    tableService.notifySubscribers(tableId);
     
     return {
         ok: true

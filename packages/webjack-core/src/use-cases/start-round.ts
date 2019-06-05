@@ -43,6 +43,7 @@ export const startRound = (tableId: string): Promise<UseCaseResult> => {
         .map(player => () => new Promise(resolve => {
             const hand = playerService.getCurrentHand(player)!;
             handService.addCard(hand, getNextCard(table.cardSet, true));
+            tableService.notifySubscribers(tableId);
             delay(400).then(resolve);
         }))
         .reduce((promiseChain, runPromise) => promiseChain.then(runPromise), Promise.resolve({}));
@@ -51,6 +52,7 @@ export const startRound = (tableId: string): Promise<UseCaseResult> => {
         .map(player => () => new Promise(resolve => {
             const hand = playerService.getCurrentHand(player)!;
             handService.addCard(hand, getNextCard(table.cardSet, true));
+            tableService.notifySubscribers(tableId);
             delay(400).then(resolve);
         }))
         .reduce((promiseChain, runPromise) => promiseChain.then(runPromise), firstPromiseChain);

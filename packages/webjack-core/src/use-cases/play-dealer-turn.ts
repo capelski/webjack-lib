@@ -30,6 +30,7 @@ export const playDealerTurn = (tableId: string): UseCaseResult => {
     const dealerInterval = setInterval(() => {
         if (dealerHandValue < 17) {
             handService.addCard(dealerHand, getNextCard(table.cardSet));
+            tableService.notifySubscribers(tableId);
             dealerHandValue = handService.getValue(dealerHand);
         }
         else {
