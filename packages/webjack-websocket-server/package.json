@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "description": "Websocket server for black jack real time synchronization",
   "keywords": [
-    "webjack",
     "blackjack",
-    "websocket"
+    "websocket",
+    "server"
   ],
   "author": "Carles Capellas <capellas.carles@gmail.com>",
   "homepage": "https://github.com/L3bowski/webjack-lib/tree/master/packages/webjack-websocket-server#readme",
@@ -20,7 +20,8 @@
     "url": "git@my-git:L3bowski/webjack-lib"
   },
   "scripts": {
-    "build": "rm -rf dist && tsc",
+    "build": "tsc -b",
+    "clean": "rm -rf dist",
     "dev": "tsc -p tsconfig.dev.json && node dist/development.js"
   },
   "devDependencies": {
@@ -31,6 +32,8 @@
   "dependencies": {
     "express": "^4.17.1",
     "http": "0.0.0",
+    "webjack-core": "^0.2.1",
+    "webjack-websocket-contracts": "^0.0.0",
     "ws": "^7.0.0"
   }
 }

@@ -40,21 +40,21 @@ export const startRound = (tableId: string): Promise<UseCaseResult> => {
     tableService.setStatus(table, TableStatus.DealingCards);
 
     const firstPromiseChain = activePlayers.concat([table.dealer])
-        .map(player => () => new Promise(resolve => {
+        .map(player => () => {
             const hand = playerService.getCurrentHand(player)!;
             handService.addCard(hand, getNextCard(table.cardSet, true));
             tableService.notifySubscribers(tableId);
-            delay(400).then(resolve);
-        }))
-        .reduce((promiseChain, runPromise) => promiseChain.then(runPromise), Promise.resolve({}));
+            return delay(400);
+        })
+        .reduce((promiseChain, runPromise) => promiseChain.then(runPromise), Promise.resolve());
 
     const secondPromiseChain = activePlayers
-        .map(player => () => new Promise(resolve => {
+        .map(player => () => {
             const hand = playerService.getCurrentHand(player)!;
             handService.addCard(hand, getNextCard(table.cardSet, true));
             tableService.notifySubscribers(tableId);
-            delay(400).then(resolve);
-        }))
+            return delay(400);
+        })
         .reduce((promiseChain, runPromise) => promiseChain.then(runPromise), firstPromiseChain);
     
     return secondPromiseChain.then(_ => {

@@ -9,7 +9,7 @@ export const cartesianProduct = <T, U, R>(
 };
 
 export const delay = (minimumTime = 500) => {
-    return new Promise(resolve => setTimeout(resolve, minimumTime));
+    return new Promise<void>(resolve => setTimeout(resolve, minimumTime));
 };
 
 export const removeDuplicates = (numbers: number[]): number[] => {

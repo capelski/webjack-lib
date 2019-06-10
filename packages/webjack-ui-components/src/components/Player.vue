@@ -26,14 +26,14 @@
                             :class="{ 'card': true, 'red': card.suit === '♦' || card.suit === '♥', 'black': card.suit === '♠' || card.suit === '♣'}">
                             {{ card.symbol + card.suit }}
                         </span>
-                        <div v-if="showHandStatus(hand)">{{ hand.status }}</div>
+                        <ShakyElement :html="showHandStatus(hand) ? hand.status : ''" />
                     </li>
                 </ul>
             </div>
 
             <div class="earnings">
                 <span class="bubble" v-if="!isDealer">
-                    <ShakyElement :html="player.hands && player.hands.length > 0 ? player.hands.map(h => h.bet).reduce((x, y) => x + y, 0) : '-'" />
+                    <ShakyElement :html="player.hands && player.hands.length > 0 ? player.hands.map(h => h.bet).reduce((x, y) => x + y, 0) || '-' : '-'" />
                 </span>
                 <span class="bubble inverted" v-if="!isDealer">
                     <ShakyElement :html="(player.earningRate > 0 ? '+' : '' ) + player.earningRate" />

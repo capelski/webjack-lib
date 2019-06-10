@@ -2,12 +2,12 @@
     <div class="full-height" v-if="renderCondition || loading.value">
         <Loader v-if="loading.value"/>
         <RemoteRegister 
-            v-if="renderCondition && !loading.value && !isPlayerRegistered.value"
+            v-if="renderCondition && !loading.value && !userPlayerId.value"
             v-on:RegisterCanceled="cancelRegister"
             v-on:RegisterRequested="registerPlayer"
         />
         <Table
-            v-if="renderCondition && !loading.value && isPlayerRegistered.value && table"
+            v-if="renderCondition && !loading.value && userPlayerId.value && table"
             :table="table"
             :actionsHandlers="actionsHandlers"
             :userPlayerId="userPlayerId.value"
@@ -44,7 +44,7 @@
 
         @Watch('renderCondition')
         renderConditionChanged(newValue: boolean, oldValue: boolean) {
-            if (newValue && !oldValue && this.userPlayerId.value && !this.tableId.value) {
+            if (newValue && !oldValue && this.userPlayerId.value && !this.table) {
                 this.setLoading(true);
                 this.joinTable();
             }
@@ -61,10 +61,8 @@
             split: this.split,
             stand: this.stand
         };
-        isPlayerRegistered: IValueReference<boolean> = { value: false };
         loading: IValueReference<boolean> = { value: false };
         table: types.ITable = null;
-        tableId: INullableValueReference<string> = { value: undefined };
         tableInterval: INullableValueReference<number> = { value: undefined };
         userPlayerId: INullableValueReference<string> = { value: undefined };
 
@@ -73,18 +71,11 @@
             stallPromise(get(this.serverUrl, 'session-data', 'Error checking whether the player is already registered'))
                 .then(data => {
                     Vue.set(this, 'userPlayerId', { value: data.playerId });
-                    if (data.playerId) {
-                        Vue.set(this, 'isPlayerRegistered', { value: true });
-                        Vue.set(this, 'tableId', { value: data.tableId });
-                        if (data.tableId) {
-                            this.setUpdateInterval();
-                        }
-                        else if (this.renderCondition) {
-                            this.joinTable();
-                        }
-                        else {
-                            this.setLoading(false);
-                        }
+                    if (data.tableId) {
+                        this.setUpdateInterval();
+                    }
+                    else if (data.playerId && this.renderCondition) {
+                        this.joinTable();
                     }
                     else {
                         this.setLoading(false);
@@ -113,7 +104,6 @@
 
         exitTable() {
             Vue.set(this, 'table', undefined);
-            Vue.set(this, 'tableId', { value: undefined });
             if (this.tableInterval.value) {
                 clearInterval(this.tableInterval.value);
             }
@@ -132,7 +122,6 @@
         joinTable() {
             stallPromise(get(this.serverUrl, 'join-table', 'Error trying to join a table'))
                 .then(data => {
-                    Vue.set(this, 'tableId', { value: data.tableId });
                     this.setUpdateInterval();
                 })
                 .catch(_ => {
@@ -149,7 +138,6 @@
             this.setLoading(true);
             return stallPromise(get(this.serverUrl, 'register-player','Error registering the player', { name }))
                 .then(data => {
-                    Vue.set(this, 'isPlayerRegistered', { value: true });
                     Vue.set(this, 'userPlayerId', { value: data.playerId });
                     this.joinTable();
                 })

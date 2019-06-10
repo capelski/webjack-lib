@@ -1,0 +1,30 @@
+{
+  "name": "webjack-websocket-contracts",
+  "version": "0.0.0",
+  "description": "Types for blackjack websocket client/server communication",
+  "keywords": [
+    "websocket"
+  ],
+  "author": "Carles Capellas <capellas.carles@gmail.com>",
+  "homepage": "https://github.com/L3bowski/webjack-lib/tree/master/packages/webjack-websocket-contracts#readme",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@my-git:L3bowski/webjack-lib"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "typescript": "^3.5.1"
+  },
+  "dependencies": {
+    "webjack-core": "^0.2.1"
+  }
+}

@@ -21,15 +21,17 @@
     "url": "git@my-git:L3bowski/webjack-lib"
   },
   "scripts": {
-    "dev": "cross-env NODE_ENV=development webpack-dev-server --progress",
-    "build": "cross-env NODE_ENV=production webpack"
+    "clean": "rm -rf dist",
+    "build": "cross-env NODE_ENV=production webpack",
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --progress"
   },
   "dependencies": {
     "bootstrap": "^3.2.0",
     "jquery": "^2.1.1",
     "toastr": "^2.1.4",
     "vue": "^2.6.10",
-    "webjack-core": "^0.2.1"
+    "webjack-core": "^0.2.1",
+    "webjack-websocket-contracts": "^0.0.0"
   },
   "devDependencies": {
     "@babel/core": "~7.2",

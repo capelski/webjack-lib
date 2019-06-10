@@ -12,6 +12,7 @@ export const addCard = (hand: IHand, card: ICard) => {
     }
     else if (isBust(hand)) {
         hand.status = HandStatus.Bust;
+        clearBet(hand);
     }
     else if (isMaxValue(hand)) {
         hand.status = HandStatus.Unresolved;
@@ -21,6 +22,10 @@ export const addCard = (hand: IHand, card: ICard) => {
 export const canDouble = (hand: IHand) => getValue(hand) > 8 && getValue(hand) < 12;
 
 export const canSplit = (hand: IHand) => hand.cards.length === 2 && cardService.getValue(hand.cards[0])[0] === cardService.getValue(hand.cards[1])[0];
+
+export const clearBet = (hand: IHand) => {
+    hand.bet = 0;
+};
 
 export const createHand = (bet: number): IHand => ({
     bet,

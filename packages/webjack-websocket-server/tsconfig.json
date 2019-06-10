@@ -16,5 +16,13 @@
     },
     "include": [
         "src/index.ts"
+    ],
+    "references": [
+        {
+            "path": "../webjack-core"
+        },
+        {
+            "path": "../webjack-websocket-contracts"
+        }
     ]
 }

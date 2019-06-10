@@ -16,5 +16,10 @@
     },
     "include": [
         "src/index.ts"
+    ],
+    "references": [
+        {
+            "path": "../webjack-core"
+        }
     ]
 }
