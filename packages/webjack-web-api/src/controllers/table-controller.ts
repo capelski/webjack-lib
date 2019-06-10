@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
-import { services, useCases } from 'webjack-core';
+import { services, types, useCases } from 'webjack-core';
 
 export const exitTable = (req: Request, res: Response) => {
-    const useCaseResult = useCases.exitTable(req.session!.tableId, req.session!.playerId);
-    if (useCaseResult.ok) {
+    const operationResult = useCases.exitTable(req.session!.tableId, req.session!.playerId);
+    if (operationResult.outcome === types.IOperationOutcome.success) {
         delete req.session!.tableId;
         res.status(200).send(JSON.stringify({}));
     } else {
-        res.status(400).send(JSON.stringify({ message: useCaseResult.error }));
+        res.status(400).send(JSON.stringify({ message: operationResult.error }));
     }
 };
 
@@ -39,36 +39,36 @@ export const getTableStatus = (req: Request, res: Response) => {
 };
 
 export const joinTable = (req: Request, res: Response) => {
-    const useCaseResult = useCases.joinTable(req.session!.playerId);
-    if (useCaseResult.ok) {
-        req.session!.tableId = useCaseResult.result.id;
-        res.status(200).send(JSON.stringify({ tableId: useCaseResult.result.id }));
+    const operationResult = useCases.joinTable(req.session!.playerId);
+    if (operationResult.outcome === types.IOperationOutcome.success) {
+        req.session!.tableId = operationResult.result.id;
+        res.status(200).send(JSON.stringify({ tableId: operationResult.result.id }));
     } else {
-        res.status(400).send(JSON.stringify({ message: useCaseResult.error }));
+        res.status(400).send(JSON.stringify({ message: operationResult.error }));
     }
 };
 
 export const makeDecision = (req: Request, res: Response) => {
     const decision = req.query.decision;
-    const useCaseResult = useCases.makeDecision(
+    const operationResult = useCases.makeDecision(
         req.session!.tableId,
         req.session!.playerId,
         decision
     );
 
-    if (useCaseResult.ok) {
+    if (operationResult.outcome === types.IOperationOutcome.success) {
         res.status(200).send(JSON.stringify({}));
     } else {
-        res.status(400).send(JSON.stringify({ message: useCaseResult.error }));
+        res.status(400).send(JSON.stringify({ message: operationResult.error }));
     }
 };
 
 export const placeBet = (req: Request, res: Response) => {
     const bet = parseInt(req.query.bet, 10);
-    const useCaseResult = useCases.placeBet(req.session!.tableId, req.session!.playerId, bet);
-    if (useCaseResult.ok) {
+    const operationResult = useCases.placeBet(req.session!.tableId, req.session!.playerId, bet);
+    if (operationResult.outcome === types.IOperationOutcome.success) {
         res.status(200).send(JSON.stringify({}));
     } else {
-        res.status(400).send(JSON.stringify({ message: useCaseResult.error }));
+        res.status(400).send(JSON.stringify({ message: operationResult.error }));
     }
 };

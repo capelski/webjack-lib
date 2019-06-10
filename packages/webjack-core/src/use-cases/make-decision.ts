@@ -2,28 +2,28 @@ import { getNextCard } from '../services/card-set-service';
 import * as handService from '../services/hand-service';
 import * as playerService from '../services/player-service';
 import * as tableService from '../services/table-service';
+import { IOperationOutcome, IOperationResult } from '../types/operation-result';
 import { PlayerActions } from '../types/player-actions';
 import { TableStatus } from '../types/table-status';
-import { IUseCaseResult } from '../types/use-case-result';
 import { updateCurrentRound } from './update-current-round';
 
 export const makeDecision = (
     tableId: string,
     playerId: string,
     decision: PlayerActions
-): IUseCaseResult => {
+): IOperationResult<undefined> => {
     const table = tableService.getTableById(tableId);
     if (!table) {
         return {
             error: 'No table identified by ' + tableId + ' was found',
-            ok: false
+            outcome: IOperationOutcome.error
         };
     }
 
     if (table.status !== TableStatus.PlayerTurns) {
         return {
             error: 'Not allowed to update the current round now',
-            ok: false
+            outcome: IOperationOutcome.error
         };
     }
 
@@ -31,7 +31,7 @@ export const makeDecision = (
     if (player.id !== playerId) {
         return {
             error: 'You are not allowed to make a decision now',
-            ok: false
+            outcome: IOperationOutcome.error
         };
     }
 
@@ -42,7 +42,7 @@ export const makeDecision = (
             if (!handService.canDouble(currentHand)) {
                 return {
                     error: 'Doubling is only allowed with 9, 10 or 11 points',
-                    ok: false
+                    outcome: IOperationOutcome.error
                 };
             }
             playerService.double(player, getNextCard(table.cardSet));
@@ -56,7 +56,7 @@ export const makeDecision = (
             if (!handService.canSplit(currentHand)) {
                 return {
                     error: 'Splitting is only allowed with two equal cards!',
-                    ok: false
+                    outcome: IOperationOutcome.error
                 };
             }
             playerService.split(player, getNextCard(table.cardSet));
@@ -69,7 +69,7 @@ export const makeDecision = (
         default:
             return {
                 error: 'Action not supported',
-                ok: false
+                outcome: IOperationOutcome.error
             };
     }
     tableService.notifySubscribers(tableId);
@@ -77,6 +77,7 @@ export const makeDecision = (
     updateCurrentRound(tableId);
 
     return {
-        ok: true
+        outcome: IOperationOutcome.success,
+        result: undefined
     };
 };

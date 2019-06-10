@@ -1,11 +1,12 @@
 import * as playerService from '../services/player-service';
-import { IUseCaseResult } from '../types/use-case-result';
+import { IOperationOutcome, IOperationResult } from '../types/operation-result';
+import { IPlayer } from '../types/player';
 
-export const registerPlayer = (playerName: string): IUseCaseResult => {
+export const registerPlayer = (playerName: string): IOperationResult<IPlayer> => {
     if (!playerName || !playerName.trim()) {
         return {
             error: 'No player name was provided',
-            ok: false
+            outcome: IOperationOutcome.error
         };
     }
     playerName = playerName.trim();
@@ -13,7 +14,7 @@ export const registerPlayer = (playerName: string): IUseCaseResult => {
     if (playerName.toLowerCase() === 'dealer') {
         return {
             error: 'So you think you are funny, huh? Choose another name',
-            ok: false
+            outcome: IOperationOutcome.error
         };
     }
 
@@ -21,13 +22,13 @@ export const registerPlayer = (playerName: string): IUseCaseResult => {
     if (existingPlayer) {
         return {
             error: playerName + ' is already taken. Please choose another name',
-            ok: false
+            outcome: IOperationOutcome.error
         };
     }
 
     const player = playerService.createPlayer(playerName);
     return {
-        ok: true,
+        outcome: IOperationOutcome.success,
         result: player
     };
 };

@@ -2,23 +2,23 @@ import { getNextCard } from '../services/card-set-service';
 import * as handService from '../services/hand-service';
 import * as playerService from '../services/player-service';
 import * as tableService from '../services/table-service';
+import { IOperationOutcome, IOperationResult } from '../types/operation-result';
 import { TableStatus } from '../types/table-status';
-import { IUseCaseResult } from '../types/use-case-result';
 import { endRound } from './end-round';
 
-export const playDealerTurn = (tableId: string): IUseCaseResult => {
+export const playDealerTurn = (tableId: string): IOperationResult<undefined> => {
     const table = tableService.getTableById(tableId);
     if (!table) {
         return {
             error: 'No table identified by ' + tableId + ' was found',
-            ok: false
+            outcome: IOperationOutcome.error
         };
     }
 
     if (table.status !== TableStatus.DealerTurn) {
         return {
             error: "Dealer turn can't be played now",
-            ok: false
+            outcome: IOperationOutcome.error
         };
     }
 
@@ -40,6 +40,7 @@ export const playDealerTurn = (tableId: string): IUseCaseResult => {
     }, 1000);
 
     return {
-        ok: true
+        outcome: IOperationOutcome.success,
+        result: undefined
     };
 };

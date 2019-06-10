@@ -91,7 +91,7 @@
         makeDecision(decision: types.PlayerActions) {
             const result =
                 useCases.makeDecision(this.table.id, this.player.id, decision);
-            if (!result.ok) {
+            if (result.outcome === types.IOperationOutcome.error) {
                 toastr.error(result.error);
             }
         }

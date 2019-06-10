@@ -2,22 +2,22 @@ import { collectPlayedCards } from '../services/card-set-service';
 import * as handService from '../services/hand-service';
 import * as playerService from '../services/player-service';
 import * as tableService from '../services/table-service';
+import { IOperationOutcome, IOperationResult } from '../types/operation-result';
 import { TableStatus } from '../types/table-status';
-import { IUseCaseResult } from '../types/use-case-result';
 
-export const endRound = (tableId: string): IUseCaseResult => {
+export const endRound = (tableId: string): IOperationResult<undefined> => {
     const table = tableService.getTableById(tableId);
     if (!table) {
         return {
             error: 'No table identified by ' + tableId + ' was found',
-            ok: false
+            outcome: IOperationOutcome.error
         };
     }
 
     if (table.status !== TableStatus.EndingRound) {
         return {
             error: "Round can't be ended now",
-            ok: false
+            outcome: IOperationOutcome.error
         };
     }
 
@@ -44,6 +44,7 @@ export const endRound = (tableId: string): IUseCaseResult => {
     tableService.notifySubscribers(tableId);
 
     return {
-        ok: true
+        outcome: IOperationOutcome.success,
+        result: undefined
     };
 };

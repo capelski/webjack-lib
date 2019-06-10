@@ -3,23 +3,23 @@ import * as handService from '../services/hand-service';
 import * as playerService from '../services/player-service';
 import * as tableService from '../services/table-service';
 import { HandStatus } from '../types/hand-status';
+import { IOperationOutcome, IOperationResult } from '../types/operation-result';
 import { TableStatus } from '../types/table-status';
-import { IUseCaseResult } from '../types/use-case-result';
 import { playDealerTurn } from './play-dealer-turn';
 
-export const updateCurrentRound = (tableId: string): IUseCaseResult => {
+export const updateCurrentRound = (tableId: string): IOperationResult<undefined> => {
     const table = tableService.getTableById(tableId);
     if (!table) {
         return {
             error: 'No table identified by ' + tableId + ' was found',
-            ok: false
+            outcome: IOperationOutcome.error
         };
     }
 
     if (table.status !== TableStatus.PlayerTurns) {
         return {
             error: 'Not allowed to update the current round now',
-            ok: false
+            outcome: IOperationOutcome.error
         };
     }
 
@@ -49,6 +49,7 @@ export const updateCurrentRound = (tableId: string): IUseCaseResult => {
     }
 
     return {
-        ok: true
+        outcome: IOperationOutcome.success,
+        result: undefined
     };
 };

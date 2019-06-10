@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { useCases } from 'webjack-core';
+import { types, useCases } from 'webjack-core';
 
 export const registerPlayer = (req: Request, res: Response) => {
     if (req.session!.playerId) {
@@ -7,11 +7,11 @@ export const registerPlayer = (req: Request, res: Response) => {
     }
 
     const playerName = req.query.name;
-    const useCaseResult = useCases.registerPlayer(playerName);
-    if (useCaseResult.ok) {
-        req.session!.playerId = useCaseResult.result.id;
-        res.status(200).send(JSON.stringify({ playerId: useCaseResult.result.id }));
+    const operationResult = useCases.registerPlayer(playerName);
+    if (operationResult.outcome === types.IOperationOutcome.success) {
+        req.session!.playerId = operationResult.result.id;
+        res.status(200).send(JSON.stringify({ playerId: operationResult.result.id }));
     } else {
-        res.status(400).send(JSON.stringify({ message: useCaseResult.error }));
+        res.status(400).send(JSON.stringify({ message: operationResult.error }));
     }
 };

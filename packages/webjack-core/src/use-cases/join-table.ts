@@ -1,13 +1,14 @@
 import * as playerService from '../services/player-service';
 import * as tableService from '../services/table-service';
-import { IUseCaseResult } from '../types/use-case-result';
+import { IOperationOutcome, IOperationResult } from '../types/operation-result';
+import { ITable } from '../types/table';
 
-export const joinTable = (playerId: string): IUseCaseResult => {
+export const joinTable = (playerId: string): IOperationResult<ITable> => {
     const player = playerService.getPlayerById(playerId);
     if (!player) {
         return {
             error: 'No player identified by ' + playerId + ' was found',
-            ok: false
+            outcome: IOperationOutcome.error
         };
     }
     playerService.resetInactiveRounds(player);
@@ -17,7 +18,7 @@ export const joinTable = (playerId: string): IUseCaseResult => {
     tableService.notifySubscribers(table.id);
 
     return {
-        ok: true,
+        outcome: IOperationOutcome.success,
         result: table
     };
 };

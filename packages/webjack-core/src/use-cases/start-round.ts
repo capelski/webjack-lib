@@ -3,12 +3,12 @@ import { getParameters } from '../services/game-parameters-service';
 import * as handService from '../services/hand-service';
 import * as playerService from '../services/player-service';
 import * as tableService from '../services/table-service';
+import { IOperationOutcome, IOperationResult } from '../types/operation-result';
 import { TableStatus } from '../types/table-status';
-import { IUseCaseResult } from '../types/use-case-result';
 import { delay } from '../utils/js-generics';
 import { updateCurrentRound } from './update-current-round';
 
-export const startRound = (tableId: string): Promise<IUseCaseResult> => {
+export const startRound = (tableId: string): Promise<IOperationResult<undefined>> => {
     const table = tableService.getTableById(tableId);
     if (!table) {
         return Promise.reject({
@@ -61,7 +61,8 @@ export const startRound = (tableId: string): Promise<IUseCaseResult> => {
         tableService.setStatus(table, TableStatus.PlayerTurns);
         updateCurrentRound(tableId);
         return {
-            ok: true
+            outcome: IOperationOutcome.success,
+            result: undefined
         };
     });
 };

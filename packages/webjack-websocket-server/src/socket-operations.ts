@@ -10,13 +10,13 @@ export const exitTable = (clientWebSocket: WebSocket, clientData: IClientWebSock
     const response: WebsocketResponseMessage = {
         operationType: WebsocketResponseType.exitTable
     };
-    const useCaseResult = useCases.exitTable(clientData.tableId!, clientData.playerId!);
-    if (useCaseResult.ok) {
+    const operationResult = useCases.exitTable(clientData.tableId!, clientData.playerId!);
+    if (operationResult.outcome === types.IOperationOutcome.success) {
         clientData.tableUnsubscribe!();
         delete clientData.tableId;
         delete clientData.tableUnsubscribe;
     } else {
-        response.error = useCaseResult.error;
+        response.error = operationResult.error;
     }
     sendMessage(clientWebSocket, response);
 };
@@ -46,13 +46,13 @@ export const joinTable = (clientWebSocket: WebSocket, clientData: IClientWebSock
     const response: WebsocketResponseMessage = {
         operationType: WebsocketResponseType.joinTable
     };
-    const useCaseResult = useCases.joinTable(clientData.playerId!);
-    if (useCaseResult.ok) {
-        clientData.tableId = useCaseResult.result.id;
-        response.table = formatTable(useCaseResult.result);
-        clientData.tableUnsubscribe = subscribeToTable(clientData.tableId!, clientWebSocket);
+    const operationResult = useCases.joinTable(clientData.playerId!);
+    if (operationResult.outcome === types.IOperationOutcome.success) {
+        clientData.tableId = operationResult.result.id;
+        clientData.tableUnsubscribe = subscribeToTable(operationResult.result.id, clientWebSocket);
+        response.table = formatTable(operationResult.result);
     } else {
-        response.error = useCaseResult.error;
+        response.error = operationResult.error;
     }
 
     sendMessage(clientWebSocket, response);
@@ -63,14 +63,14 @@ export const makeDecision = (
     clientData: IClientWebSocketData,
     decision: types.PlayerActions
 ) => {
-    const useCaseResult = useCases.makeDecision(
+    const operationResult = useCases.makeDecision(
         clientData.tableId!,
         clientData.playerId!,
         decision
     );
-    if (!useCaseResult.ok) {
+    if (operationResult.outcome === types.IOperationOutcome.error) {
         sendMessage(clientWebSocket, {
-            error: useCaseResult.error!,
+            error: operationResult.error,
             operationType: WebsocketResponseType.makeDecision
         });
     }
@@ -81,10 +81,10 @@ export const placeBet = (
     clientData: IClientWebSocketData,
     bet: number
 ) => {
-    const useCaseResult = useCases.placeBet(clientData.tableId!, clientData.playerId!, bet);
-    if (!useCaseResult.ok) {
+    const operationResult = useCases.placeBet(clientData.tableId!, clientData.playerId!, bet);
+    if (operationResult.outcome === types.IOperationOutcome.error) {
         sendMessage(clientWebSocket, {
-            error: useCaseResult.error!,
+            error: operationResult.error,
             operationType: WebsocketResponseType.placeBet
         });
     }
@@ -101,12 +101,12 @@ export const registerPlayer = (
     if (clientData.playerId) {
         response.error = 'You are already registered';
     } else {
-        const useCaseResult = useCases.registerPlayer(name);
-        if (useCaseResult.ok) {
-            clientData.playerId = useCaseResult.result.id;
+        const operationResult = useCases.registerPlayer(name);
+        if (operationResult.outcome === types.IOperationOutcome.success) {
+            clientData.playerId = operationResult.result.id;
             response.playerId = clientData.playerId;
         } else {
-            response.error = useCaseResult.error;
+            response.error = operationResult.error;
         }
     }
     sendMessage(clientWebSocket, response);

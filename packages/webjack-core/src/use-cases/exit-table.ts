@@ -1,13 +1,13 @@
 import * as playerService from '../services/player-service';
 import * as tableService from '../services/table-service';
-import { IUseCaseResult } from '../types/use-case-result';
+import { IOperationOutcome, IOperationResult } from '../types/operation-result';
 
-export const exitTable = (tableId: string, playerId: string): IUseCaseResult => {
+export const exitTable = (tableId: string, playerId: string): IOperationResult<undefined> => {
     const table = tableService.getTableById(tableId);
     if (!table) {
         return {
             error: 'No table identified by ' + tableId + ' was found',
-            ok: false
+            outcome: IOperationOutcome.error
         };
     }
 
@@ -15,14 +15,14 @@ export const exitTable = (tableId: string, playerId: string): IUseCaseResult => 
     if (!player) {
         return {
             error: 'No player identified by ' + playerId + ' was found',
-            ok: false
+            outcome: IOperationOutcome.error
         };
     }
 
     if (playerService.isPlaying(player)) {
         return {
             error: 'Wait to finish the current round before leaving the table',
-            ok: false
+            outcome: IOperationOutcome.error
         };
     }
 
@@ -30,6 +30,7 @@ export const exitTable = (tableId: string, playerId: string): IUseCaseResult => 
     tableService.notifySubscribers(tableId);
 
     return {
-        ok: true
+        outcome: IOperationOutcome.success,
+        result: undefined
     };
 };
