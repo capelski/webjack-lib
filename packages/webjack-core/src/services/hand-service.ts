@@ -1,8 +1,8 @@
 import { ICard } from '../types/card';
 import { IHand } from '../types/hand';
-import * as cardService from './card-service';
-import { cartesianProduct, removeDuplicates } from '../utils/js-generics';
 import { HandStatus } from '../types/hand-status';
+import { cartesianProduct, removeDuplicates } from '../utils/js-generics';
+import * as cardService from './card-service';
 
 export const addCard = (hand: IHand, card: ICard) => {
     hand.cards.push(card);
@@ -30,8 +30,8 @@ export const clearBet = (hand: IHand) => {
 export const createHand = (bet: number): IHand => ({
     bet,
     cards: [],
-    values: [],
-    status: HandStatus.Unplayed
+    status: HandStatus.Unplayed,
+    values: []
 });
 
 export const doubleBet = (hand: IHand) => {

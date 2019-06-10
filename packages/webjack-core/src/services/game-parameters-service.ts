@@ -3,8 +3,8 @@ import { IGameParameters } from '../types/game-parameters';
 let gameParameters: IGameParameters = {
     decksNumber: 4,
     maxDiscardedCards: 40,
-    maxPlayers: 7,
-    maxInactiveRounds: 4
+    maxInactiveRounds: 4,
+    maxPlayers: 7
 };
 
 export const getParameters = () => gameParameters;

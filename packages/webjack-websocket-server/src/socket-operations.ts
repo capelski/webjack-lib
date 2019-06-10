@@ -1,13 +1,13 @@
 import * as http from 'http';
-import { useCases, services, types } from 'webjack-core';
+import { services, types, useCases } from 'webjack-core';
 import { WebsocketResponseMessage, WebsocketResponseType } from 'webjack-websocket-contracts';
 import WebSocket from 'ws';
-import { ClientWebSocketData, Dictionary } from './types';
+import { IClientWebSocketData, IDictionary } from './types';
 
-const wsClients: Dictionary<ClientWebSocketData> = {};
+const wsClients: IDictionary<IClientWebSocketData> = {};
 
-export const exitTable = (clientWebSocket: WebSocket, clientData: ClientWebSocketData) => {
-    let response: WebsocketResponseMessage = {
+export const exitTable = (clientWebSocket: WebSocket, clientData: IClientWebSocketData) => {
+    const response: WebsocketResponseMessage = {
         operationType: WebsocketResponseType.exitTable
     };
     const useCaseResult = useCases.exitTable(clientData.tableId!, clientData.playerId!);
@@ -42,13 +42,13 @@ export const getClientData = (request: http.IncomingMessage) => {
     return clientData;
 };
 
-export const joinTable = (clientWebSocket: WebSocket, clientData: ClientWebSocketData) => {
-    let response: WebsocketResponseMessage = {
+export const joinTable = (clientWebSocket: WebSocket, clientData: IClientWebSocketData) => {
+    const response: WebsocketResponseMessage = {
         operationType: WebsocketResponseType.joinTable
     };
     const useCaseResult = useCases.joinTable(clientData.playerId!);
     if (useCaseResult.ok) {
-        clientData.tableId = useCaseResult.result!.id;
+        clientData.tableId = useCaseResult.result.id;
         response.table = formatTable(useCaseResult.result);
         clientData.tableUnsubscribe = subscribeToTable(clientData.tableId!, clientWebSocket);
     } else {
@@ -60,7 +60,7 @@ export const joinTable = (clientWebSocket: WebSocket, clientData: ClientWebSocke
 
 export const makeDecision = (
     clientWebSocket: WebSocket,
-    clientData: ClientWebSocketData,
+    clientData: IClientWebSocketData,
     decision: types.PlayerActions
 ) => {
     const useCaseResult = useCases.makeDecision(
@@ -70,32 +70,32 @@ export const makeDecision = (
     );
     if (!useCaseResult.ok) {
         sendMessage(clientWebSocket, {
-            operationType: WebsocketResponseType.makeDecision,
-            error: useCaseResult.error!
+            error: useCaseResult.error!,
+            operationType: WebsocketResponseType.makeDecision
         });
     }
 };
 
 export const placeBet = (
     clientWebSocket: WebSocket,
-    clientData: ClientWebSocketData,
+    clientData: IClientWebSocketData,
     bet: number
 ) => {
     const useCaseResult = useCases.placeBet(clientData.tableId!, clientData.playerId!, bet);
     if (!useCaseResult.ok) {
         sendMessage(clientWebSocket, {
-            operationType: WebsocketResponseType.placeBet,
-            error: useCaseResult.error!
+            error: useCaseResult.error!,
+            operationType: WebsocketResponseType.placeBet
         });
     }
 };
 
 export const registerPlayer = (
     clientWebSocket: WebSocket,
-    clientData: ClientWebSocketData,
+    clientData: IClientWebSocketData,
     name: string
 ) => {
-    let response: WebsocketResponseMessage = {
+    const response: WebsocketResponseMessage = {
         operationType: WebsocketResponseType.registerPlayer
     };
     if (clientData.playerId) {
@@ -103,7 +103,7 @@ export const registerPlayer = (
     } else {
         const useCaseResult = useCases.registerPlayer(name);
         if (useCaseResult.ok) {
-            clientData.playerId = useCaseResult.result!.id;
+            clientData.playerId = useCaseResult.result.id;
             response.playerId = clientData.playerId;
         } else {
             response.error = useCaseResult.error;
@@ -112,7 +112,7 @@ export const registerPlayer = (
     sendMessage(clientWebSocket, response);
 };
 
-export const sendClientData = (clientWebSocket: WebSocket, clientData: ClientWebSocketData) => {
+export const sendClientData = (clientWebSocket: WebSocket, clientData: IClientWebSocketData) => {
     let table: types.ITable | undefined;
     if (clientData.tableId) {
         clientData.tableUnsubscribe = subscribeToTable(clientData.tableId, clientWebSocket);
@@ -129,20 +129,20 @@ export const sendMessage = (clientWebSocket: WebSocket, message: WebsocketRespon
     clientWebSocket.send(JSON.stringify(message));
 };
 
-export const setKickOutTimer = (clientWebSocket: WebSocket, clientData: ClientWebSocketData) => {
+export const setKickOutTimer = (clientWebSocket: WebSocket, clientData: IClientWebSocketData) => {
     if (clientData.kickOutTimer) {
         clearTimeout(clientData.kickOutTimer);
     }
     clientData.kickOutTimer = setTimeout(() => {
         sendMessage(clientWebSocket, {
-            operationType: WebsocketResponseType.inactivityKickOut,
-            error: 'Kicked out due to inactivity'
+            error: 'Kicked out due to inactivity',
+            operationType: WebsocketResponseType.inactivityKickOut
         });
-        if (clientData.tableId) {
-            useCases.exitTable(clientData.tableId!, clientData.playerId!);
-        }
         if (clientData.playerId) {
             services.playerService.deletePlayer(clientData.playerId);
+            if (clientData.tableId) {
+                useCases.exitTable(clientData.tableId, clientData.playerId);
+            }
         }
         if (clientData.tableUnsubscribe) {
             clientData.tableUnsubscribe();

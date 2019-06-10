@@ -1,9 +1,10 @@
 import * as components from './components';
 
-const install = (Vue: any, options: any = {}) => {
-    for (let key in components) {
-        let _key = options.prefix ? options.prefix + key : key;
-        Vue.component(_key, (components as any)[key]);
+const install = (vue: any, options: any = {}) => {
+    // tslint:disable-next-line:forin
+    for (const key in components) {
+        const _key = options.prefix ? options.prefix + key : key;
+        vue.component(_key, (components as any)[key]);
     }
 };
 

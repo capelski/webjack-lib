@@ -1,27 +1,27 @@
 import * as playerService from '../services/player-service';
-import { UseCaseResult } from '../types/use-case-result';
+import { IUseCaseResult } from '../types/use-case-result';
 
-export const registerPlayer = (playerName: string): UseCaseResult => {
+export const registerPlayer = (playerName: string): IUseCaseResult => {
     if (!playerName || !playerName.trim()) {
         return {
-            ok: false,
-            error: 'No player name was provided'
+            error: 'No player name was provided',
+            ok: false
         };
     }
     playerName = playerName.trim();
 
     if (playerName.toLowerCase() === 'dealer') {
         return {
-            ok: false,
-            error: 'So you think you are funny, huh? Choose another name'
+            error: 'So you think you are funny, huh? Choose another name',
+            ok: false
         };
     }
 
     const existingPlayer = playerService.getPlayerByName(playerName);
     if (existingPlayer) {
         return {
-            ok: false,
-            error: playerName + ' is already taken. Please choose another name'
+            error: playerName + ' is already taken. Please choose another name',
+            ok: false
         };
     }
 

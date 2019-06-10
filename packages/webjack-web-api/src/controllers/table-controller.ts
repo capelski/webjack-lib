@@ -1,5 +1,5 @@
-import { services, useCases } from 'webjack-core';
 import { Request, Response } from 'express';
+import { services, useCases } from 'webjack-core';
 
 export const exitTable = (req: Request, res: Response) => {
     const useCaseResult = useCases.exitTable(req.session!.tableId, req.session!.playerId);
@@ -41,8 +41,8 @@ export const getTableStatus = (req: Request, res: Response) => {
 export const joinTable = (req: Request, res: Response) => {
     const useCaseResult = useCases.joinTable(req.session!.playerId);
     if (useCaseResult.ok) {
-        req.session!.tableId = useCaseResult.result!.id;
-        res.status(200).send(JSON.stringify({ tableId: useCaseResult.result!.id }));
+        req.session!.tableId = useCaseResult.result.id;
+        res.status(200).send(JSON.stringify({ tableId: useCaseResult.result.id }));
     } else {
         res.status(400).send(JSON.stringify({ message: useCaseResult.error }));
     }
@@ -64,7 +64,7 @@ export const makeDecision = (req: Request, res: Response) => {
 };
 
 export const placeBet = (req: Request, res: Response) => {
-    const bet = parseInt(req.query.bet);
+    const bet = parseInt(req.query.bet, 10);
     const useCaseResult = useCases.placeBet(req.session!.tableId, req.session!.playerId, bet);
     if (useCaseResult.ok) {
         res.status(200).send(JSON.stringify({}));

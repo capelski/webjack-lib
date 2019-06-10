@@ -1,18 +1,18 @@
 import { v4 as uuid } from 'uuid';
-import { IDictionary } from '../types/dictionary';
-import { IPlayer } from '../types/player';
 import { ICard } from '../types/card';
+import { IDictionary } from '../types/dictionary';
 import { HandStatus } from '../types/hand-status';
+import { IPlayer } from '../types/player';
 import { addCard, createHand, doubleBet, finishHand, isUnplayed } from './hand-service';
 
-let players: IDictionary<IPlayer> = {};
+const players: IDictionary<IPlayer> = {};
 
 export const clearHands = (player: IPlayer) => (player.hands = []);
 
-const create = (name: string = 'Unnamed'): IPlayer => ({
-    id: uuid(),
+const create = (name = 'Unnamed'): IPlayer => ({
     earningRate: 0,
     hands: [],
+    id: uuid(),
     inactiveRounds: 0,
     name
 });

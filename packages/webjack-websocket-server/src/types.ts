@@ -1,8 +1,8 @@
-export interface Dictionary<T> {
+export interface IDictionary<T> {
     [key: string]: T;
 }
 
-export interface ClientWebSocketData {
+export interface IClientWebSocketData {
     id: string;
     playerId?: string;
     tableId?: string;

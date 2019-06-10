@@ -1,28 +1,28 @@
 import * as playerService from '../services/player-service';
 import * as tableService from '../services/table-service';
-import { UseCaseResult } from '../types/use-case-result';
+import { IUseCaseResult } from '../types/use-case-result';
 
-export const exitTable = (tableId: string, playerId: string): UseCaseResult => {
+export const exitTable = (tableId: string, playerId: string): IUseCaseResult => {
     const table = tableService.getTableById(tableId);
     if (!table) {
         return {
-            ok: false,
-            error: 'No table identified by ' + tableId + ' was found'
+            error: 'No table identified by ' + tableId + ' was found',
+            ok: false
         };
     }
 
     const player = tableService.getPlayerById(table, playerId);
     if (!player) {
         return {
-            ok: false,
-            error: 'No player identified by ' + playerId + ' was found'
+            error: 'No player identified by ' + playerId + ' was found',
+            ok: false
         };
     }
 
     if (playerService.isPlaying(player)) {
         return {
-            ok: false,
-            error: 'Wait to finish the current round before leaving the table'
+            error: 'Wait to finish the current round before leaving the table',
+            ok: false
         };
     }
 

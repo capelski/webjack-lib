@@ -1,3 +1,7 @@
+interface IDictionary<T> {
+    [key: string]: T;
+}
+
 export const cartesianProduct = <T, U, R>(
     firstArray: T[],
     secondArray: U[],
@@ -16,17 +20,18 @@ export const delay = (minimumTime = 500) => {
 };
 
 export const removeDuplicates = (numbers: number[]): number[] => {
-    const numbersDictionary: { [key: string]: number } = numbers.reduce(
+    const numbersDictionary: IDictionary<number> = numbers.reduce(
         (dictionary, next) => ({ ...dictionary, [next]: next }),
-        {}
+        // tslint:disable-next-line:no-object-literal-type-assertion
+        {} as IDictionary<number>
     );
     return Object.keys(numbersDictionary).map(x => numbersDictionary[x]);
 };
 
 export const shuffleArray = (array: any[]) => {
-    for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = array[i];
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = array[i];
         array[i] = array[j];
         array[j] = temp;
     }

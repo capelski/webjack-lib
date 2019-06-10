@@ -108,7 +108,7 @@ const getHardHandSymbols = (value: number): string[] => {
 };
 
 const getRandomHandSymbols = (trainingSet: ITrainingSet): string[] => {
-    let handsSet =
+    const handsSet =
         trainingSet.playerAvailableHands.length > 0
             ? trainingSet.playerAvailableHands
             : trainingSet.playerUsedHands;
@@ -121,7 +121,7 @@ const getRandomHandSymbols = (trainingSet: ITrainingSet): string[] => {
     let symbols: string[] = [];
     const hardHandMatch = randomHand.match(/^\+(.*)$/);
     if (hardHandMatch) {
-        symbols = getHardHandSymbols(parseInt(hardHandMatch[1]));
+        symbols = getHardHandSymbols(parseInt(hardHandMatch[1], 10));
     } else {
         symbols = randomHand
             .replace(/Figure/, getFigureSymbol())

@@ -1,6 +1,6 @@
+import { TableStatus } from '../types/table-status';
 import { ICardSet } from './card-set';
 import { IPlayer } from './player';
-import { TableStatus } from '../types/table-status';
 
 export interface ITable {
     baseTimestamp: number | undefined;

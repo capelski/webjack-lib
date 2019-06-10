@@ -3,6 +3,7 @@ import { cartesianProduct } from '../utils/js-generics';
 
 const cardsValue: { [key: string]: number[] } = {
     A: [1, 11],
+    // tslint:disable-next-line:object-literal-sort-keys
     '2': [2],
     '3': [3],
     '4': [4],

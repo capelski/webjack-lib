@@ -7,8 +7,8 @@ import { createCardSet } from './card-set-service';
 import { getParameters } from './game-parameters-service';
 import * as playerService from './player-service';
 
-let tables: IDictionary<ITable> = {};
-let tableSubscribers: IDictionary<TableSubscriber[]> = {};
+const tables: IDictionary<ITable> = {};
+const tableSubscribers: IDictionary<TableSubscriber[]> = {};
 
 export const addPlayer = (table: ITable, player: IPlayer) => table.players.push(player);
 

@@ -1,30 +1,30 @@
 import { initializeHand } from '../services/player-service';
 import * as tableService from '../services/table-service';
 import { TableStatus } from '../types/table-status';
-import { UseCaseResult } from '../types/use-case-result';
+import { IUseCaseResult } from '../types/use-case-result';
 import { startRound } from './start-round';
 
-export const placeBet = (tableId: string, playerId: string, bet = 1): UseCaseResult => {
+export const placeBet = (tableId: string, playerId: string, bet = 1): IUseCaseResult => {
     const table = tableService.getTableById(tableId);
     if (!table) {
         return {
-            ok: false,
-            error: 'No table identified by ' + tableId + ' was found'
+            error: 'No table identified by ' + tableId + ' was found',
+            ok: false
         };
     }
 
     const player = tableService.getPlayerById(table, playerId);
     if (!player) {
         return {
-            ok: false,
-            error: 'No player identified by ' + playerId + ' was found'
+            error: 'No player identified by ' + playerId + ' was found',
+            ok: false
         };
     }
 
     if (table.status !== TableStatus.Idle && table.status !== TableStatus.PlacingBets) {
         return {
-            ok: false,
-            error: "Bets can't be placed once a round has been started"
+            error: "Bets can't be placed once a round has been started",
+            ok: false
         };
     }
 

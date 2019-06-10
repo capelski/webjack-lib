@@ -1,25 +1,25 @@
+import { getNextCard } from '../services/card-set-service';
 import * as handService from '../services/hand-service';
 import * as playerService from '../services/player-service';
 import * as tableService from '../services/table-service';
-import { getNextCard } from '../services/card-set-service';
 import { HandStatus } from '../types/hand-status';
 import { TableStatus } from '../types/table-status';
-import { UseCaseResult } from '../types/use-case-result';
+import { IUseCaseResult } from '../types/use-case-result';
 import { playDealerTurn } from './play-dealer-turn';
 
-export const updateCurrentRound = (tableId: string): UseCaseResult => {
+export const updateCurrentRound = (tableId: string): IUseCaseResult => {
     const table = tableService.getTableById(tableId);
     if (!table) {
         return {
-            ok: false,
-            error: 'No table identified by ' + tableId + ' was found'
+            error: 'No table identified by ' + tableId + ' was found',
+            ok: false
         };
     }
 
     if (table.status !== TableStatus.PlayerTurns) {
         return {
-            ok: false,
-            error: 'Not allowed to update the current round now'
+            error: 'Not allowed to update the current round now',
+            ok: false
         };
     }
 

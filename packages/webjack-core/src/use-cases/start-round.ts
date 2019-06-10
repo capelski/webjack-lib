@@ -3,25 +3,24 @@ import { getParameters } from '../services/game-parameters-service';
 import * as handService from '../services/hand-service';
 import * as playerService from '../services/player-service';
 import * as tableService from '../services/table-service';
-import { UseCaseResult } from '../types/use-case-result';
-import { HandStatus } from '../types/hand-status';
 import { TableStatus } from '../types/table-status';
+import { IUseCaseResult } from '../types/use-case-result';
 import { delay } from '../utils/js-generics';
 import { updateCurrentRound } from './update-current-round';
 
-export const startRound = (tableId: string): Promise<UseCaseResult> => {
+export const startRound = (tableId: string): Promise<IUseCaseResult> => {
     const table = tableService.getTableById(tableId);
     if (!table) {
         return Promise.reject({
-            ok: false,
-            error: 'No table identified by ' + tableId + ' was found'
+            error: 'No table identified by ' + tableId + ' was found',
+            ok: false
         });
     }
 
     if (table.status !== TableStatus.PlacingBets) {
         return Promise.reject({
-            ok: false,
-            error: 'A round can only be started when some bet has been placed'
+            error: 'A round can only be started when some bet has been placed',
+            ok: false
         });
     }
 

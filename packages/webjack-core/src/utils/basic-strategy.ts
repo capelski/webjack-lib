@@ -1,11 +1,11 @@
-import { IHand } from '../types/hand';
 import {
-    DecisionsSet,
-    HandDecisionsData,
     DecisionsSetGetter,
-    NumberDictionary,
-    OptimalDecision
+    IDecisionsSet,
+    IHandDecisionsData,
+    INumberDictionary,
+    IOptimalDecision
 } from '../types/basic-strategy';
+import { IHand } from '../types/hand';
 import { PlayerActions } from '../types/player-actions';
 
 const nNumbers = (n: number) =>
@@ -17,7 +17,7 @@ const nNumbers = (n: number) =>
 const numberRange = (min: number, max: number) => nNumbers(max).filter(x => x >= min);
 
 const extendDecisionSet = (
-    previousDecisionSet: DecisionsSet,
+    previousDecisionSet: IDecisionsSet,
     action: string,
     startScore: number,
     endScore: number
@@ -34,11 +34,12 @@ const extendDecisionSet = (
 const createDecisionsSet = (
     action: string,
     startScore?: number,
-    previousDecisionSet?: DecisionsSet
-): DecisionsSet => {
-    const currentDecisionsSet: DecisionsSet = {
+    previousDecisionSet?: IDecisionsSet
+): IDecisionsSet => {
+    const currentDecisionsSet: IDecisionsSet = {
         ...extendDecisionSet(
-            previousDecisionSet || ({} as DecisionsSet),
+            // tslint:disable-next-line:no-object-literal-type-assertion
+            previousDecisionSet || ({} as IDecisionsSet),
             action,
             startScore || 2,
             11
@@ -80,7 +81,7 @@ const hit = createDecisionsSet(PlayerActions.Hit);
 const split = createDecisionsSet(PlayerActions.Split);
 const stand = createDecisionsSet(PlayerActions.Stand);
 
-const softHandsMap: NumberDictionary<DecisionsSet> = {
+const softHandsMap: INumberDictionary<IDecisionsSet> = {
     13: hit,
     14: hit,
     15: hit,
@@ -92,7 +93,7 @@ const softHandsMap: NumberDictionary<DecisionsSet> = {
     21: stand
 };
 
-const hardHandsMap: NumberDictionary<DecisionsSet> = {
+const hardHandsMap: INumberDictionary<IDecisionsSet> = {
     5: hit,
     6: hit,
     7: hit,
@@ -147,17 +148,18 @@ const allHandsDecisions = splittableHandDecisions
     .concat(softHandDecisions)
     .concat(hardHandDecisions);
 
-const getHandDecisionsData = (hand: IHand): HandDecisionsData => ({
+const getHandDecisionsData = (hand: IHand): IHandDecisionsData => ({
     symbols: hand.cards.map(c => c.symbol).join(','),
     value: hand.values[hand.values.length - 1],
     values: hand.values
 });
 
-export const getOptimalDecision = (hand: IHand, dealerHandValue: number): OptimalDecision => {
+export const getOptimalDecision = (hand: IHand, dealerHandValue: number): IOptimalDecision => {
     const handDecisionsData = getHandDecisionsData(hand);
     const decisionsSet = allHandsDecisions.reduce(
-        (decisionsSet, decisionsSetGetter) => decisionsSet || decisionsSetGetter(handDecisionsData),
-        (undefined as unknown) as DecisionsSet
+        (_decisionsSet, decisionsSetGetter) =>
+            _decisionsSet || decisionsSetGetter(handDecisionsData),
+        (undefined as unknown) as IDecisionsSet
     );
     const action = decisionsSet[dealerHandValue];
 

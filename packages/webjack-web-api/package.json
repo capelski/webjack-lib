@@ -1,38 +1,39 @@
 {
-  "name": "webjack-web-api",
-  "version": "0.2.2",
-  "description": "Web utilities to expose blackjack endpoints in an express server",
-  "keywords": [
-    "blackjack",
-    "library",
-    "server"
-  ],
-  "author": "Carles Capellas <capellas.carles@gmail.com>",
-  "homepage": "https://github.com/L3bowski/webjack-lib/tree/master/packages/webjack-web-api#readme",
-  "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/L3bowski/webjack-lib.git"
-  },
-  "scripts": {
-    "build": "tsc -b",
-    "clean": "rm -rf dist",
-    "dev": "tsc -p tsconfig.dev.json && node dist/development.js"
-  },
-  "devDependencies": {
-    "@types/express": "^4.16.1",
-    "@types/express-session": "^1.15.12",
-    "@types/node": "^11.13.5",
-    "express": "^4.17.1",
-    "express-session": "^1.16.1",
-    "typescript": "^3.4.3"
-  },
-  "dependencies": {
-    "webjack-core": "^0.2.2"
-  }
+    "name": "webjack-web-api",
+    "version": "0.2.2",
+    "description": "Web utilities to expose blackjack endpoints in an express server",
+    "keywords": [
+        "blackjack",
+        "library",
+        "server"
+    ],
+    "author": "Carles Capellas <capellas.carles@gmail.com>",
+    "homepage": "https://github.com/L3bowski/webjack-lib/tree/master/packages/webjack-web-api#readme",
+    "license": "MIT",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/L3bowski/webjack-lib.git"
+    },
+    "scripts": {
+        "build": "tsc -b",
+        "clean": "rm -rf dist",
+        "dev": "tsc -p tsconfig.dev.json && node dist/development.js",
+        "lint": "tslint -e 'node_modules/**' -p ."
+    },
+    "devDependencies": {
+        "@types/express": "^4.16.1",
+        "@types/express-session": "^1.15.12",
+        "@types/node": "^11.13.5",
+        "express": "^4.17.1",
+        "express-session": "^1.16.1",
+        "typescript": "^3.4.3"
+    },
+    "dependencies": {
+        "webjack-core": "^0.2.2"
+    }
 }

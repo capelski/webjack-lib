@@ -1,7 +1,7 @@
+import { Application, Router } from 'express';
+import { services, types } from 'webjack-core';
 import * as playerController from './controllers/player-controller';
 import * as tableController from './controllers/table-controller';
-import { services, types } from 'webjack-core';
-import { Router, Application } from 'express';
 
 export const exposeWebjackRoutes = (app: Application | Router, routesPrefix = '') => {
     app.get(`${routesPrefix}/session-data`, (req, res) =>

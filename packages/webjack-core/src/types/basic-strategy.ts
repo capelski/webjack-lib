@@ -1,32 +1,32 @@
-export interface DecisionsSet {
+export interface IDecisionsSet {
     [key: number]: string;
     until: {
         dealer: (
             limit: number
         ) => {
             then: {
-                double: DecisionsSet;
-                hit: DecisionsSet;
-                split: DecisionsSet;
-                stand: DecisionsSet;
+                double: IDecisionsSet;
+                hit: IDecisionsSet;
+                split: IDecisionsSet;
+                stand: IDecisionsSet;
             };
         };
     };
 }
 
-export interface HandDecisionsData {
+export interface IHandDecisionsData {
     symbols: string;
     value: number;
     values: number[];
 }
 
-export type DecisionsSetGetter = (decisionsData: HandDecisionsData) => undefined | DecisionsSet;
+export type DecisionsSetGetter = (decisionsData: IHandDecisionsData) => undefined | IDecisionsSet;
 
-export interface NumberDictionary<T> {
+export interface INumberDictionary<T> {
     [key: number]: T;
 }
 
-export interface OptimalDecision {
+export interface IOptimalDecision {
     action: string;
     description: string;
 }

@@ -1,23 +1,23 @@
+import { collectPlayedCards } from '../services/card-set-service';
 import * as handService from '../services/hand-service';
 import * as playerService from '../services/player-service';
 import * as tableService from '../services/table-service';
-import { collectPlayedCards } from '../services/card-set-service';
 import { TableStatus } from '../types/table-status';
-import { UseCaseResult } from '../types/use-case-result';
+import { IUseCaseResult } from '../types/use-case-result';
 
-export const endRound = (tableId: string): UseCaseResult => {
+export const endRound = (tableId: string): IUseCaseResult => {
     const table = tableService.getTableById(tableId);
     if (!table) {
         return {
-            ok: false,
-            error: 'No table identified by ' + tableId + ' was found'
+            error: 'No table identified by ' + tableId + ' was found',
+            ok: false
         };
     }
 
     if (table.status !== TableStatus.EndingRound) {
         return {
-            ok: false,
-            error: "Round can't be ended now"
+            error: "Round can't be ended now",
+            ok: false
         };
     }
 

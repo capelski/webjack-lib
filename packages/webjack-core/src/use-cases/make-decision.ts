@@ -1,37 +1,37 @@
+import { getNextCard } from '../services/card-set-service';
 import * as handService from '../services/hand-service';
 import * as playerService from '../services/player-service';
 import * as tableService from '../services/table-service';
 import { PlayerActions } from '../types/player-actions';
-import { getNextCard } from '../services/card-set-service';
 import { TableStatus } from '../types/table-status';
-import { UseCaseResult } from '../types/use-case-result';
+import { IUseCaseResult } from '../types/use-case-result';
 import { updateCurrentRound } from './update-current-round';
 
 export const makeDecision = (
     tableId: string,
     playerId: string,
     decision: PlayerActions
-): UseCaseResult => {
+): IUseCaseResult => {
     const table = tableService.getTableById(tableId);
     if (!table) {
         return {
-            ok: false,
-            error: 'No table identified by ' + tableId + ' was found'
+            error: 'No table identified by ' + tableId + ' was found',
+            ok: false
         };
     }
 
     if (table.status !== TableStatus.PlayerTurns) {
         return {
-            ok: false,
-            error: 'Not allowed to update the current round now'
+            error: 'Not allowed to update the current round now',
+            ok: false
         };
     }
 
     const player = tableService.getCurrentPlayer(table)!;
     if (player.id !== playerId) {
         return {
-            ok: false,
-            error: 'You are not allowed to make a decision now'
+            error: 'You are not allowed to make a decision now',
+            ok: false
         };
     }
 
@@ -41,8 +41,8 @@ export const makeDecision = (
         case PlayerActions.Double: {
             if (!handService.canDouble(currentHand)) {
                 return {
-                    ok: false,
-                    error: 'Doubling is only allowed with 9, 10 or 11 points'
+                    error: 'Doubling is only allowed with 9, 10 or 11 points',
+                    ok: false
                 };
             }
             playerService.double(player, getNextCard(table.cardSet));
@@ -55,8 +55,8 @@ export const makeDecision = (
         case PlayerActions.Split: {
             if (!handService.canSplit(currentHand)) {
                 return {
-                    ok: false,
-                    error: 'Splitting is only allowed with two equal cards!'
+                    error: 'Splitting is only allowed with two equal cards!',
+                    ok: false
                 };
             }
             playerService.split(player, getNextCard(table.cardSet));
@@ -68,8 +68,8 @@ export const makeDecision = (
         }
         default:
             return {
-                ok: false,
-                error: 'Action not supported'
+                error: 'Action not supported',
+                ok: false
             };
     }
     tableService.notifySubscribers(tableId);
