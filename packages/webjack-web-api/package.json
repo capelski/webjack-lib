@@ -1,6 +1,6 @@
 {
   "name": "webjack-web-api",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Web utilities to expose blackjack endpoints in an express server",
   "keywords": [
     "blackjack",
@@ -33,6 +33,6 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "webjack-core": "^0.2.1"
+    "webjack-core": "^0.2.2"
   }
 }
