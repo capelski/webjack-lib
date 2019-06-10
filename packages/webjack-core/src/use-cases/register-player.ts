@@ -1,4 +1,3 @@
-
 import * as playerService from '../services/player-service';
 import { UseCaseResult } from '../types/use-case-result';
 
@@ -10,7 +9,7 @@ export const registerPlayer = (playerName: string): UseCaseResult => {
         };
     }
     playerName = playerName.trim();
-    
+
     if (playerName.toLowerCase() === 'dealer') {
         return {
             ok: false,
@@ -31,4 +30,4 @@ export const registerPlayer = (playerName: string): UseCaseResult => {
         ok: true,
         result: player
     };
-}
+};

@@ -1,5 +1,3 @@
 import * as basicStrategy from './basic-strategy';
 
-export {
-    basicStrategy
-};
+export { basicStrategy };

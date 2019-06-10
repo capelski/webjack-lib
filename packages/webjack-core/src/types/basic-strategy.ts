@@ -1,7 +1,9 @@
 export interface DecisionsSet {
     [key: number]: string;
     until: {
-        dealer: (limit: number) => {
+        dealer: (
+            limit: number
+        ) => {
             then: {
                 double: DecisionsSet;
                 hit: DecisionsSet;

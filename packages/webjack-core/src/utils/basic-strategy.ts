@@ -1,29 +1,72 @@
 import { IHand } from '../types/hand';
-import { DecisionsSet, HandDecisionsData, DecisionsSetGetter, NumberDictionary, OptimalDecision } from '../types/basic-strategy';
+import {
+    DecisionsSet,
+    HandDecisionsData,
+    DecisionsSetGetter,
+    NumberDictionary,
+    OptimalDecision
+} from '../types/basic-strategy';
 import { PlayerActions } from '../types/player-actions';
 
-const nNumbers = (n: number) => ' '.repeat(n).split('').map((_, index) => index + 1);
+const nNumbers = (n: number) =>
+    ' '
+        .repeat(n)
+        .split('')
+        .map((_, index) => index + 1);
 
 const numberRange = (min: number, max: number) => nNumbers(max).filter(x => x >= min);
 
-const extendDecisionSet = (previousDecisionSet: DecisionsSet, action: string, startScore: number, endScore: number) => {
-    return numberRange(startScore, endScore).reduce((target, propertyName) => ({
-        ...target,
-        [propertyName]: action
-    }), previousDecisionSet);
+const extendDecisionSet = (
+    previousDecisionSet: DecisionsSet,
+    action: string,
+    startScore: number,
+    endScore: number
+) => {
+    return numberRange(startScore, endScore).reduce(
+        (target, propertyName) => ({
+            ...target,
+            [propertyName]: action
+        }),
+        previousDecisionSet
+    );
 };
 
-const createDecisionsSet = (action: string, startScore?: number, previousDecisionSet?: DecisionsSet): DecisionsSet => {
+const createDecisionsSet = (
+    action: string,
+    startScore?: number,
+    previousDecisionSet?: DecisionsSet
+): DecisionsSet => {
     const currentDecisionsSet: DecisionsSet = {
-        ...extendDecisionSet(previousDecisionSet || ({} as DecisionsSet), action, startScore || 2, 11),
+        ...extendDecisionSet(
+            previousDecisionSet || ({} as DecisionsSet),
+            action,
+            startScore || 2,
+            11
+        ),
         until: {
-            dealer: (limitScore) => {
+            dealer: limitScore => {
                 return {
                     then: {
-                        double: createDecisionsSet(PlayerActions.Double, limitScore + 1, currentDecisionsSet),
-                        hit: createDecisionsSet(PlayerActions.Hit, limitScore + 1, currentDecisionsSet),
-                        split: createDecisionsSet(PlayerActions.Split, limitScore + 1, currentDecisionsSet),
-                        stand: createDecisionsSet(PlayerActions.Stand, limitScore + 1, currentDecisionsSet),
+                        double: createDecisionsSet(
+                            PlayerActions.Double,
+                            limitScore + 1,
+                            currentDecisionsSet
+                        ),
+                        hit: createDecisionsSet(
+                            PlayerActions.Hit,
+                            limitScore + 1,
+                            currentDecisionsSet
+                        ),
+                        split: createDecisionsSet(
+                            PlayerActions.Split,
+                            limitScore + 1,
+                            currentDecisionsSet
+                        ),
+                        stand: createDecisionsSet(
+                            PlayerActions.Stand,
+                            limitScore + 1,
+                            currentDecisionsSet
+                        )
                     }
                 };
             }
@@ -66,42 +109,43 @@ const hardHandsMap: NumberDictionary<DecisionsSet> = {
     18: stand,
     19: stand,
     20: stand,
-    21: stand,
+    21: stand
 };
 
 const splittableHandDecisions: DecisionsSetGetter[] = [
-    decisionsData => /^A,A$/.test(decisionsData.symbols) ?
-        split.until.dealer(10).then.hit :
-        undefined,
-    decisionsData => /^9,9$/.test(decisionsData.symbols) ?
-        split.until.dealer(6).then.stand.until.dealer(7).then.split.until.dealer(9).then.stand :
-        undefined,
-    decisionsData => /^8,8$/.test(decisionsData.symbols) ?
-        split.until.dealer(9).then.hit :
-        undefined,
-    decisionsData => /^7,7$/.test(decisionsData.symbols) ?
-        split.until.dealer(7).then.hit :
-        undefined,
-    decisionsData => /^6,6$/.test(decisionsData.symbols) ?
-        split.until.dealer(6).then.hit :
-        undefined,
-    decisionsData => /^4,4$/.test(decisionsData.symbols) ?
-        hit.until.dealer(4).then.split.until.dealer(6).then.hit :
-        undefined,
-    decisionsData => /^3,3$/.test(decisionsData.symbols) ?
-        split.until.dealer(7).then.hit :
-        undefined,
-    decisionsData => /^2,2$/.test(decisionsData.symbols) ?
-        split.until.dealer(7).then.hit : 
-        undefined];
+    decisionsData =>
+        /^A,A$/.test(decisionsData.symbols) ? split.until.dealer(10).then.hit : undefined,
+    decisionsData =>
+        /^9,9$/.test(decisionsData.symbols)
+            ? split.until
+                  .dealer(6)
+                  .then.stand.until.dealer(7)
+                  .then.split.until.dealer(9).then.stand
+            : undefined,
+    decisionsData =>
+        /^8,8$/.test(decisionsData.symbols) ? split.until.dealer(9).then.hit : undefined,
+    decisionsData =>
+        /^7,7$/.test(decisionsData.symbols) ? split.until.dealer(7).then.hit : undefined,
+    decisionsData =>
+        /^6,6$/.test(decisionsData.symbols) ? split.until.dealer(6).then.hit : undefined,
+    decisionsData =>
+        /^4,4$/.test(decisionsData.symbols)
+            ? hit.until.dealer(4).then.split.until.dealer(6).then.hit
+            : undefined,
+    decisionsData =>
+        /^3,3$/.test(decisionsData.symbols) ? split.until.dealer(7).then.hit : undefined,
+    decisionsData =>
+        /^2,2$/.test(decisionsData.symbols) ? split.until.dealer(7).then.hit : undefined
+];
 
-const softHandDecisions: DecisionsSetGetter = decisionsData => decisionsData.values.length > 1 ?
-    softHandsMap[decisionsData.value] :
-    undefined;
+const softHandDecisions: DecisionsSetGetter = decisionsData =>
+    decisionsData.values.length > 1 ? softHandsMap[decisionsData.value] : undefined;
 
 const hardHandDecisions: DecisionsSetGetter = decisionsData => hardHandsMap[decisionsData.value];
 
-const allHandsDecisions = splittableHandDecisions.concat(softHandDecisions).concat(hardHandDecisions);
+const allHandsDecisions = splittableHandDecisions
+    .concat(softHandDecisions)
+    .concat(hardHandDecisions);
 
 const getHandDecisionsData = (hand: IHand): HandDecisionsData => ({
     symbols: hand.cards.map(c => c.symbol).join(','),
@@ -113,11 +157,14 @@ export const getOptimalDecision = (hand: IHand, dealerHandValue: number): Optima
     const handDecisionsData = getHandDecisionsData(hand);
     const decisionsSet = allHandsDecisions.reduce(
         (decisionsSet, decisionsSetGetter) => decisionsSet || decisionsSetGetter(handDecisionsData),
-        undefined as unknown as DecisionsSet);
+        (undefined as unknown) as DecisionsSet
+    );
     const action = decisionsSet[dealerHandValue];
 
     return {
         action,
-        description: `The optimal decision for ${handDecisionsData.values.join('/')} (${handDecisionsData.symbols}) against a dealer ${dealerHandValue} is to ${action}`
+        description: `The optimal decision for ${handDecisionsData.values.join('/')} (${
+            handDecisionsData.symbols
+        }) against a dealer ${dealerHandValue} is to ${action}`
     };
 };

@@ -9,19 +9,19 @@ export const addCard = (hand: IHand, card: ICard) => {
     hand.values = hand.cards.reduce(handValuesReducer, [0]);
     if (isBlackJack(hand)) {
         hand.status = HandStatus.BlackJack;
-    }
-    else if (isBust(hand)) {
+    } else if (isBust(hand)) {
         hand.status = HandStatus.Bust;
         clearBet(hand);
-    }
-    else if (isMaxValue(hand)) {
+    } else if (isMaxValue(hand)) {
         hand.status = HandStatus.Unresolved;
     }
 };
 
 export const canDouble = (hand: IHand) => getValue(hand) > 8 && getValue(hand) < 12;
 
-export const canSplit = (hand: IHand) => hand.cards.length === 2 && cardService.getValue(hand.cards[0])[0] === cardService.getValue(hand.cards[1])[0];
+export const canSplit = (hand: IHand) =>
+    hand.cards.length === 2 &&
+    cardService.getValue(hand.cards[0])[0] === cardService.getValue(hand.cards[1])[0];
 
 export const clearBet = (hand: IHand) => {
     hand.bet = 0;
@@ -31,7 +31,7 @@ export const createHand = (bet: number): IHand => ({
     bet,
     cards: [],
     values: [],
-    status: HandStatus.Unplayed,
+    status: HandStatus.Unplayed
 });
 
 export const doubleBet = (hand: IHand) => {
@@ -54,7 +54,7 @@ const handValuesReducer = (reducedValues: number[], card: ICard) => {
     }
 
     if (nextValues.length > 1) {
-       nextValues = nextValues.filter(x => x < 22);
+        nextValues = nextValues.filter(x => x < 22);
     }
 
     return nextValues;
@@ -76,32 +76,26 @@ export const resolveHand = (hand: IHand, dealerHand: IHand) => {
     if (isBust(hand)) {
         hand.status = HandStatus.Bust;
         earnings = 0;
-    }
-    else if (isBlackJack(hand)) {
+    } else if (isBlackJack(hand)) {
         hand.status = HandStatus.BlackJack;
         earnings = isBlackJack(dealerHand) ? 1 : 2.5;
-    }
-    else if (isBust(dealerHand)) {
+    } else if (isBust(dealerHand)) {
         hand.status = HandStatus.PlayerWins;
         earnings = 2;
-    }
-    else if (isBlackJack(dealerHand)) {
+    } else if (isBlackJack(dealerHand)) {
         hand.status = HandStatus.DealerWins;
         earnings = 0;
-    }
-    else {
+    } else {
         const handValue = getValue(hand);
         const dealerHandValue = getValue(dealerHand);
 
         if (handValue === dealerHandValue) {
             hand.status = HandStatus.Push;
             earnings = 1;
-        }
-        else if (handValue > dealerHandValue) {
+        } else if (handValue > dealerHandValue) {
             hand.status = HandStatus.PlayerWins;
             earnings = 2;
-        }
-        else {
+        } else {
             hand.status = HandStatus.DealerWins;
             earnings = 0;
         }

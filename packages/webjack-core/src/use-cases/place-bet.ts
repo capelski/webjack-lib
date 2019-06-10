@@ -24,7 +24,7 @@ export const placeBet = (tableId: string, playerId: string, bet = 1): UseCaseRes
     if (table.status !== TableStatus.Idle && table.status !== TableStatus.PlacingBets) {
         return {
             ok: false,
-            error: 'Bets can\'t be placed once a round has been started'
+            error: "Bets can't be placed once a round has been started"
         };
     }
 
@@ -36,7 +36,6 @@ export const placeBet = (tableId: string, playerId: string, bet = 1): UseCaseRes
     }
     tableService.notifySubscribers(tableId);
 
-    
     return {
         ok: true
     };

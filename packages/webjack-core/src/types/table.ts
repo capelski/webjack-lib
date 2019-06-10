@@ -5,7 +5,7 @@ import { TableStatus } from '../types/table-status';
 export interface ITable {
     baseTimestamp: number | undefined;
     cardSet: ICardSet;
-    dealer: IPlayer
+    dealer: IPlayer;
     id: string;
     nextActionTimestamp: number | undefined;
     nextAction: number | undefined;

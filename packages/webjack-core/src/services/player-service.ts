@@ -7,7 +7,7 @@ import { addCard, createHand, doubleBet, finishHand, isUnplayed } from './hand-s
 
 let players: IDictionary<IPlayer> = {};
 
-export const clearHands = (player: IPlayer) => player.hands = [];
+export const clearHands = (player: IPlayer) => (player.hands = []);
 
 const create = (name: string = 'Unnamed'): IPlayer => ({
     id: uuid(),
@@ -44,9 +44,10 @@ export const getCurrentHand = (player: IPlayer) => player.hands.find(isUnplayed)
 
 export const getPlayerById = (playerId: string) => players[playerId];
 
-export const getPlayerByName = (name: string) => Object.keys(players)
-    .map(key => players[key])
-    .find(p => p.name.toLowerCase() === name.toLowerCase());
+export const getPlayerByName = (name: string) =>
+    Object.keys(players)
+        .map(key => players[key])
+        .find(p => p.name.toLowerCase() === name.toLowerCase());
 
 export const hit = (player: IPlayer, nextCard: ICard) => {
     const currentHand = getCurrentHand(player)!;
@@ -64,7 +65,7 @@ export const initializeHand = (player: IPlayer, bet: number) => {
 
 export const isPlaying = (player: IPlayer) => player.hands.length > 0;
 
-export const resetInactiveRounds = (player: IPlayer) => player.inactiveRounds = 0;
+export const resetInactiveRounds = (player: IPlayer) => (player.inactiveRounds = 0);
 
 export const split = (player: IPlayer, nextCard: ICard) => {
     const currentHand = getCurrentHand(player)!;

@@ -7,7 +7,11 @@ import { TableStatus } from '../types/table-status';
 import { UseCaseResult } from '../types/use-case-result';
 import { updateCurrentRound } from './update-current-round';
 
-export const makeDecision = (tableId: string, playerId: string, decision: PlayerActions): UseCaseResult => {
+export const makeDecision = (
+    tableId: string,
+    playerId: string,
+    decision: PlayerActions
+): UseCaseResult => {
     const table = tableService.getTableById(tableId);
     if (!table) {
         return {
@@ -32,13 +36,13 @@ export const makeDecision = (tableId: string, playerId: string, decision: Player
     }
 
     const currentHand = playerService.getCurrentHand(player)!;
-    
+
     switch (decision) {
         case PlayerActions.Double: {
             if (!handService.canDouble(currentHand)) {
                 return {
                     ok: false,
-                    error: 'Doubling is only allowed with 9, 10 or 11 points',
+                    error: 'Doubling is only allowed with 9, 10 or 11 points'
                 };
             }
             playerService.double(player, getNextCard(table.cardSet));
@@ -52,7 +56,7 @@ export const makeDecision = (tableId: string, playerId: string, decision: Player
             if (!handService.canSplit(currentHand)) {
                 return {
                     ok: false,
-                    error: 'Splitting is only allowed with two equal cards!',
+                    error: 'Splitting is only allowed with two equal cards!'
                 };
             }
             playerService.split(player, getNextCard(table.cardSet));
@@ -65,7 +69,7 @@ export const makeDecision = (tableId: string, playerId: string, decision: Player
         default:
             return {
                 ok: false,
-                error: 'Action not supported',
+                error: 'Action not supported'
             };
     }
     tableService.notifySubscribers(tableId);

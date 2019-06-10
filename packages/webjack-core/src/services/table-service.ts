@@ -29,7 +29,7 @@ export const createTable = (useTrainingSet = false) => {
         nextAction: undefined,
         nextActionTimestamp: undefined,
         players: [],
-        status: TableStatus.Idle,
+        status: TableStatus.Idle
     };
     tableSubscribers[tableId] = [];
     return tables[tableId];
@@ -39,8 +39,7 @@ export const deleteTable = (tableId: string) => {
     delete tables[tableId];
 };
 
-export const getActivePlayers = (table: ITable) =>
-    table.players.filter(playerService.isPlaying);
+export const getActivePlayers = (table: ITable) => table.players.filter(playerService.isPlaying);
 
 export const getAvailableTable = () => {
     const { maxPlayers } = getParameters();
@@ -54,12 +53,13 @@ export const getAvailableTable = () => {
 };
 
 export const getCurrentPlayer = (table: ITable): IPlayer | undefined => {
-    return table.status === TableStatus.PlayerTurns ?
-        table.players.find(player => !!playerService.getCurrentHand(player)) :
-        undefined;
+    return table.status === TableStatus.PlayerTurns
+        ? table.players.find(player => !!playerService.getCurrentHand(player))
+        : undefined;
 };
 
-export const getPlayerById = (table: ITable, playerId: string) => table.players.find(p => p.id === playerId);
+export const getPlayerById = (table: ITable, playerId: string) =>
+    table.players.find(p => p.id === playerId);
 
 export const getTableById = (tableId: string) => tables[tableId];
 
@@ -68,8 +68,7 @@ export const notifySubscribers = (tableId: string) => {
     tableSubscribers[tableId].forEach(subscriber => {
         try {
             subscriber(tables[tableId]);
-        }
-        catch(error) {}
+        } catch (error) {}
     });
 };
 
@@ -81,7 +80,11 @@ export const setStatus = (table: ITable, status: TableStatus) => {
     table.status = status;
 };
 
-export const setNextAction = (table: ITable, delay: number, nextAction: (...args: any[]) => void) => {
+export const setNextAction = (
+    table: ITable,
+    delay: number,
+    nextAction: (...args: any[]) => void
+) => {
     table.nextAction = setTimeout(nextAction, delay * 1000) as any;
     table.nextActionTimestamp = Date.now() + delay * 1000;
 };
@@ -91,6 +94,6 @@ export const subscribe = (tableId: string, subscriberCallback: TableSubscriber) 
     const subscriberIndex = tableSubscribers[tableId].length;
     tableSubscribers[tableId].push(subscriberCallback);
     return () => {
-        tableSubscribers[tableId].splice(subscriberIndex, 1);    
+        tableSubscribers[tableId].splice(subscriberIndex, 1);
     };
 };

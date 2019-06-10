@@ -1,6 +1,6 @@
 export interface IGameParameters {
-	decksNumber: number;
-	maxDiscardedCards: number;
-	maxPlayers: number;
-	maxInactiveRounds: number;
+    decksNumber: number;
+    maxDiscardedCards: number;
+    maxPlayers: number;
+    maxInactiveRounds: number;
 }

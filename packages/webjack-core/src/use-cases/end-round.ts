@@ -17,7 +17,7 @@ export const endRound = (tableId: string): UseCaseResult => {
     if (table.status !== TableStatus.EndingRound) {
         return {
             ok: false,
-            error: 'Round can\'t be ended now'
+            error: "Round can't be ended now"
         };
     }
 
@@ -42,8 +42,8 @@ export const endRound = (tableId: string): UseCaseResult => {
         tableService.notifySubscribers(tableId);
     });
     tableService.notifySubscribers(tableId);
-    
+
     return {
         ok: true
     };
-}
+};

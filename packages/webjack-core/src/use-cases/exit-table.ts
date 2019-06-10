@@ -32,4 +32,4 @@ export const exitTable = (tableId: string, playerId: string): UseCaseResult => {
     return {
         ok: true
     };
-}
+};

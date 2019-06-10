@@ -4,5 +4,5 @@ export enum TableStatus {
     DealingCards = 'Dealing cards',
     PlayerTurns = 'Player turns',
     DealerTurn = 'Dealer turn',
-    EndingRound = 'Ending round',
+    EndingRound = 'Ending round'
 }

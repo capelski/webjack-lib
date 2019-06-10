@@ -1,35 +1,37 @@
 {
-  "name": "webjack-lib",
-  "private": true,
-  "version": "1.0.0",
-  "description": "Webjack libraries mono repository",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/L3bowski/webjack-lib.git"
-  },
-  "keywords": [
-    "black",
-    "jack"
-  ],
-  "author": "Carles Capellas <capellas.carles@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/L3bowski/webjack-lib/issues"
-  },
-  "homepage": "https://github.com/L3bowski/webjack-lib#readme",
-  "devDependencies": {
-    "lerna": "^3.13.3"
-  },
-  "scripts": {
-    "build": "lerna run build",
-    "clean": "lerna run clean",
-    "prepare": "lerna bootstrap && npm run build",
-    "publish:all": "lerna publish",
-    "start:client": "cd packages/webjack-ui-components && npm run dev",
-    "start:web-api": "cd packages/webjack-web-api && npm run dev",
-    "start:websocket": "cd packages/webjack-websocket-server && npm run dev",
-    "symlinks": "cd packages/webjack-core && npm link && cd ../webjack-ui-components && npm link && cd ../webjack-web-api && npm link && cd .. && lerna bootstrap",
-    "update:locks": "lerna clean -y && lerna exec -- npm i"
-  }
+    "name": "webjack-lib",
+    "private": true,
+    "version": "1.0.0",
+    "description": "Webjack libraries mono repository",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/L3bowski/webjack-lib.git"
+    },
+    "keywords": [
+        "black",
+        "jack"
+    ],
+    "author": "Carles Capellas <capellas.carles@gmail.com>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/L3bowski/webjack-lib/issues"
+    },
+    "homepage": "https://github.com/L3bowski/webjack-lib#readme",
+    "devDependencies": {
+        "lerna": "^3.13.3",
+        "prettier": "^1.18.2"
+    },
+    "scripts": {
+        "build": "lerna run build",
+        "clean": "lerna run clean",
+        "prepare": "lerna bootstrap && npm run build",
+        "prettier:write": "prettier --write \"packages/**/*.ts\"",
+        "publish:all": "lerna publish",
+        "start:client": "cd packages/webjack-ui-components && npm run dev",
+        "start:web-api": "cd packages/webjack-web-api && npm run dev",
+        "start:websocket": "cd packages/webjack-websocket-server && npm run dev",
+        "symlinks": "cd packages/webjack-core && npm link && cd ../webjack-ui-components && npm link && cd ../webjack-web-api && npm link && cd .. && lerna bootstrap",
+        "update:locks": "lerna clean -y && lerna exec -- npm i"
+    }
 }

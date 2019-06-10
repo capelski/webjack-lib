@@ -1,8 +1,8 @@
 <template>
     <!-- <AjaxTable serverUrl="http://localhost:3000/api" /> -->
     <!-- <LocalTable /> -->
-    <!-- <TrainingTable /> -->
-    <WebsocketTable websocketUrl="ws://localhost:13000"/>
+    <TrainingTable />
+    <!-- <WebsocketTable websocketUrl="ws://localhost:13000"/> -->
 </template>
 
 <script lang="ts">

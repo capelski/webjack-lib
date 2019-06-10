@@ -18,7 +18,7 @@ export const playDealerTurn = (tableId: string): UseCaseResult => {
     if (table.status !== TableStatus.DealerTurn) {
         return {
             ok: false,
-            error: 'Dealer turn can\'t be played now'
+            error: "Dealer turn can't be played now"
         };
     }
 
@@ -32,8 +32,7 @@ export const playDealerTurn = (tableId: string): UseCaseResult => {
             handService.addCard(dealerHand, getNextCard(table.cardSet));
             tableService.notifySubscribers(tableId);
             dealerHandValue = handService.getValue(dealerHand);
-        }
-        else {
+        } else {
             clearInterval(dealerInterval);
             tableService.setStatus(table, TableStatus.EndingRound);
             endRound(table.id);
@@ -41,6 +40,6 @@ export const playDealerTurn = (tableId: string): UseCaseResult => {
     }, 1000);
 
     return {
-        ok: true,
+        ok: true
     };
 };

@@ -3,9 +3,12 @@ export const cartesianProduct = <T, U, R>(
     secondArray: U[],
     elementBuilder: (t: T, u: U) => R
 ): R[] => {
-    return firstArray.reduce((product, x) => {
-        return product.concat(secondArray.map(y => elementBuilder(x, y)));
-    }, [] as R[]);
+    return firstArray.reduce(
+        (product, x) => {
+            return product.concat(secondArray.map(y => elementBuilder(x, y)));
+        },
+        [] as R[]
+    );
 };
 
 export const delay = (minimumTime = 500) => {
@@ -13,8 +16,10 @@ export const delay = (minimumTime = 500) => {
 };
 
 export const removeDuplicates = (numbers: number[]): number[] => {
-    const numbersDictionary: { [key: string]: number } =
-        numbers.reduce((dictionary, next) => ({...dictionary, [next]: next}), {});
+    const numbersDictionary: { [key: string]: number } = numbers.reduce(
+        (dictionary, next) => ({ ...dictionary, [next]: next }),
+        {}
+    );
     return Object.keys(numbersDictionary).map(x => numbersDictionary[x]);
 };
 

@@ -11,8 +11,7 @@ export const registerPlayer = (req: Request, res: Response) => {
     if (useCaseResult.ok) {
         req.session!.playerId = useCaseResult.result!.id;
         res.status(200).send(JSON.stringify({ playerId: useCaseResult.result!.id }));
-    }
-    else {
+    } else {
         res.status(400).send(JSON.stringify({ message: useCaseResult.error }));
     }
 };

@@ -7,7 +7,7 @@ import * as operations from './socket-operations';
 export const getWebsocketServer = () => {
     const app = express();
     const httpServer = http.createServer(app);
-    const wsServer = new WebSocket.Server({server: httpServer});
+    const wsServer = new WebSocket.Server({ server: httpServer });
 
     wsServer.on('connection', function connection(clientWebSocket, request) {
         const clientData = operations.getClientData(request);

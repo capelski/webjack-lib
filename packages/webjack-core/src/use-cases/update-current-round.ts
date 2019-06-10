@@ -35,19 +35,16 @@ export const updateCurrentRound = (tableId: string): UseCaseResult => {
         // After dealing the card to the split hand, the current hand might be a BlackJack
         if (currentHand.status === HandStatus.BlackJack) {
             updateCurrentRound(tableId);
-        }
-        else {
+        } else {
             tableService.setNextAction(table, 20, () => {
                 playerService.stand(currentPlayer);
                 updateCurrentRound(tableId);
             });
             tableService.notifySubscribers(tableId);
-
         }
-    }
-    else {
+    } else {
         tableService.setStatus(table, TableStatus.DealerTurn);
-        tableService.setNextAction(table, 3, () => playDealerTurn(tableId))
+        tableService.setNextAction(table, 3, () => playDealerTurn(tableId));
         tableService.notifySubscribers(tableId);
     }
 

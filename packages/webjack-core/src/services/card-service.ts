@@ -2,7 +2,7 @@ import { ICard } from '../types/card';
 import { cartesianProduct } from '../utils/js-generics';
 
 const cardsValue: { [key: string]: number[] } = {
-    'A': [1, 11],
+    A: [1, 11],
     '2': [2],
     '3': [3],
     '4': [4],
@@ -12,9 +12,9 @@ const cardsValue: { [key: string]: number[] } = {
     '8': [8],
     '9': [9],
     '10': [10],
-    'J': [10],
-    'Q': [10],
-    'K': [10]
+    J: [10],
+    Q: [10],
+    K: [10]
 };
 const symbols = Object.keys(cardsValue);
 const suits = ['\u2663', '\u2666', '\u2665', '\u2660'];

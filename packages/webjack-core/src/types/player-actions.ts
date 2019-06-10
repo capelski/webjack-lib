@@ -3,4 +3,4 @@ export enum PlayerActions {
     Hit = 'Hit',
     Split = 'Split',
     Stand = 'Stand'
-};
+}

@@ -49,7 +49,8 @@ export const collectPlayedCards = (cardSet: ICardSet) => {
 
 export const createCardSet = (useTrainingSet = false) => {
     const { decksNumber } = getParameters();
-    const cards = ' '.repeat(decksNumber)
+    const cards = ' '
+        .repeat(decksNumber)
         .split('')
         .map(_ => createDeck())
         .reduce((x, y) => x.concat(y), []);

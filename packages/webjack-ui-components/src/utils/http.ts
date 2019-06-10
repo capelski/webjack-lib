@@ -9,8 +9,8 @@ export const get = (
     serverUrl: string,
     endpoint: string,
     defaultErrorMessage = 'An unexpected error occurred',
-    parameters: any = {}) => {
-
+    parameters: any = {}
+) => {
     const endpointUrl = getEndpointUrl(serverUrl, endpoint);
     const parameterizedUrl = getParameterizedUrl(endpointUrl, parameters);
     const options: RequestInit = {
@@ -19,18 +19,20 @@ export const get = (
         cache: 'default',
         credentials: 'include'
     };
-    
+
     return fetch(parameterizedUrl, options)
         .catch(error => {
             toastr.error(defaultErrorMessage, 'Network error');
             throw error;
         })
-        .then(response => response.json()
-            .then(payload => ({ status: response.status, payload } as ParsedResponse))
-            .catch(parsingError => {
-                toastr.error(defaultErrorMessage, 'Response content error');
-                throw parsingError;
-            })
+        .then(response =>
+            response
+                .json()
+                .then(payload => ({ status: response.status, payload } as ParsedResponse))
+                .catch(parsingError => {
+                    toastr.error(defaultErrorMessage, 'Response content error');
+                    throw parsingError;
+                })
         )
         .then(parsedResponse => {
             if (parsedResponse.status != 200) {
@@ -43,9 +45,9 @@ export const get = (
 };
 
 const getEndpointUrl = (serverUrl: string, endpoint: string) => {
-    return serverUrl.indexOf('{endpoint}') > -1 ?
-        serverUrl.replace('{endpoint}', endpoint) : 
-        serverUrl + `/${endpoint}`;
+    return serverUrl.indexOf('{endpoint}') > -1
+        ? serverUrl.replace('{endpoint}', endpoint)
+        : serverUrl + `/${endpoint}`;
 };
 
 const getParameterizedUrl = (url: string, parameters: any = {}) => {
@@ -53,8 +55,7 @@ const getParameterizedUrl = (url: string, parameters: any = {}) => {
     if (Object.keys(parameters).length > 0) {
         if (parameterizedUrl.indexOf('?') < 0) {
             parameterizedUrl += '?';
-        }
-        else if (!parameterizedUrl.endsWith('&')) {
+        } else if (!parameterizedUrl.endsWith('&')) {
             parameterizedUrl += '&';
         }
         parameterizedUrl += Object.keys(parameters)
@@ -62,4 +63,4 @@ const getParameterizedUrl = (url: string, parameters: any = {}) => {
             .join('&');
     }
     return parameterizedUrl;
-}
+};

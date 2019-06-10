@@ -1,19 +1,24 @@
 import { types } from 'webjack-core';
 
-export type WebsocketRequestMessage = {
-    operationType: WebsocketRequestType.makeDecision;
-    decision: types.PlayerActions;
-} | {
-    operationType: WebsocketRequestType.placeBet;
-    bet: number;
-} | {
-    operationType: WebsocketRequestType.registerPlayer;
-    name: string;
-} | {
-    operationType: WebsocketRequestType.clientData | 
-        WebsocketRequestType.exitTable |
-        WebsocketRequestType.joinTable;
-}
+export type WebsocketRequestMessage =
+    | {
+          operationType: WebsocketRequestType.makeDecision;
+          decision: types.PlayerActions;
+      }
+    | {
+          operationType: WebsocketRequestType.placeBet;
+          bet: number;
+      }
+    | {
+          operationType: WebsocketRequestType.registerPlayer;
+          name: string;
+      }
+    | {
+          operationType:
+              | WebsocketRequestType.clientData
+              | WebsocketRequestType.exitTable
+              | WebsocketRequestType.joinTable;
+      };
 
 export enum WebsocketRequestType {
     clientData = 'client-data',
@@ -24,28 +29,37 @@ export enum WebsocketRequestType {
     registerPlayer = 'register-player'
 }
 
-export type WebsocketResponseMessage = {
-    operationType: WebsocketResponseType.clientData;
-    playerId?: string;
-    table?: types.ITable;
-} | {
-    operationType: WebsocketResponseType.exitTable;
-    error?: string;
-} | {
-    operationType: WebsocketResponseType.inactivityKickOut | WebsocketResponseType.makeDecision | WebsocketResponseType.placeBet;
-    error: string;
-} | {
-    operationType: WebsocketResponseType.joinTable;
-    error?: string;
-    table?: types.ITable;
-} | {
-    operationType: WebsocketResponseType.registerPlayer;
-    error?: string;
-    playerId?: string;
-} | {
-    operationType: WebsocketResponseType.tableUpdate;
-    table: types.ITable;
-}
+export type WebsocketResponseMessage =
+    | {
+          operationType: WebsocketResponseType.clientData;
+          playerId?: string;
+          table?: types.ITable;
+      }
+    | {
+          operationType: WebsocketResponseType.exitTable;
+          error?: string;
+      }
+    | {
+          operationType:
+              | WebsocketResponseType.inactivityKickOut
+              | WebsocketResponseType.makeDecision
+              | WebsocketResponseType.placeBet;
+          error: string;
+      }
+    | {
+          operationType: WebsocketResponseType.joinTable;
+          error?: string;
+          table?: types.ITable;
+      }
+    | {
+          operationType: WebsocketResponseType.registerPlayer;
+          error?: string;
+          playerId?: string;
+      }
+    | {
+          operationType: WebsocketResponseType.tableUpdate;
+          table: types.ITable;
+      };
 
 export enum WebsocketResponseType {
     clientData = 'client-data',
@@ -57,4 +71,3 @@ export enum WebsocketResponseType {
     registerPlayer = 'register-player',
     tableUpdate = 'table-update'
 }
-    

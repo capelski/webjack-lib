@@ -2,18 +2,7 @@ import { ICard } from '../types/card';
 import { ICardSet } from '../types/card-set';
 import { ITrainingSet } from '../types/training-set';
 
-const relevantDealerHands = [
-    'A',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    'Figure'
-];
+const relevantDealerHands = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'Figure'];
 
 const splittableHands = [
     '2,2',
@@ -25,7 +14,7 @@ const splittableHands = [
     '8,8',
     '9,9',
     'Figure,Figure', // Not relevant as splittable hand, but still there to train
-    'A,A',
+    'A,A'
 ];
 
 const softHands = [
@@ -36,7 +25,7 @@ const softHands = [
     'A,6',
     'A,7',
     'A,8',
-    'A,9',
+    'A,9'
     // 'A,Figure' -> There is no decision to make since the hand is skipped
 ];
 
@@ -56,15 +45,11 @@ const hardHands = [
     '+17',
     '+18',
     '+19',
-    '+20',
+    '+20'
     // '+21' -> There is no decision to make since the hand is skipped
-]
-
-const relevantPlayerHands = [
-    ...splittableHands,
-    ...softHands,
-    ...hardHands
 ];
+
+const relevantPlayerHands = [...splittableHands, ...softHands, ...hardHands];
 
 export const createTrainingSet = (): ITrainingSet => ({
     currentRoundCards: [],
@@ -87,7 +72,7 @@ const getCardFromCardSet = (symbol: string, cardSet: ICardSet): ICard => {
 const getCardFromCollection = (symbol: string, cards: ICard[]): ICard | undefined => {
     let targetCard: ICard | undefined;
     // We iterate the cards set from end to beginning to minimize the game interfering
-    for (let i = cards.length - 1; i >= 0 ; --i) {
+    for (let i = cards.length - 1; i >= 0; --i) {
         const card = cards[i];
         if (symbol === card.symbol) {
             targetCard = card;
@@ -123,7 +108,10 @@ const getHardHandSymbols = (value: number): string[] => {
 };
 
 const getRandomHandSymbols = (trainingSet: ITrainingSet): string[] => {
-    let handsSet = trainingSet.playerAvailableHands.length > 0 ? trainingSet.playerAvailableHands : trainingSet.playerUsedHands;
+    let handsSet =
+        trainingSet.playerAvailableHands.length > 0
+            ? trainingSet.playerAvailableHands
+            : trainingSet.playerUsedHands;
 
     const randomIndex = Math.floor(Math.random() * (handsSet.length - 1));
     const randomHand = handsSet[randomIndex];
@@ -134,9 +122,11 @@ const getRandomHandSymbols = (trainingSet: ITrainingSet): string[] => {
     const hardHandMatch = randomHand.match(/^\+(.*)$/);
     if (hardHandMatch) {
         symbols = getHardHandSymbols(parseInt(hardHandMatch[1]));
-    }
-    else {
-        symbols = randomHand.replace(/Figure/, getFigureSymbol()).replace(/Figure/, getFigureSymbol()).split(',');
+    } else {
+        symbols = randomHand
+            .replace(/Figure/, getFigureSymbol())
+            .replace(/Figure/, getFigureSymbol())
+            .split(',');
     }
 
     if (Math.floor(Math.random() * 100) % 2) {
@@ -149,17 +139,20 @@ const getRandomHandSymbols = (trainingSet: ITrainingSet): string[] => {
 export const setNextTrainingRound = (cardSet: ICardSet) => {
     const playersNumber = 7; // When using training hands there must always be 7 players playing
     updateTrainingSet(cardSet.trainingSet!);
-    const playerCards = Array(playersNumber).fill(0).map(_ => {
-        const symbols = getRandomHandSymbols(cardSet.trainingSet!);
-        return {
-            first: getCardFromCardSet(symbols[0], cardSet),
-            second: getCardFromCardSet(symbols[1], cardSet)
-        };
-    });
+    const playerCards = Array(playersNumber)
+        .fill(0)
+        .map(_ => {
+            const symbols = getRandomHandSymbols(cardSet.trainingSet!);
+            return {
+                first: getCardFromCardSet(symbols[0], cardSet),
+                second: getCardFromCardSet(symbols[1], cardSet)
+            };
+        });
     const playersFirstCard = playerCards.map(x => x.first);
     const dealerCard = getCardFromCardSet(
         cardSet.trainingSet!.dealerCurrentHand.replace(/Figure/, getFigureSymbol()),
-        cardSet);
+        cardSet
+    );
     const playersSecondCard = playerCards.map(x => x.second);
     cardSet.trainingSet!.currentRoundCards = playersFirstCard
         .concat([dealerCard])
@@ -181,16 +174,17 @@ const updateTrainingSet = (trainingSet: ITrainingSet) => {
             trainingSet.dealerAvailableHands = [...relevantDealerHands];
         }
 
-        const dealerIndex = Math.floor(Math.random() * (trainingSet.dealerAvailableHands.length - 1));
+        const dealerIndex = Math.floor(
+            Math.random() * (trainingSet.dealerAvailableHands.length - 1)
+        );
         trainingSet.dealerCurrentHand = trainingSet.dealerAvailableHands[dealerIndex];
         trainingSet.dealerAvailableHands.splice(dealerIndex, 1);
     }
 
     const coveredDealerHands =
         relevantDealerHands.length - (trainingSet.dealerAvailableHands.length + 1);
-    const coveredPlayerHands =
-        relevantPlayerHands.length - trainingSet.playerAvailableHands.length;
+    const coveredPlayerHands = relevantPlayerHands.length - trainingSet.playerAvailableHands.length;
     const coveredHands = coveredDealerHands * relevantPlayerHands.length + coveredPlayerHands;
     const totalHands = relevantDealerHands.length * relevantPlayerHands.length;
-    trainingSet.progress = Math.min(100, Math.floor(coveredHands * 1000 / totalHands) / 10);
+    trainingSet.progress = Math.min(100, Math.floor((coveredHands * 1000) / totalHands) / 10);
 };

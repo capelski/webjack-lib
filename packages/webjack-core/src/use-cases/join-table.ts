@@ -20,4 +20,4 @@ export const joinTable = (playerId: string): UseCaseResult => {
         ok: true,
         result: table
     };
-}
+};
