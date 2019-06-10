@@ -29,6 +29,7 @@
     "start:client": "cd packages/webjack-ui-components && npm run dev",
     "start:web-api": "cd packages/webjack-web-api && npm run dev",
     "start:websocket": "cd packages/webjack-websocket-server && npm run dev",
-    "symlinks": "cd packages/webjack-core && npm link && cd ../webjack-ui-components && npm link && cd ../webjack-web-api && npm link && cd .. && lerna bootstrap"
+    "symlinks": "cd packages/webjack-core && npm link && cd ../webjack-ui-components && npm link && cd ../webjack-web-api && npm link && cd .. && lerna bootstrap",
+    "update:locks": "lerna clean -y && lerna exec -- npm i"
   }
 }
