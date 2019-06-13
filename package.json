@@ -19,6 +19,7 @@
     },
     "homepage": "https://github.com/L3bowski/webjack-lib#readme",
     "devDependencies": {
+        "husky": "^2.4.1",
         "lerna": "^3.13.3",
         "prettier": "^1.18.2",
         "tslint": "^5.17.0",
@@ -30,6 +31,7 @@
         "clean": "lerna run clean",
         "lint": "lerna run lint",
         "prepare": "lerna bootstrap && npm run build",
+        "prettier:check": "prettier --list-different \"packages/**/*.ts\"",
         "prettier:write": "prettier --write \"packages/**/*.ts\"",
         "publish:all": "lerna publish",
         "start:client": "cd packages/webjack-ui-components && npm run dev",
