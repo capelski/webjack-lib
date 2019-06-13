@@ -1,22 +1,28 @@
 <template>
     <Table
         v-if="renderCondition && table"
-        :table="table"
         :actionsHandlers="actionsHandlers"
-        :userPlayerId="player.id"
-        :trainingProgress="-1"
-        :isUserPlayerHandler="isUserPlayer"
-        :evaluteDecisions="false"
-        :displayDecisionHelp="true"
+        :isUserPlayerHandler="() => true"
         :startRoundButtonText="'Place bet'"
-    />
+        :table="table"
+        :userPlayerId="userPlayer.id"
+    >
+        <span>
+            <button
+                class="btn optimal-decision"
+                v-on:click="displayOptimalDecision"
+            >
+                &#9873;
+            </button>
+        </span>
+    </Table>
 </template>
 
 <script lang="ts">
     import toastr from 'toastr';
     import Vue from 'vue';
     import { Component, Prop, Watch } from 'vue-property-decorator';
-    import { services, types, useCases } from 'webjack-core';
+    import { services, types, useCases, utils } from 'webjack-core';
     import { IActionsBarHandlers, INullableValueReference } from '../utils/types';
     import Table from './Table.vue';
 
@@ -44,12 +50,27 @@
             split: this.split,
             stand: this.stand
         };
-        player: types.IPlayer = null;
         table: types.ITable = null;
         unsubscriber: INullableValueReference<() => void> = { value: undefined };
+        userPlayer: types.IPlayer = null;
 
         private created() {
             this.joinTable();
+        }
+
+        get dealerScore() {
+            let dealerScore;
+            const dealerHand = services.playerService.getCurrentHand(this.table.dealer);
+            if (dealerHand) {
+                dealerScore = services.handService.getValue(dealerHand);
+            }
+            return dealerScore;
+        }
+
+        displayOptimalDecision() {
+            const hand = services.playerService.getCurrentHand(this.userPlayer);
+            const optimalDecisionInfo = utils.basicStrategy.getOptimalDecision(hand!, this.dealerScore!).description;
+            toastr.info(optimalDecisionInfo, 'Basic strategy');
         }
 
         double() {
@@ -63,8 +84,8 @@
             Vue.set(this, 'unsubscriber', { value: undefined });
             services.tableService.deleteTable(this.table.id);
             Vue.set(this, 'table', undefined);
-            services.playerService.deletePlayer(this.player.id);
-            Vue.set(this, 'player', undefined);
+            services.playerService.deletePlayer(this.userPlayer.id);
+            Vue.set(this, 'userPlayer', undefined);
             this.$emit('TableExited');
         }
 
@@ -72,16 +93,12 @@
             this.makeDecision(types.PlayerActions.Hit);
         }
 
-        isUserPlayer(player?: types.IPlayer) {
-            return true;
-        }
-
         joinTable() {
             const table = services.tableService.createTable();
-            const player = services.playerService.createPlayer('You');
-            services.tableService.addPlayer(table, player);
+            const userPlayer = services.playerService.createPlayer('You');
+            services.tableService.addPlayer(table, userPlayer);
             Vue.set(this, 'table', table);
-            Vue.set(this, 'player', player);
+            Vue.set(this, 'userPlayer', userPlayer);
             const unsubscriber = services.tableService.subscribe(table.id, (table) => {
                 Vue.set(this, 'table', { ...table });
             })
@@ -90,7 +107,7 @@
 
         makeDecision(decision: types.PlayerActions) {
             const result =
-                useCases.makeDecision(this.table.id, this.player.id, decision);
+                useCases.makeDecision(this.table.id, this.userPlayer.id, decision);
             if (result.outcome === types.IOperationOutcome.error) {
                 toastr.error(result.error);
             }
@@ -105,7 +122,7 @@
         }
 
         startRound() {
-            useCases.placeBet(this.table.id, this.player.id, 1);
+            useCases.placeBet(this.table.id, this.userPlayer.id, 1);
         }
     }
 </script>

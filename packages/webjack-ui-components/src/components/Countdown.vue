@@ -16,6 +16,7 @@
 
     @Component({})
     export default class Countdown extends Vue {
+        // TODO Replace with the nextActionTimestamp
         @Prop({ required: true })
         table: types.ITable;
 

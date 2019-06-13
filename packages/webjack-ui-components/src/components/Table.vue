@@ -24,11 +24,10 @@
             :table="table"
             :userPlayer="userPlayer"
             :isPlayerTurn="userPlayerId === currentPlayerId"
-            :trainingProgress="trainingProgress"
-            :evaluteDecisions="evaluteDecisions"
-            :displayDecisionHelp="displayDecisionHelp"
             :startRoundButtonText="startRoundButtonText"
-        />
+        >
+            <slot /><!-- Used to display additional actions in the ActionBar -->
+        </ActionsBar>
     </div>
 </template>
 
@@ -50,15 +49,7 @@
         @Prop({ required: true })
         actionsHandlers: IActionsBarHandlers;
 
-        @Prop({ default: -1 })
-        trainingProgress: number;
-
-        @Prop()
-        displayDecisionHelp: boolean;
-
-        @Prop()
-        evaluteDecisions: boolean;
-
+        // TODO Do we need it? I should be able to use the userPlayerId to determine
         @Prop()
         isUserPlayerHandler: (player?: types.IPlayer) => boolean;
 
@@ -79,13 +70,13 @@
         get isDealerTurn() {
             return this.table.status === types.TableStatus.DealerTurn;
         }
-        
-        get userPlayer() {
-            return this.table.players.find(player => player.id === this.userPlayerId);
-        }
 
         isUserPlayer(player?: types.IPlayer) {
             return player && this.isUserPlayerHandler(player);
+        }
+        
+        get userPlayer() {
+            return this.table.players.find(player => player.id === this.userPlayerId);
         }
     }
 </script>

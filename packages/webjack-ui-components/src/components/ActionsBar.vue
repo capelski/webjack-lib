@@ -20,15 +20,12 @@
                                 Exit table
                             </button>
                         </div>
-                        <PlayerActions 
-                            :dealer="table.dealer"
+                        <PlayerActions
+                            v-if="isPlayerTurn"
                             :userPlayer="userPlayer"
-                            :isPlayerTurn="isPlayerTurn"
-                            :trainingProgress="trainingProgress"
                             :actionsHandlers="actionsHandlers"
-                            :evaluteDecisions="evaluteDecisions"
-                            :displayDecisionHelp="displayDecisionHelp"
                         />
+                        <slot /><!-- Used to display additional actions -->
                     </div>
                 </div>
             </div>
@@ -56,15 +53,6 @@
         actionsHandlers: IActionsBarHandlers;
 
         @Prop()
-        trainingProgress: number;
-
-        @Prop()
-        displayDecisionHelp: boolean;
-
-        @Prop()
-        evaluteDecisions: boolean;
-
-        @Prop()
         isPlayerTurn: boolean;
 
         @Prop({ required: true })
@@ -76,10 +64,6 @@
         @Prop()
         userPlayer: types.IPlayer;
 
-        get isUserPlaying() {
-            return this.userPlayer && services.playerService.isPlaying(this.userPlayer);
-        }
-
         exitTable() {
             if (this.isUserPlaying) {
                 toastr.error('You cannot leave the table while playing a round', 'Round in progress');
@@ -87,6 +71,10 @@
             else {
                 this.actionsHandlers.exitTable();
             }
+        }
+
+        get isUserPlaying() {
+            return this.userPlayer && services.playerService.isPlaying(this.userPlayer);
         }
 
         startRound() {

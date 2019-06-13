@@ -8,14 +8,11 @@
         />
         <Table
             v-if="renderCondition && !loading.value && userPlayerId.value && table"
-            :table="table"
             :actionsHandlers="actionsHandlers"
-            :userPlayerId="userPlayerId.value"
-            :trainingProgress="-1"
             :isUserPlayerHandler="isUserPlayer"
-            :evaluteDecisions="false"
-            :displayDecisionHelp="false"
             :startRoundButtonText="'Place bet'"
+            :table="table"
+            :userPlayerId="userPlayerId.value"
         />
     </div>
 </template>

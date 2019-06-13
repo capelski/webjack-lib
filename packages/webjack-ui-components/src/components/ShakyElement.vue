@@ -1,5 +1,5 @@
 <template>
-    <div :class="{'shake': hasTimeout }" v-html="html"></div>
+    <div :class="{'shake': hasTimeout, 'inline': displayInline }" v-html="html"></div>
 </template>
 
 <script lang="ts">
@@ -11,6 +11,9 @@
     export default class ShakyElement extends Vue {
         @Prop({ required: true })
         html: string;
+
+        @Prop({ default: false })
+        displayInline: boolean;
         
         shakyTimeout: INullableValueReference<number> = { value: undefined };
 
@@ -49,5 +52,9 @@
     .shake {
         font-weight: bold;
         animation: shake 0.4s;
+    }
+
+    .inline {
+        display: inline-block;
     }
 </style>
