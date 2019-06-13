@@ -31,18 +31,15 @@
         @Prop({ required: true })
         actionsHandlers: IPlayerActionsHandlers;
 
-        // TODO Replace by user hand
-        @Prop()
-        userPlayer: types.IPlayer;
+        @Prop({ required: true })
+        userHand: types.IHand;
 
         get canDouble() {
-            const hand = services.playerService.getCurrentHand(this.userPlayer);
-            return services.handService.canDouble(hand!);
+            return services.handService.canDouble(this.userHand);
         }
 
         get canSplit() {
-            const hand = services.playerService.getCurrentHand(this.userPlayer);
-            return services.handService.canSplit(hand!);
+            return services.handService.canSplit(this.userHand);
         }
 
         double() {

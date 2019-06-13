@@ -170,7 +170,6 @@ const updateTrainingSet = (trainingSet: ITrainingSet) => {
 
     if (mustUpdateDealerHand) {
         if (trainingSet.dealerAvailableHands.length === 0) {
-            // TODO When tracking the progress, we should mark 100% in this point
             trainingSet.dealerAvailableHands = [...relevantDealerHands];
         }
 

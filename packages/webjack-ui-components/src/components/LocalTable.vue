@@ -7,14 +7,13 @@
         :table="table"
         :userPlayerId="userPlayer.id"
     >
-        <span>
-            <button
-                class="btn optimal-decision"
-                v-on:click="displayOptimalDecision"
-            >
-                &#9873;
-            </button>
-        </span>
+        <button
+            v-if="currentPlayerId === userPlayer.id"
+            class="btn optimal-decision"
+            v-on:click="displayOptimalDecision"
+        >
+            &#9873;
+        </button>
     </Table>
 </template>
 
@@ -56,6 +55,11 @@
 
         private created() {
             this.joinTable();
+        }
+
+        get currentPlayerId() {
+            const currentPlayer = services.tableService.getCurrentPlayer(this.table);
+            return currentPlayer ? currentPlayer.id : undefined;
         }
 
         get dealerScore() {

@@ -11,33 +11,38 @@
 <script lang="ts">
     import Vue from 'vue';
     import { Component, Prop, Watch } from 'vue-property-decorator';
-    import { types } from 'webjack-core';
     import { INullableValueReference } from '../utils/types';
 
     @Component({})
     export default class Countdown extends Vue {
-        // TODO Replace with the nextActionTimestamp
-        @Prop({ required: true })
-        table: types.ITable;
-
-        @Watch('table')
-        tableChanged(newValue: types.ITable, oldValue: types.ITable) {
-            if (newValue.nextActionTimestamp && !oldValue.nextActionTimestamp) {
-                this.setCountdownInterval();
-            }
-            else if (!newValue.nextActionTimestamp && oldValue.nextActionTimestamp) {
-                this.clearCountdownInterval();
-            }
-        }
+        @Prop()
+        baseTimestamp?: number;
         
         @Prop()
         isPlayerTurn: boolean;
+
+        @Prop()
+        nextActionTimestamp?: number;
+
+        @Watch('nextActionTimestamp')
+        tableChanged(newValue: number, oldValue: number) {
+            if (newValue && !oldValue) {
+                this.setCountdownInterval();
+            }
+            else if (!newValue && oldValue) {
+                this.clearCountdownInterval();
+            }
+        }
 
         countdownAnimation = false;
         countdownStart: INullableValueReference<number> = { value: undefined };
         secondsLeft: INullableValueReference<number> = { value: undefined };
         secondsLeftInterval: INullableValueReference<number> = { value: undefined };
         tableLastestTimestamp: INullableValueReference<number> = { value: undefined };
+
+        private beforeDestroy() {
+            this.clearCountdownInterval();
+        }
 
         get countdownWidth() {
             return this.countdownStart.value ? Math.floor(((this.secondsLeft.value - 1) / (this.countdownStart.value - 1)) * 100) : 0;
@@ -52,17 +57,17 @@
 
         setCountdownInterval() {
             const interval = window.setInterval(() => {
-                if (!this.table.nextActionTimestamp) {
+                if (!this.nextActionTimestamp) {
                     Vue.set(this, 'secondsLeft', { value: undefined });
                     Vue.set(this, 'countdownStart', { value: undefined });
                     Vue.set(this, 'tableLastestTimestamp', { value: undefined });
                 }
                 else {
-                    const diff = (this.table.nextActionTimestamp - (this.table.baseTimestamp || Date.now()));
+                    const diff = (this.nextActionTimestamp - (this.baseTimestamp || Date.now()));
                     const secondsDiff = Math.floor(diff / 1000);
-                    if (this.table.nextActionTimestamp !== this.tableLastestTimestamp.value) {
+                    if (this.nextActionTimestamp !== this.tableLastestTimestamp.value) {
                         Vue.set(this, 'countdownAnimation', false);
-                        Vue.set(this, 'tableLastestTimestamp', { value: this.table.nextActionTimestamp });
+                        Vue.set(this, 'tableLastestTimestamp', { value: this.nextActionTimestamp });
                         Vue.set(this, 'countdownStart', { value: secondsDiff });
                     }
                     else {
@@ -72,10 +77,6 @@
                 }
             }, 1000);
             Vue.set(this, 'secondsLeftInterval', { value: interval });
-        }
-
-        private beforeDestroy() {
-            this.clearCountdownInterval();
         }
     }
 </script>

@@ -2,8 +2,9 @@
     <div>
         <div class="actions-bar">
             <Countdown
-                :table="table"
+                :baseTimestamp="table.baseTimestamp"
                 :isPlayerTurn="isPlayerTurn"
+                :nextActionTimestamp="table.nextActionTimestamp"
             />
             <div class="actions-area">
                 <div class="row">
@@ -22,7 +23,7 @@
                         </div>
                         <PlayerActions
                             v-if="isPlayerTurn"
-                            :userPlayer="userPlayer"
+                            :userHand="userHand"
                             :actionsHandlers="actionsHandlers"
                         />
                         <slot /><!-- Used to display additional actions -->
@@ -84,6 +85,10 @@
             else {
                 this.actionsHandlers.startRound();
             }
+        }
+
+        get userHand() {
+            return services.playerService.getCurrentHand(this.userPlayer);
         }
     }
 </script>
