@@ -64,12 +64,15 @@ export const getPlayerById = (table: ITable, playerId: string) =>
 export const getTableById = (tableId: string) => tables[tableId];
 
 export const notifySubscribers = (tableId: string) => {
-    // TODO Validate that tableId exists
-    tableSubscribers[tableId].forEach(subscriber => {
-        try {
-            subscriber(tables[tableId]);
-        } catch (error) {}
-    });
+    if (tables[tableId] && tableSubscribers[tableId]) {
+        tableSubscribers[tableId].forEach(subscriber => {
+            try {
+                subscriber(tables[tableId]);
+            } catch (error) {}
+        });
+    } else {
+        console.error('No table identified by ' + tableId + ' was found');
+    }
 };
 
 export const removePlayer = (table: ITable, playerId: string) => {
@@ -90,10 +93,14 @@ export const setNextAction = (
 };
 
 export const subscribe = (tableId: string, subscriberCallback: TableSubscriber) => {
-    // TODO Validate that tableId exists
-    const subscriberIndex = tableSubscribers[tableId].length;
-    tableSubscribers[tableId].push(subscriberCallback);
-    return () => {
-        tableSubscribers[tableId].splice(subscriberIndex, 1);
-    };
+    if (tables[tableId]) {
+        tableSubscribers[tableId].push(subscriberCallback);
+        return () => {
+            tableSubscribers[tableId] = tableSubscribers[tableId].filter(
+                subscriber => subscriber !== subscriberCallback
+            );
+        };
+    } else {
+        console.error('No table identified by ' + tableId + ' was found');
+    }
 };

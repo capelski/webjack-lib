@@ -49,7 +49,6 @@
         @Prop({ required: true })
         actionsHandlers: IActionsBarHandlers;
 
-        // TODO Do we need it? I should be able to use the userPlayerId to determine
         @Prop()
         isUserPlayerHandler: (player?: types.IPlayer) => boolean;
 
