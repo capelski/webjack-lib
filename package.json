@@ -19,7 +19,6 @@
     },
     "homepage": "https://github.com/L3bowski/webjack-lib#readme",
     "devDependencies": {
-        "husky": "^2.4.1",
         "lerna": "^3.13.3",
         "prettier": "^1.18.2",
         "tslint": "^5.17.0",
