@@ -1,8 +1,10 @@
+// Important: JQuery must be imported before Bootstrap
+import 'expose-loader?$!jquery';
+
 // tslint:disable-next-line:no-submodule-imports
 import 'bootstrap/dist/css/bootstrap.min.css';
 // tslint:disable-next-line:no-submodule-imports
 import 'bootstrap/dist/js/bootstrap';
-import 'expose-loader?$!jquery';
 // tslint:disable-next-line:no-submodule-imports
 import 'toastr/build/toastr.min.css';
 
