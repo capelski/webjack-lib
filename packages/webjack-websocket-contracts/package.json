@@ -23,7 +23,7 @@
         "lint": "tslint -e 'node_modules/**' -p ."
     },
     "devDependencies": {
-        "typescript": "^3.5.1"
+        "typescript": "^3.5.2"
     },
     "dependencies": {
         "webjack-core": "^0.2.3"
