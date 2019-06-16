@@ -1,6 +1,6 @@
 {
     "name": "webjack-websocket-server",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "Websocket server for black jack real time synchronization",
     "keywords": [
         "blackjack",
@@ -33,8 +33,8 @@
     "dependencies": {
         "express": "^4.17.1",
         "http": "0.0.0",
-        "webjack-core": "^0.2.3",
-        "webjack-websocket-contracts": "^0.1.1",
+        "webjack-core": "^0.2.4",
+        "webjack-websocket-contracts": "^0.1.2",
         "ws": "^7.0.0"
     }
 }
