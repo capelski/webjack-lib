@@ -6,14 +6,8 @@
         >
             <div class="player-status">
                 <div class="player-name">{{ player.name }}</div>
-                <div class="earnings" v-if="!isDealer">
-                    <span class="bubble left">
-                        <ShakyElement
-                            :displayInline="true"
-                            :html="player.hands && player.hands.length > 0 ? player.hands.map(h => h.bet).reduce((x, y) => x + y, 0) || '-' : '-'"
-                        />
-                    </span>
-                    <span class="bubble right inverted">
+                <div class="earnings">
+                    <span class="bubble inverted" v-if="!isDealer">
                         <ShakyElement
                             :displayInline="true"
                             :html="(player.earningRate > 0 ? '+' : '' ) + player.earningRate"
@@ -30,13 +24,23 @@
                             :class="{ 'card': true, 'red': card.suit === '♦' || card.suit === '♥', 'black': card.suit === '♠' || card.suit === '♣'}">
                             {{ card.symbol + card.suit }}
                         </span>
-                        <span class="bubble">
-                            <ShakyElement
-                                :displayInline="true"
-                                :html="hand.values.join(' / ')"
-                            />
+                        <span class="hand-data">
+                            <span class="bubble left inverted">
+                                <ShakyElement
+                                    :displayInline="true"
+                                    :html="isDealer ? '-' : hand.bet"
+                                />
+                            </span>
+                            <span class="bubble right">
+                                <ShakyElement
+                                    :displayInline="true"
+                                    :html="hand.values.join(' / ')"
+                                />
+                            </span>
                         </span>
-                        <ShakyElement :html="showHandStatus(hand) ? hand.status : ''" />
+                        <div class="hand-status">
+                            <ShakyElement :html="showHandStatus(hand) ? hand.status : ''" />
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -178,7 +182,7 @@
 
     .player-wrapper .player-status .earnings {
         font-size: 18px;
-        min-width: 45%;
+        min-width: 40%;
         text-align: right;
     }
     @media(min-width: 992px) {
@@ -192,13 +196,22 @@
     .player-wrapper .hands ul {
         padding: 0 7px;
         margin: 0;
-    }
-    @media(min-width: 992px) {
-        .player-wrapper .hands ul {
+
+        @media(min-width: 992px) {
             padding: 0;
             margin-top: 10px;
         }
+
+        .hand-data {
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        .hand-status {
+            margin-top: 4px;
+        }
     }
+
     .player-wrapper .hands ul li {
         list-style-type: none;
         margin-top: 5px;
