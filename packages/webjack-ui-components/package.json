@@ -1,6 +1,6 @@
 {
     "name": "webjack-ui-components",
-    "version": "0.2.6",
+    "version": "0.2.7",
     "description": "Vue UI components for a blackjack application",
     "keywords": [
         "blackjack",
