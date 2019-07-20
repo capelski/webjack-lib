@@ -4,44 +4,45 @@
             v-if="player"
             :class="{ 'player-wrapper': true, 'user': isUserPlayer, 'active': isPlayerTurn }"
         >
-            <div class="player-name text-center">{{ player.name }}</div>
-            
-            <div class="values" v-if="handValues && handValues.length">
-                <span
-                    v-for="(handValue, index) in handValues"
-                    :key="index"
-                >
-                    <span class="bubble">
-                        <ShakyElement :html="handValue" />
+            <div class="player-status">
+                <div class="player-name">{{ player.name }}</div>
+                <div class="earnings" v-if="!isDealer">
+                    <span class="bubble left">
+                        <ShakyElement
+                            :displayInline="true"
+                            :html="player.hands && player.hands.length > 0 ? player.hands.map(h => h.bet).reduce((x, y) => x + y, 0) || '-' : '-'"
+                        />
                     </span>
-                    <span> </span>
-                </span>
+                    <span class="bubble right inverted">
+                        <ShakyElement
+                            :displayInline="true"
+                            :html="(player.earningRate > 0 ? '+' : '' ) + player.earningRate"
+                        />
+                    </span>
+                </div>
             </div>
 
-            <div class="hands" v-if="player.hands && player.hands[0] && player.hands[0].cards.length > 0">
-                <ul>
+            <div class="hands">
+                <ul v-if="player.hands && player.hands[0] && player.hands[0].cards.length > 0">
                     <li v-for="(hand, handIndex) in player.hands" :key="handIndex" class="text-center">
                         <span v-for="(card, cardIndex) in hand.cards"
                             :key="cardIndex"
                             :class="{ 'card': true, 'red': card.suit === '♦' || card.suit === '♥', 'black': card.suit === '♠' || card.suit === '♣'}">
                             {{ card.symbol + card.suit }}
                         </span>
+                        <span class="bubble">
+                            <ShakyElement
+                                :displayInline="true"
+                                :html="hand.values.join(' / ')"
+                            />
+                        </span>
                         <ShakyElement :html="showHandStatus(hand) ? hand.status : ''" />
                     </li>
                 </ul>
             </div>
-
-            <div class="earnings">
-                <span class="bubble" v-if="!isDealer">
-                    <ShakyElement :html="player.hands && player.hands.length > 0 ? player.hands.map(h => h.bet).reduce((x, y) => x + y, 0) || '-' : '-'" />
-                </span>
-                <span class="bubble inverted" v-if="!isDealer">
-                    <ShakyElement :html="(player.earningRate > 0 ? '+' : '' ) + player.earningRate" />
-                </span>
-            </div>
         </div>
         <div v-if="!player" class="free-seat">
-            Free seat
+            Free slot
         </div>
     </div>
 </template>
@@ -70,21 +71,13 @@
         @Prop()
         player: types.IPlayer;
 
-        get handValues(): string[] | undefined {
-            let handValues;
-            if (this.player && this.player.hands) {
-                handValues = this.player.hands.map(hand => hand.values.join(' / ')).filter(Boolean);
-            }
-            return handValues;
-        }
-
         showHandStatus(hand: types.IHand) {
             return hand.status !== types.HandStatus.Unplayed && hand.status !== types.HandStatus.Unresolved;
         }
     }
 </script>
 
-<style>
+<style lang="scss">
     .card {
         font-size: 20px;
     }
@@ -98,25 +91,33 @@
     .player-card {
         flex-grow: 1;
         flex-basis: 0;
-        margin-top: 20px;
-    }
-    .player-card:first-child {
-        margin-top: 0;
-    }
-    @media(min-width: 992px) {
-        .player-card {
-            padding-right: 10px;
+        margin-top: 15px;
+
+        &:first-child {
+            margin-top: 0;
         }
-        .player-card:first-child {
+
+        @media(min-width: 992px) {
             margin-top: 20px;
-        }
-        .player-card:last-child {
-            padding-right: 0;
+            padding-right: 10px;
+            max-width: 14.28%;
+
+            &:first-child {
+                margin-top: 20px;
+            }
+
+            &:last-child {
+                padding-right: 0;
+            }
         }
     }
 
     .dealer-card {
         margin: auto;
+
+        .player-wrapper .player-status .player-name {
+            padding-bottom: 0;
+        }
     }
     @media(min-width: 992px) {
         .dealer-card {
@@ -127,9 +128,10 @@
     .player-wrapper {
         background-color: white;
         color: black;
-        padding: 5px 0;
+        padding: 8px 5px;
         display: flex;
         flex-direction: row;
+        align-items: center;
     }
     @media(min-width: 992px) {
         .player-wrapper {
@@ -143,64 +145,95 @@
         flex-basis: 0;
     }
 
-    .player-wrapper .player-name {
-        padding: 0 5px;
-        padding-bottom: 5px;
-        padding-top: 7px;
+    .player-wrapper .player-status {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        max-width: 50%;
+
+        @media(min-width: 992px) {
+            flex-direction: column;
+            max-width: unset;
+            align-items: center;
+        }
+    }
+
+    .player-wrapper .player-status .player-name {
+        padding: 0 10px;
         font-size: 20px;
+        margin: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        max-width: 60%;
+    }
+    @media(min-width: 992px) {
+        .player-wrapper .player-status .player-name {
+            padding: 10px;
+            padding-top: 0;
+            text-align: center;
+            max-width: unset;
+        }
+    }
+
+    .player-wrapper .player-status .earnings {
+        font-size: 18px;
+        min-width: 45%;
+        text-align: right;
+    }
+    @media(min-width: 992px) {
+        .player-wrapper .player-status .earnings {
+            text-align: center;
+            padding-bottom: 10px;
+            min-width: unset;
+        }
+    }
+
+    .player-wrapper .hands ul {
+        padding: 0 7px;
         margin: 0;
     }
     @media(min-width: 992px) {
-        .player-wrapper .player-name {
-            padding: 0 10px;
-            padding-bottom: 10px;
-        }
-    }
-    .player-wrapper .values {
-        text-align: center;
-        padding: 5px;
-    }
-    @media(min-width: 992px) {
-        .player-wrapper .values {
-            padding: 10px 0;
-        }
-    }
-    .player-wrapper .hands ul {
-        padding: 0;
-        padding-bottom: 5px;
-        padding-top: 7px;
-        margin-bottom: 0;
-        min-height: 10px;
-    }
-    @media(min-width: 992px) {
         .player-wrapper .hands ul {
-            padding-bottom: 10px;
-            padding-top: 0;
+            padding: 0;
+            margin-top: 10px;
         }
     }
     .player-wrapper .hands ul li {
         list-style-type: none;
-    }
-
-    .player-wrapper .earnings {
-        margin-bottom: 0;
-        text-align: center;
-        font-size: 18px;
+        margin-top: 5px;
         padding-top: 5px;
+        border-top: 1px dashed #088446;
+    }
+    .player-wrapper .hands ul li:first-child {
+        list-style-type: none;
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
     }
     @media(min-width: 992px) {
-        .player-wrapper .earnings {
+        .player-wrapper .hands ul li {
+            margin: 0 10px;
+            margin-top: 10px;
             padding-top: 10px;
         }
     }
     
     .player-wrapper .bubble {
-        display: inline-block;
         font-size: 18px;
         padding: 3px 7px;
         border: 2px solid black;
         color: black;
         border-radius: 10px;
+     
+        &.left {
+            border-radius: 10px 0 0 10px;
+            margin-right: -2.5px;
+        }
+        &.right {
+            border-radius: 0 10px 10px 0;
+            margin-left: -2.5px;
+        }
     }
     .player-wrapper .bubble.inverted {
         border: 2px solid black;
