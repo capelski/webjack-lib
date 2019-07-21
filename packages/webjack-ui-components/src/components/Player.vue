@@ -5,7 +5,6 @@
             :class="{ 'player-wrapper': true, 'user': isUserPlayer, 'active': isPlayerTurn }"
         >
             <div class="player-status">
-                <div class="player-name">{{ player.name }}</div>
                 <div class="earnings">
                     <span class="bubble inverted" v-if="!isDealer">
                         <ShakyElement
@@ -14,6 +13,7 @@
                         />
                     </span>
                 </div>
+                <div class="player-name">{{ player.name }}</div>
             </div>
 
             <div class="hands">
@@ -152,7 +152,6 @@
     .player-wrapper .player-status {
         display: flex;
         align-items: baseline;
-        justify-content: space-between;
         max-width: 50%;
 
         @media(min-width: 992px) {
@@ -181,11 +180,14 @@
     .player-wrapper .player-status .earnings {
         font-size: 18px;
         text-align: right;
+        display: inline-block;
+        padding-right: 5px;
     }
     @media(min-width: 992px) {
         .player-wrapper .player-status .earnings {
             text-align: center;
             padding-bottom: 10px;
+            padding-right: 0;
         }
     }
 
