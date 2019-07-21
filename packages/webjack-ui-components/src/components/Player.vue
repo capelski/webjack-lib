@@ -163,33 +163,29 @@
     }
 
     .player-wrapper .player-status .player-name {
-        padding: 0 10px;
+        padding: 0;
         font-size: 20px;
         margin: 0;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        max-width: 60%;
     }
     @media(min-width: 992px) {
         .player-wrapper .player-status .player-name {
             padding: 10px;
             padding-top: 0;
             text-align: center;
-            max-width: unset;
         }
     }
 
     .player-wrapper .player-status .earnings {
         font-size: 18px;
-        min-width: 40%;
         text-align: right;
     }
     @media(min-width: 992px) {
         .player-wrapper .player-status .earnings {
             text-align: center;
             padding-bottom: 10px;
-            min-width: unset;
         }
     }
 
