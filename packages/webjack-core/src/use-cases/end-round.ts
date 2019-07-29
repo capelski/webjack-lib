@@ -23,18 +23,20 @@ export const endRound = (tableId: string): IOperationResult<undefined> => {
 
     const dealerHand = table.dealer.hands[0];
     const activePlayers = tableService.getActivePlayers(table);
-    activePlayers.forEach(player => {
-        const handsEarnings = player.hands.map(hand => {
-            const handEarnings = handService.resolveHand(hand, dealerHand);
-            handService.clearBet(hand);
-            return handEarnings;
-        });
+    const playersEarnings = activePlayers.map(player => {
+        const handsEarnings = player.hands.map(hand => handService.resolveHand(hand, dealerHand));
         const earningRate = handsEarnings.reduce((x, y) => x + y, 0);
-        playerService.updateEarningRate(player, earningRate);
+        return {
+            earningRate,
+            player
+        };
     });
 
     tableService.setNextAction(table, 5, () => {
         tableService.clearNextAction(table);
+        playersEarnings.forEach(playerEarning => {
+            playerService.updateEarningRate(playerEarning.player, playerEarning.earningRate);
+        });
         collectPlayedCards(table.cardSet);
         activePlayers.forEach(playerService.clearHands);
         playerService.clearHands(table.dealer);
