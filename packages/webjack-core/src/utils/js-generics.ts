@@ -15,9 +15,8 @@ export const cartesianProduct = <T, U, R>(
     );
 };
 
-export const delay = (minimumTime = 500) => {
-    return new Promise<void>(resolve => setTimeout(resolve, minimumTime));
-};
+export const delay = (minimumTime = 500) =>
+    new Promise<void>(resolve => setTimeout(resolve, minimumTime));
 
 export const removeDuplicates = (numbers: number[]): number[] => {
     const numbersDictionary: IDictionary<number> = numbers.reduce(

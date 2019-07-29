@@ -4,6 +4,7 @@ import * as playerService from '../services/player-service';
 import * as tableService from '../services/table-service';
 import { IOperationOutcome, IOperationResult } from '../types/operation-result';
 import { TableStatus } from '../types/table-status';
+import { delay } from '../utils/js-generics';
 
 export const endRound = (tableId: string): IOperationResult<undefined> => {
     const table = tableService.getTableById(tableId);
@@ -34,14 +35,22 @@ export const endRound = (tableId: string): IOperationResult<undefined> => {
 
     tableService.setNextAction(table, 5, () => {
         tableService.clearNextAction(table);
-        playersEarnings.forEach(playerEarning => {
-            playerService.updateEarningRate(playerEarning.player, playerEarning.earningRate);
+
+        const collectionPromise = playersEarnings.reduce((promiseChain, playerEarning) => {
+            return promiseChain.then(_ => {
+                playerEarning.player.hands.forEach(handService.clearBet);
+                playerService.updateEarningRate(playerEarning.player, playerEarning.earningRate);
+                return delay(400);
+            });
+        }, Promise.resolve());
+
+        collectionPromise.then(_ => {
+            activePlayers.forEach(playerService.clearHands);
+            playerService.clearHands(table.dealer);
+            collectPlayedCards(table.cardSet);
+            tableService.setStatus(table, TableStatus.Idle);
+            tableService.notifySubscribers(tableId);
         });
-        collectPlayedCards(table.cardSet);
-        activePlayers.forEach(playerService.clearHands);
-        playerService.clearHands(table.dealer);
-        tableService.setStatus(table, TableStatus.Idle);
-        tableService.notifySubscribers(tableId);
     });
     tableService.notifySubscribers(tableId);
 
