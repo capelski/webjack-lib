@@ -1,6 +1,6 @@
 {
     "name": "webjack-ui-components",
-    "version": "0.2.8",
+    "version": "0.2.9",
     "description": "Vue UI components for a blackjack application",
     "keywords": [
         "blackjack",
@@ -31,8 +31,8 @@
         "jquery": "^2.1.1",
         "toastr": "^2.1.4",
         "vue": "^2.6.10",
-        "webjack-core": "^0.2.4",
-        "webjack-websocket-contracts": "^0.1.2"
+        "webjack-core": "^0.2.5",
+        "webjack-websocket-contracts": "^0.1.3"
     },
     "devDependencies": {
         "@babel/core": "~7.2",
