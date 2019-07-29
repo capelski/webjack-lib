@@ -17,7 +17,7 @@
             </div>
 
             <div class="hands">
-                <ul v-if="player.hands && player.hands[0] && player.hands[0].cards.length > 0">
+                <ul v-if="player.hands && player.hands[0]">
                     <li v-for="(hand, handIndex) in player.hands" :key="handIndex" class="text-center">
                         <span v-for="(card, cardIndex) in hand.cards"
                             :key="cardIndex"
