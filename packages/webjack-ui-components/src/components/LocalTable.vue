@@ -126,7 +126,7 @@
         }
 
         startRound() {
-            useCases.placeBet(this.table.id, this.userPlayer.id, 1);
+            useCases.placeBet(this.table.id, this.userPlayer.id, 1, 2);
         }
     }
 </script>

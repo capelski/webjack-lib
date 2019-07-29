@@ -143,8 +143,8 @@
         startRound() {
             this.table.players.reduce((promiseChain, player) => {
                 return promiseChain.then(_ =>  {
-                    useCases.placeBet(this.table.id, player.id, 1);
-                    return new Promise(resolve => window.setTimeout(resolve, 800));
+                    useCases.placeBet(this.table.id, player.id, 1, 2);
+                    return new Promise(resolve => window.setTimeout(resolve, 250));
                 })
             }, Promise.resolve({}));
         }

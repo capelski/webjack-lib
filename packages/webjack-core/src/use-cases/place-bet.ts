@@ -7,7 +7,8 @@ import { startRound } from './start-round';
 export const placeBet = (
     tableId: string,
     playerId: string,
-    bet = 1
+    bet = 1,
+    roundDelay = 7
 ): IOperationResult<undefined> => {
     const table = tableService.getTableById(tableId);
     if (!table) {
@@ -36,7 +37,7 @@ export const placeBet = (
     tableService.setStatus(table, TableStatus.PlacingBets);
 
     if (!table.nextAction) {
-        tableService.setNextAction(table, 7, () => startRound(tableId));
+        tableService.setNextAction(table, roundDelay, () => startRound(tableId));
     }
     tableService.notifySubscribers(tableId);
 
