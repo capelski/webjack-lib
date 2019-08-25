@@ -4,7 +4,7 @@ const install = (vue: any, options: any = {}) => {
     // tslint:disable-next-line:forin
     for (const key in components) {
         const _key = options.prefix ? options.prefix + key : key;
-        vue.component(_key, (components as any)[key]);
+        vue.component(_key, components[key]);
     }
 };
 
