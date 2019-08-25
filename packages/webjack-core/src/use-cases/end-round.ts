@@ -40,6 +40,7 @@ export const endRound = (tableId: string): IOperationResult<undefined> => {
             return promiseChain.then(_ => {
                 playerEarning.player.hands.forEach(handService.clearBet);
                 playerService.updateEarningRate(playerEarning.player, playerEarning.earningRate);
+                playerService.storeEarningRate(playerEarning.player);
                 return delay(400);
             });
         }, Promise.resolve());

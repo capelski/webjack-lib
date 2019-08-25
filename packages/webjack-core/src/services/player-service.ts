@@ -10,6 +10,7 @@ const players: IDictionary<IPlayer> = {};
 export const clearHands = (player: IPlayer) => (player.hands = []);
 
 const create = (name = 'Unnamed'): IPlayer => ({
+    earningHistory: [0],
     earningRate: 0,
     hands: [],
     id: uuid(),
@@ -83,6 +84,10 @@ export const split = (player: IPlayer, nextCard: ICard) => {
 export const stand = (player: IPlayer) => {
     const currentHand = getCurrentHand(player)!;
     finishHand(currentHand);
+};
+
+export const storeEarningRate = (player: IPlayer) => {
+    player.earningHistory.push(player.earningRate);
 };
 
 export const updateEarningRate = (player: IPlayer, earningRateVariation: number) => {
