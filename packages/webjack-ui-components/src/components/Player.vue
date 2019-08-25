@@ -91,7 +91,9 @@ export default class Player extends Vue {
     player: types.IPlayer;
 
     showEarningsHistoryModal() {
-        this.$modal.show(`earnings-history-${this.player.name}`);
+        if (this.player) {
+            this.$modal.show(`earnings-history-${this.player.name}`);
+        }
     }
 
     showHandStatus(hand: types.IHand) {
@@ -105,48 +107,50 @@ export default class Player extends Vue {
 
     constructor() {
         super();
-        this.chartOptions = {
-            chart: {
-                id: `${this.player.name}-earnings`,
-                toolbar: {
-                    show: false
-                }
-            },
-            tooltip: {
-                enabled: true,
-                x: {
-                    show: false
-                },
-                y: {
-                    show: false
-                }
-            },
-            xaxis: {
-                axisBorder: {
-                    show: false
-                },
-                axisTicks: {
-                    show: true
-                },
-                labels: {
-                    show: false
+        if (this.player) {
+            this.chartOptions = {
+                chart: {
+                    id: `${this.player.name}-earnings`,
+                    toolbar: {
+                        show: false
+                    }
                 },
                 tooltip: {
-                    enabled: false
+                    enabled: true,
+                    x: {
+                        show: false
+                    },
+                    y: {
+                        show: false
+                    }
+                },
+                xaxis: {
+                    axisBorder: {
+                        show: false
+                    },
+                    axisTicks: {
+                        show: true
+                    },
+                    labels: {
+                        show: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                },
+                yaxis: {
+                    labels: {
+                        show: false
+                    }
                 }
-            },
-            yaxis: {
-                labels: {
-                    show: false
+            };
+            this.series = [
+                {
+                    name: 'Earnings',
+                    data: this.player.earningHistory
                 }
-            }
-        };
-        this.series = [
-            {
-                name: 'Earnings',
-                data: this.player.earningHistory
-            }
-        ];
+            ];
+        }
     }
 }
 </script>
