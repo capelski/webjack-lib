@@ -21,11 +21,11 @@
             </div>
 
             <div class="hands">
-                <ul v-if="player.hands && player.hands[0]">
+                <ul v-if="player.hands && player.hands.length > 0">
                     <li
                         v-for="(hand, handIndex) in player.hands"
                         :key="handIndex"
-                        class="text-center"
+                        :class="{'text-center': true, 'highlighted-hand': mustHighlightHand(hand)}"
                     >
                         <span
                             v-for="(card, cardIndex) in hand.cards"
@@ -54,12 +54,7 @@
             </div>
 
             <modal :name="`earnings-history-${player.name}`" height="auto">
-                <apexchart
-                    width="100%"
-                    type="line"
-                    :options="chartOptions"
-                    :series="series"
-                ></apexchart>
+                <apexchart width="100%" type="line" :options="chartOptions" :series="series"></apexchart>
             </modal>
         </div>
         <div v-if="!player" class="free-seat">Free slot</div>
@@ -94,6 +89,14 @@ export default class Player extends Vue {
         if (this.player) {
             this.$modal.show(`earnings-history-${this.player.name}`);
         }
+    }
+
+    mustHighlightHand(hand: types.IHand) {
+        return (
+            this.isPlayerTurn &&
+            this.player.hands.length > 1 &&
+            this.player.hands.find(h => h.status === types.HandStatus.Unplayed) === hand
+        );
     }
 
     showHandStatus(hand: types.IHand) {
@@ -158,16 +161,14 @@ export default class Player extends Vue {
 <style lang="scss">
 .card {
     font-size: 20px;
-}
-.card.black {
-    color: black;
-}
-.card.red {
-    color: red;
-}
 
-.clickable {
-    cursor: pointer;
+    &.black {
+        color: black;
+    }
+
+    &.red {
+        color: red;
+    }
 }
 
 .player-card {
@@ -215,173 +216,164 @@ export default class Player extends Vue {
     display: flex;
     flex-direction: row;
     align-items: center;
-}
 
-@media (min-width: 992px) {
-    .player-wrapper {
+    @media (min-width: 992px) {
         padding: 10px 0;
         display: block;
     }
-}
 
-.player-wrapper > * {
-    flex-grow: 1;
-    flex-basis: 0;
-}
-
-.player-wrapper .player-status {
-    display: flex;
-    align-items: baseline;
-    max-width: 50%;
-
-    @media (min-width: 992px) {
-        flex-direction: column;
-        max-width: unset;
-        align-items: center;
-    }
-}
-
-.player-wrapper .player-status .player-name {
-    padding: 0;
-    font-size: 20px;
-    margin: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-@media (min-width: 992px) {
-    .player-wrapper .player-status .player-name {
-        padding: 10px;
-        padding-top: 0;
-        text-align: center;
-    }
-}
-
-.player-wrapper .player-status .earnings {
-    font-size: 18px;
-    text-align: right;
-    display: inline-block;
-    padding-right: 5px;
-}
-
-@media (min-width: 992px) {
-    .player-wrapper .player-status .earnings {
-        text-align: center;
-        padding-bottom: 10px;
-        padding-right: 0;
-    }
-}
-
-.player-wrapper .hands ul {
-    padding: 0 7px;
-    margin: 0;
-
-    @media (min-width: 992px) {
-        padding: 0;
-        margin-top: 10px;
+    > * {
+        flex-grow: 1;
+        flex-basis: 0;
     }
 
-    .hand-data {
-        display: inline-block;
-        margin-top: 4px;
+    .player-status {
+        display: flex;
+        align-items: baseline;
+        max-width: 50%;
+
+        @media (min-width: 992px) {
+            flex-direction: column;
+            max-width: unset;
+            align-items: center;
+        }
+
+        .player-name {
+            padding: 0;
+            font-size: 20px;
+            margin: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+
+            @media (min-width: 992px) {
+                padding: 10px;
+                padding-top: 0;
+                text-align: center;
+            }
+        }
+
+        .earnings {
+            font-size: 18px;
+            text-align: right;
+            display: inline-block;
+            padding-right: 5px;
+
+            @media (min-width: 992px) {
+                text-align: center;
+                padding-bottom: 10px;
+                padding-right: 0;
+            }
+        }
     }
 
-    .hand-status {
-        margin-top: 4px;
+    .hands ul {
+        padding: 0 7px;
+        margin: 0;
+
+        @media (min-width: 992px) {
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        .hand-data {
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        .hand-status {
+            margin-top: 4px;
+        }
+
+        li {
+            list-style-type: none;
+            margin-top: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            border-top: 1px dashed #088446;
+
+            &:first-child {
+                margin-top: 0;
+                border-top: none;
+            }
+
+            &.highlighted-hand {
+                background-color: #f3e6a7;
+            }
+        }
     }
-}
 
-.player-wrapper .hands ul li {
-    list-style-type: none;
-    margin-top: 5px;
-    padding-top: 5px;
-    border-top: 1px dashed #088446;
-}
+    .bubble {
+        font-size: 18px;
+        padding: 3px 7px;
+        border: 2px solid black;
+        color: black;
+        border-radius: 10px;
 
-.player-wrapper .hands ul li:first-child {
-    list-style-type: none;
-    margin-top: 0;
-    padding-top: 0;
-    border-top: none;
-}
+        &.left {
+            border-radius: 10px 0 0 10px;
+            margin-right: -2.5px;
+        }
+        &.right {
+            border-radius: 0 10px 10px 0;
+            margin-left: -2.5px;
+        }
 
-@media (min-width: 992px) {
-    .player-wrapper .hands ul li {
-        margin: 0 10px;
-        margin-top: 10px;
-        padding-top: 10px;
+        &.inverted {
+            border: 2px solid black;
+            background-color: black;
+            color: white;
+        }
     }
-}
 
-.player-wrapper .bubble {
-    font-size: 18px;
-    padding: 3px 7px;
-    border: 2px solid black;
-    color: black;
-    border-radius: 10px;
+    &.user {
+        .player-name,
+        .earnings,
+        .hands li,
+        .bubble {
+            color: #3071a9;
+        }
 
-    &.left {
-        border-radius: 10px 0 0 10px;
-        margin-right: -2.5px;
+        .bubble {
+            border: 2px solid #3071a9;
+        }
+
+        .bubble.inverted {
+            border: 2px solid #3071a9;
+            background-color: #3071a9;
+            color: white;
+        }
     }
-    &.right {
-        border-radius: 0 10px 10px 0;
-        margin-left: -2.5px;
+
+    &.active {
+        background-color: #eedc82;
     }
-}
 
-.player-wrapper .bubble.inverted {
-    border: 2px solid black;
-    background-color: black;
-    color: white;
-}
+    &.active,
+    &.active .player-name,
+    &.active .earnings,
+    &.active .hands li,
+    &.active .hands li .card.black,
+    &.active .bubble,
+    &.user.active .player-name,
+    &.user.active .earnings,
+    &.user.active .hands li,
+    &.user.active .hands li .card.black,
+    &.user.active .bubble {
+        color: white;
+    }
 
-.player-wrapper.user .player-name,
-.player-wrapper.user .earnings,
-.player-wrapper.user .hands li,
-.player-wrapper.user .bubble {
-    color: #3071a9;
-}
+    &.active .bubble,
+    &.user.active .bubble {
+        border: 2px solid white;
+    }
 
-.player-wrapper.user .bubble {
-    border: 2px solid #3071a9;
-}
-
-.player-wrapper.user .bubble.inverted {
-    border: 2px solid #3071a9;
-    background-color: #3071a9;
-    color: white;
-}
-
-.player-wrapper.active {
-    background-color: #eedc82;
-}
-
-.player-wrapper.active,
-.player-wrapper.active .player-name,
-.player-wrapper.active .earnings,
-.player-wrapper.active .hands li,
-.player-wrapper.active .hands li .card.black,
-.player-wrapper.active .bubble,
-.player-wrapper.user.active .player-name,
-.player-wrapper.user.active .earnings,
-.player-wrapper.user.active .hands li,
-.player-wrapper.user.active .hands li .card.black,
-.player-wrapper.user.active .bubble {
-    color: white;
-}
-
-.player-wrapper.active .bubble,
-.player-wrapper.user.active .bubble {
-    border: 2px solid white;
-}
-
-.player-wrapper.active .bubble.inverted,
-.player-wrapper.user.active .bubble.inverted {
-    border: 2px solid white;
-    background-color: white;
-    color: #eedc82;
+    &.active .bubble.inverted,
+    &.user.active .bubble.inverted {
+        border: 2px solid white;
+        background-color: white;
+        color: #eedc82;
+    }
 }
 
 .free-seat {
@@ -390,10 +382,8 @@ export default class Player extends Vue {
     padding: 5px 0;
     font-size: 20px;
     text-align: center;
-}
 
-@media (min-width: 992px) {
-    .free-seat {
+    @media (min-width: 992px) {
         padding: 30px 10px;
     }
 }
